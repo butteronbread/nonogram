@@ -91,7 +91,7 @@ def setupBoards(size, cellW, gap):
     return boardSolution, boardSolving, boardRects
 
 def setupPlayAnimations(cellW, size):
-    crossImg = pygame.transform.scale(pygame.image.load("imgs/cross.png"), (cellW, cellW))
+    crossImg = pygame.transform.scale(pygame.image.load("cross.png"), (cellW, cellW))
     cellTimers = []
     for y in range(size):
         cellTimers.append([])
@@ -123,23 +123,23 @@ def setupHome():
     drawRect.centerx = w/2
     drawRect.centery = w*0.55
 
-    playBubble = pygame.transform.scale(pygame.image.load("imgs/upbubble.png"), (w*0.6, w*0.2))
-    drawBubble = pygame.transform.scale(pygame.image.load("imgs/downbubble.png"), (w*0.6, w*0.2))
+    playBubble = pygame.transform.scale(pygame.image.load("upbubble.png"), (w*0.6, w*0.2))
+    drawBubble = pygame.transform.scale(pygame.image.load("downbubble.png"), (w*0.6, w*0.2))
 
     sanddollarRect = pygame.Rect(w*0.63, w*0.02, w*0.35, w*0.1)
-    sanddollarImg = pygame.transform.scale(pygame.image.load("imgs/sanddollar.png"), (w*0.07, w*0.07))
+    sanddollarImg = pygame.transform.scale(pygame.image.load("sanddollar.png"), (w*0.07, w*0.07))
 
     shopButtonRect = pygame.Rect(w*0.02, w*0.02, w*0.12, w*0.12)
-    ogShopImg = pygame.image.load("imgs/shop.png")
-    shopImg = pygame.transform.scale(pygame.image.load("imgs/shop.png"), (w*0.08, w*0.08))
+    ogShopImg = pygame.image.load("shop.png")
+    shopImg = pygame.transform.scale(pygame.image.load("shop.png"), (w*0.08, w*0.08))
 
     galleryButtonRect = pygame.Rect(w*0.16, w*0.02, w*0.12, w*0.12)
-    ogGalleryImg = pygame.image.load("imgs/gallery.png")
-    galleryImg = pygame.transform.scale(pygame.image.load("imgs/gallery.png"), (w*0.08, w*0.08))
+    ogGalleryImg = pygame.image.load("gallery.png")
+    galleryImg = pygame.transform.scale(pygame.image.load("gallery.png"), (w*0.08, w*0.08))
 
     beachButtonRect = pygame.Rect(w*0.02, w*0.86, w*0.12, w*0.12)
-    ogBeachImg = pygame.image.load("imgs/beach.png")
-    beachImg = pygame.transform.scale(pygame.image.load("imgs/beach.png"), (w*0.08, w*0.08))
+    ogBeachImg = pygame.image.load("beach.png")
+    beachImg = pygame.transform.scale(pygame.image.load("beach.png"), (w*0.08, w*0.08))
 
     return playRect, drawRect, playBubble, drawBubble, sanddollarRect, sanddollarImg, shopButtonRect, ogShopImg, shopImg, galleryButtonRect, ogGalleryImg, galleryImg, beachButtonRect, ogBeachImg, beachImg
 
@@ -197,27 +197,21 @@ def setupBeach():
     beachBgImgs = [pygame.transform.scale(pygame.image.load("beachBg/1.png"), (w,w)), pygame.transform.scale(pygame.image.load("beachBg/2.png"), (w,w)), pygame.transform.scale(pygame.image.load("beachBg/3.png"), (w,w))]
 
     beachConfirmButtonRect = pygame.Rect(w*0.45,w*0.88,w*0.1,w*0.1)
-    beachConfirmButtonImg = pygame.transform.scale(pygame.image.load("imgs/check.png"), (w*0.1,w*0.1))
+    beachConfirmButtonImg = pygame.transform.scale(pygame.image.load("check.png"), (w*0.1,w*0.1))
 
     beachExitRect = pygame.Rect(w*0.88, w*0.02, w*0.1, w*0.1)
 
     addButtonRect = pygame.Rect(w*0.02, w*0.88, w*0.1, w*0.1)
     trashButtonRect = pygame.Rect(w*0.14, w*0.88, w*0.1, w*0.1)
 
-    scaleImg = pygame.transform.scale(pygame.image.load("imgs/scale.png"), (w*0.05,w*0.05))
-    rotateImg = pygame.transform.scale(pygame.image.load("imgs/rotate.png"), (w*0.05,w*0.05))
-
-    scaleRect = pygame.Rect(0, 0, w*0.06, w*0.06)
-    rotateRect = pygame.Rect(0, 0, w*0.06, w*0.06)
-
-    trashImgs = [pygame.transform.scale(pygame.image.load("imgs/close.png"), (w*0.08, w*0.08)), pygame.transform.scale(pygame.image.load("imgs/open.png"), (w*0.08, w*0.08))]
+    trashImgs = [pygame.transform.scale(pygame.image.load("close.png"), (w*0.08, w*0.08)), pygame.transform.scale(pygame.image.load("open.png"), (w*0.08, w*0.08))]
 
     addBg = pygame.Rect(0,0,w*0.9,w*0.9)
     addBg.center = (w/2,w/2)
 
     posOffset = (0,0)
 
-    return beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg, beachExitRect, addButtonRect, trashButtonRect, trashImgs, addBg, posOffset, rotateImg, scaleImg, rotateRect, scaleRect
+    return beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg, beachExitRect, addButtonRect, trashButtonRect, trashImgs, addBg, posOffset
 
 def setupShop():
     shopBg = pygame.Rect(0,0,w*0.9,w*0.9)
@@ -256,9 +250,9 @@ def setupOthers():
     colors = ((185, 191, 153), (75, 83, 32), (255, 255, 255), (252, 93, 93)) # filled and not filled nonogram colors
 
     checkButtonRect = pygame.Rect(gap*0.1, gap*0.1, gap*0.8, gap*0.8)
-    checkButtonImg = pygame.transform.scale(pygame.image.load("imgs/check.png"), (gap*0.8, gap*0.8))
+    checkButtonImg = pygame.transform.scale(pygame.image.load("check.png"), (gap*0.8, gap*0.8))
 
-    heartImg = pygame.transform.scale(pygame.image.load("imgs/heart.png"), (gap, gap))
+    heartImg = pygame.transform.scale(pygame.image.load("heart.png"), (gap, gap))
 
     return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, checkButtonRect, checkButtonImg, heartImg
 
@@ -295,25 +289,25 @@ def setup():
     galleryBg, popupExitRect, galleryData, galleryBigRects, gallerySmallRects, galleryColors, chosen, galleryPage, FlipLeftRect, FlipRightRect = setupGallery()
 
     # beach stuff
-    beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg, beachExitRect, addButtonRect, trashButtonRect, trashImgs, addBg, posOffset, rotateImg, scaleImg, rotateRect, scaleRect = setupBeach()
+    beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg, beachExitRect, addButtonRect, trashButtonRect, trashImgs, addBg, posOffset = setupBeach()
 
     # shop stuff
     shopBg, shopPage, shopItemRects, shopItemImgs, ogShopItemImgs, shopItemPrice = setupShop()
 
     stage, sanddollar = setupChange()
 
-    return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, checkButtonRect, checkButtonImg, heartImg, crossImg, cellTimers, boardSolution, boardSolving, boardRects, yinfo, xinfo, yinfoRects, xinfoRects, darken, opacity, fade, fadeo, playRect, drawRect, playBubble, drawBubble, sanddollarRect, sanddollarImg, shopButtonRect, ogShopImg, shopImg, galleryButtonRect, ogGalleryImg, galleryImg, beachButtonRect, ogBeachImg, beachImg, yesRect, noRect, claimSanddollarRect, galleryBg, popupExitRect, galleryData, galleryBigRects, gallerySmallRects, galleryColors, chosen, galleryPage, FlipLeftRect, FlipRightRect, beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg, beachExitRect, addButtonRect, trashButtonRect, trashImgs, addBg, posOffset, shopBg, shopPage, shopItemRects, shopItemImgs, ogShopItemImgs, shopItemPrice, stage, sanddollar, -1, False, rotateImg, scaleImg, rotateRect, scaleRect, 0, "", False
+    return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, checkButtonRect, checkButtonImg, heartImg, crossImg, cellTimers, boardSolution, boardSolving, boardRects, yinfo, xinfo, yinfoRects, xinfoRects, darken, opacity, fade, fadeo, playRect, drawRect, playBubble, drawBubble, sanddollarRect, sanddollarImg, shopButtonRect, ogShopImg, shopImg, galleryButtonRect, ogGalleryImg, galleryImg, beachButtonRect, ogBeachImg, beachImg, yesRect, noRect, claimSanddollarRect, galleryBg, popupExitRect, galleryData, galleryBigRects, gallerySmallRects, galleryColors, chosen, galleryPage, FlipLeftRect, FlipRightRect, beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg, beachExitRect, addButtonRect, trashButtonRect, trashImgs, addBg, posOffset, shopBg, shopPage, shopItemRects, shopItemImgs, ogShopItemImgs, shopItemPrice, stage, sanddollar, -1, False
 
 async def main():
-    size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, checkButtonRect, checkButtonImg, heartImg, crossImg, cellTimers, boardSolution, boardSolving, boardRects, yinfo, xinfo, yinfoRects, xinfoRects, darken, opacity, fade, fadeo, playRect, drawRect, playBubble, drawBubble, sanddollarRect, sanddollarImg, shopButtonRect, ogShopImg, shopImg, galleryButtonRect, ogGalleryImg, galleryImg, beachButtonRect, ogBeachImg, beachImg, yesRect, noRect, claimSanddollarRect, galleryBg, popupExitRect, galleryData, galleryBigRects, gallerySmallRects, galleryColors, chosen, galleryPage, FlipLeftRect, FlipRightRect, beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg, beachExitRect, addButtonRect, trashButtonRect, trashImgs, addBg, posOffset, shopBg, shopPage, shopItemRects, shopItemImgs, ogShopItemImgs, shopItemPrice, stage, sanddollar, selecting, clickBg, rotateImg, scaleImg, rotateRect, scaleRect, shopSDAnimate, shopSDAnimateTxt, scaling = setup()
+    size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, checkButtonRect, checkButtonImg, heartImg, crossImg, cellTimers, boardSolution, boardSolving, boardRects, yinfo, xinfo, yinfoRects, xinfoRects, darken, opacity, fade, fadeo, playRect, drawRect, playBubble, drawBubble, sanddollarRect, sanddollarImg, shopButtonRect, ogShopImg, shopImg, galleryButtonRect, ogGalleryImg, galleryImg, beachButtonRect, ogBeachImg, beachImg, yesRect, noRect, claimSanddollarRect, galleryBg, popupExitRect, galleryData, galleryBigRects, gallerySmallRects, galleryColors, chosen, galleryPage, FlipLeftRect, FlipRightRect, beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg, beachExitRect, addButtonRect, trashButtonRect, trashImgs, addBg, posOffset, shopBg, shopPage, shopItemRects, shopItemImgs, ogShopItemImgs, shopItemPrice, stage, sanddollar, selecting, clickBg = setup()
 
-    # pygame.mixer.music.load("music/bgm.ogg")
-    # pygame.mixer.music.set_volume(0.2)
-    # pygame.mixer.music.play(-1)
+    pygame.mixer.music.load("bgm.ogg")
+    pygame.mixer.music.set_volume(0.2)
+    pygame.mixer.music.play(-1)
 
-    clickSFX = pygame.mixer.Sound("music/click.ogg")
+    clickSFX = pygame.mixer.Sound("click.ogg")
     clickSFX.set_volume(0.2)
-    flipSFX = pygame.mixer.Sound("music/flip.ogg")
+    flipSFX = pygame.mixer.Sound("flip.ogg")
     flipSFX.set_volume(0.3)
 
     while True:
@@ -326,8 +320,6 @@ async def main():
 
         if stage == "home":
             # money
-            sanddollarRect = pygame.Rect(w*0.63, w*0.02, w*0.35, w*0.1)
-
             pygame.draw.rect(screen, (248, 250, 247), sanddollarRect, border_radius=20)
             screen.blit(sanddollarImg, (sanddollarRect.x+w*0.02, sanddollarRect.centery-w*0.035))
 
@@ -561,18 +553,16 @@ async def main():
 
                         if pygame.mouse.get_pressed()[0] and not down:
                             if sanddollar >= shopItemPrice[i]:
-                                shopSDAnimateTxt = str(shopItemPrice[i])
-                                shopSDAnimate = 20
                                 clickSFX.play()
                                 r = load_data("save")
 
                                 # adding item to inventory
                                 r = r.split(",")
-                                r[3] = r[3].split(" ")
-                                r[3].append(str(i))
+                                r[4] = r[4].split(" ")
+                                r[4].append(str(i))
 
-                                r[3] = " ".join(r[3])
-                                r[3] = r[3].strip(" ")
+                                r[4] = " ".join(r[4])
+                                r[4] = r[4].strip(" ")
                                 r = ",".join(r)
 
                                 # minus money
@@ -628,30 +618,6 @@ async def main():
                 shopPage -= 1
             if key[pygame.K_RIGHT] and shopPage < (len(shopItemRects)-1)//4 and not down:
                 shopPage += 1
-
-            sanddollarRect = pygame.Rect(w*0.04, w*0.02, w*0.35, w*0.1)
-
-            pygame.draw.rect(screen, "#CAD4C5", sanddollarRect, border_radius=20)
-            screen.blit(sanddollarImg, (sanddollarRect.x+w*0.02, sanddollarRect.centery-w*0.035))
-
-            sdShowTxt = str(sanddollar)
-            if len(sdShowTxt) > 9:
-                sdShowTxt = str(int(sanddollar/1000000))+"M"
-            elif len(sdShowTxt) > 5:
-                sdShowTxt = str(int(sanddollar/1000))+"K"
-
-            text = pygame.font.Font(FONT, 48).render(sdShowTxt, True, (66, 99, 52))
-            textpos = text.get_rect(x=sanddollarRect.x+w*0.12, centery=sanddollarRect.centery-w*0.003)
-            screen.blit(text, textpos)
-
-            if shopSDAnimate > 0:
-                text = pygame.font.Font(FONT, int((20-shopSDAnimate)*1.5)).render(f"-{shopSDAnimateTxt}", True, (66, 99, 52))
-                text.set_alpha(255*shopSDAnimate/20)
-                textpos = text.get_rect(centerx=sanddollarRect.x + sanddollarRect.w + w*0.05, 
-                                        centery=sanddollarRect.y + sanddollarRect.h - w*0.05 + w*0.1*shopSDAnimate/20)
-                screen.blit(text, textpos)
-
-                shopSDAnimate -= 1
 
             if popupExitRect.collidepoint(pygame.mouse.get_pos()):
                 pygame.draw.rect(screen, (222, 130, 126), popupExitRect, border_radius=20)
@@ -726,14 +692,13 @@ async def main():
 
         if stage.split()[0] == "beach":
             if len(stage.split()) > 1 and stage.split()[1] == "setup":
-                #selecting = -1
                 r = load_data("save")
                 beachBgNo = 0
                 beachData = ""
 
                 r = r.split(",")
                 beachBgNo = r[2]
-                beachData = r[4]
+                beachData = r[3]
 
                 if beachBgNo == '':
                     stage = "pick-beach"
@@ -750,13 +715,12 @@ async def main():
 
                     beachData[i][1] = beachData[i][1].split("-")
                     
-                    beachData[i][1][0] = int(beachData[i][1][0]) # x
-                    beachData[i][1][1] = int(beachData[i][1][1]) # y
-                    beachData[i][1][2] = float(beachData[i][1][2]) # scale
-                    beachData[i][1][3] = int(beachData[i][1][3]) # rotation
+                    beachData[i][1][0] = int(beachData[i][1][0])
+                    beachData[i][1][1] = int(beachData[i][1][1])
 
-                    shopItemImgs[beachData[i][0]] = pygame.transform.scale(ogShopItemImgs[beachData[i][0]], (w*0.2 * beachData[i][1][2],  w*0.2*beachData[i][1][2]))
-                    beachItemRects.append(pygame.Rect(beachData[i][1][0], beachData[i][1][1], w*0.2 * beachData[i][1][2],  w*0.2*beachData[i][1][2]))
+                    shopItemImgs[beachData[i][0]] = pygame.transform.scale(ogShopItemImgs[beachData[i][0]], (w*0.2,w*0.2))
+
+                    beachItemRects.append(pygame.Rect(beachData[i][1][0], beachData[i][1][1], w*0.2, w*0.2))
                 
                 if stage != "pick-beach":
                     stage = "beach"
@@ -774,7 +738,6 @@ async def main():
                 screen.blit(shopItemImgs[beachData[i][0]], (beachData[i][1][0], beachData[i][1][1]))
                 if beachItemRects[i].collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] and not down:
                     moveItem.append(i)
-
                     posOffset = (pygame.mouse.get_pos()[0]-beachData[moveItem[-1]][1][0], pygame.mouse.get_pos()[1]-beachData[moveItem[-1]][1][1])
                     clickBg = False
             
@@ -785,41 +748,7 @@ async def main():
             if selecting != -1:
                 pygame.draw.rect(screen, (100,100,255), beachItemRects[selecting], 5)
 
-                pygame.draw.rect(screen, (118, 143, 116), scaleRect, border_radius=10)
-                screen.blit(scaleImg, (scaleRect.x+w*0.005, scaleRect.y+w*0.005))
-
-                pygame.draw.rect(screen, (163, 191, 159), rotateRect, border_radius=10)
-                screen.blit(rotateImg, (rotateRect.x+w*0.005, rotateRect.y+w*0.005))
-
-                if scaleRect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
-                    scaling = True
-            
-            if scaling:
-                beachData[selecting][1][2] = (pygame.mouse.get_pos()[0] - beachItemRects[selecting].x) / (w*0.2)
-                shopItemImgs[beachData[selecting][0]] = pygame.transform.scale(ogShopItemImgs[beachData[selecting][0]], (w*0.2 * beachData[selecting][1][2],  w*0.2*beachData[selecting][1][2]))
-                
-                beachItemRects[selecting] = pygame.Rect(beachData[selecting][1][0], beachData[selecting][1][1], w*0.2 * beachData[selecting][1][2],  w*0.2*beachData[selecting][1][2])
-
-                scaleRect.centerx = beachItemRects[moveItem[-1]].x + beachItemRects[moveItem[-1]].w
-                scaleRect.centery = beachItemRects[moveItem[-1]].y + beachItemRects[moveItem[-1]].h
-
-                rotateRect.centerx = beachItemRects[moveItem[-1]].x
-                rotateRect.centery = beachItemRects[moveItem[-1]].y + beachItemRects[moveItem[-1]].h
-
-                r = load_data("save")
-
-                r = r.split(",")
-                
-                r[4] = r[4].split()
-                r[4][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}"
-                
-                r[4] = " ".join(r[4])
-                
-                r = ",".join(r)
-
-                save_data(r, "save")
-
-            if moveItem != [] and not scaleRect.collidepoint(pygame.mouse.get_pos()) and not rotateRect.collidepoint(pygame.mouse.get_pos()) and not scaling: # move item
+            if moveItem != []: # move item
                 selecting = moveItem[-1]
 
                 beachData[moveItem[-1]][1][0] = pygame.mouse.get_pos()[0] - posOffset[0]
@@ -829,10 +758,10 @@ async def main():
 
                 r = r.split(",")
                 
-                r[4] = r[4].split()
-                r[4][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}"
-                
-                r[4] = " ".join(r[4])
+                r[3] = r[3].split()
+                r[3][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}"
+
+                r[3] = " ".join(r[3])
                 
                 r = ",".join(r)
 
@@ -840,16 +769,6 @@ async def main():
 
                 beachItemRects[moveItem[-1]].x = pygame.mouse.get_pos()[0] - posOffset[0]
                 beachItemRects[moveItem[-1]].y = pygame.mouse.get_pos()[1] - posOffset[1]
-
-                scaleRect.centerx = beachItemRects[moveItem[-1]].x + beachItemRects[moveItem[-1]].w
-                scaleRect.centery = beachItemRects[moveItem[-1]].y + beachItemRects[moveItem[-1]].h
-
-                rotateRect.centerx = beachItemRects[moveItem[-1]].x
-                rotateRect.centery = beachItemRects[moveItem[-1]].y + beachItemRects[moveItem[-1]].h
-            
-            if not pygame.mouse.get_pressed()[0]:
-                scaling = False
-                stage = "beach setup"
             
             pygame.draw.rect(screen, (126, 166, 119), addButtonRect, border_radius=20)
 
@@ -878,13 +797,13 @@ async def main():
                     r = load_data("save")
 
                     r = r.split(",")
-                    r[4] = r[4].split()
-                    r[4].pop(moveItem[-1])
-                    r[4] = " ".join(r[4])
-
                     r[3] = r[3].split()
-                    r[3].append(str(beachData[moveItem[-1]][0]))
+                    r[3].pop(moveItem[-1])
                     r[3] = " ".join(r[3])
+
+                    r[4] = r[4].split()
+                    r[4].append(str(beachData[moveItem[-1]][0]))
+                    r[4] = " ".join(r[4])
 
                     r = ",".join(r)
 
@@ -922,7 +841,7 @@ async def main():
                 addData = ""
 
                 r = r.split(",")
-                addData = r[3]
+                addData = r[4]
                 
                 addData = addData.split()
 
@@ -947,13 +866,14 @@ async def main():
                             r = load_data("save")
 
                             r = r.split(",")
-                            r[4] = r[4].split()
                             r[3] = r[3].split()
+                            r[4] = r[4].split()
 
-                            r[3].remove(str(addData[i]))
-                            r[4].append(f"{str(addData[i])}/{int(random.randint(int(w/4), int(w/4)*3))}-{int(random.randint(int(w/4), int(w/4)*3))}-1-0")
-                            r[4] = " ".join(r[4])
+                            r[4].remove(str(addData[i]))
+                            r[3].append(f"{str(addData[i])}/{int(random.randint(int(w/4), int(w/4)*3))}-{int(random.randint(int(w/4), int(w/4)*3))}")
+
                             r[3] = " ".join(r[3])
+                            r[4] = " ".join(r[4])
 
                             r = ",".join(r)
 
@@ -1383,6 +1303,9 @@ async def main():
             colors = ((185, 191, 153), (75, 83, 32), (255, 255, 255), (252, 93, 93)) # filled and not filled nonogram colors
 
             checkButtonRect = pygame.Rect(gap*0.1, gap*0.1, gap*0.8, gap*0.8)
+            checkButtonImg = pygame.transform.scale(pygame.image.load("check.png"), (gap*0.8, gap*0.8))
+
+            heartImg = pygame.transform.scale(pygame.image.load("heart.png"), (gap, gap))
 
             # info for the sides
             yinfo, xinfo, yinfoRects, xinfoRects = setupInfo(size, gap, cellW)
