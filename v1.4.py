@@ -304,6 +304,34 @@ def setup():
 
     return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, checkButtonRect, checkButtonImg, heartImg, crossImg, cellTimers, boardSolution, boardSolving, boardRects, yinfo, xinfo, yinfoRects, xinfoRects, darken, opacity, fade, fadeo, playRect, drawRect, playBubble, drawBubble, sanddollarRect, sanddollarImg, shopButtonRect, ogShopImg, shopImg, galleryButtonRect, ogGalleryImg, galleryImg, beachButtonRect, ogBeachImg, beachImg, yesRect, noRect, claimSanddollarRect, galleryBg, popupExitRect, galleryData, galleryBigRects, gallerySmallRects, galleryColors, chosen, galleryPage, FlipLeftRect, FlipRightRect, beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg, beachExitRect, addButtonRect, trashButtonRect, trashImgs, addBg, posOffset, shopBg, shopPage, shopItemRects, shopItemImgs, ogShopItemImgs, shopItemPrice, stage, sanddollar, -1, False, rotateImg, scaleImg, rotateRect, scaleRect, 0, "", False, False
 
+# other functions:
+
+def rotate_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopItemImgs, rotateRect, scaleRect, moveItem):
+    beachData[selecting][1][2] = (pygame.mouse.get_pos()[0] - beachItemRects[selecting].x) / (w*0.2)
+    shopItemImgs[beachData[selecting][0]] = pygame.transform.scale(ogShopItemImgs[beachData[selecting][0]], (w*0.2 * beachData[selecting][1][2],  w*0.2*beachData[selecting][1][2]))
+    
+    beachItemRects[selecting] = pygame.Rect(beachData[selecting][1][0], beachData[selecting][1][1], w*0.2 * beachData[selecting][1][2],  w*0.2*beachData[selecting][1][2])
+
+    scaleRect.centerx = beachItemRects[moveItem[-1]].x + beachItemRects[moveItem[-1]].w
+    scaleRect.centery = beachItemRects[moveItem[-1]].y + beachItemRects[moveItem[-1]].h
+
+    rotateRect.centerx = beachItemRects[moveItem[-1]].x
+    rotateRect.centery = beachItemRects[moveItem[-1]].y + beachItemRects[moveItem[-1]].h
+
+    r = load_data("save")
+
+    r = r.split(",")
+    
+    r[4] = r[4].split()
+    r[4][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}"
+    
+    r[4] = " ".join(r[4])
+    
+    r = ",".join(r)
+
+    save_data(r, "save")
+
+
 async def main():
     size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, checkButtonRect, checkButtonImg, heartImg, crossImg, cellTimers, boardSolution, boardSolving, boardRects, yinfo, xinfo, yinfoRects, xinfoRects, darken, opacity, fade, fadeo, playRect, drawRect, playBubble, drawBubble, sanddollarRect, sanddollarImg, shopButtonRect, ogShopImg, shopImg, galleryButtonRect, ogGalleryImg, galleryImg, beachButtonRect, ogBeachImg, beachImg, yesRect, noRect, claimSanddollarRect, galleryBg, popupExitRect, galleryData, galleryBigRects, gallerySmallRects, galleryColors, chosen, galleryPage, FlipLeftRect, FlipRightRect, beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg, beachExitRect, addButtonRect, trashButtonRect, trashImgs, addBg, posOffset, shopBg, shopPage, shopItemRects, shopItemImgs, ogShopItemImgs, shopItemPrice, stage, sanddollar, selecting, clickBg, rotateImg, scaleImg, rotateRect, scaleRect, shopSDAnimate, shopSDAnimateTxt, scaling, rotating = setup()
 
@@ -771,7 +799,7 @@ async def main():
                 moveItem = []
 
             for i in range(len(beachData)):
-                screen.blit(shopItemImgs[beachData[i][0]], (beachData[i][1][0], beachData[i][1][1]))
+                screen.blit(pygame.transform.rotate(shopItemImgs[beachData[i][0]], int(beachData[i][1][3])), (beachData[i][1][0], beachData[i][1][1]))
                 if beachItemRects[i].collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] and not down:
                     moveItem.append(i)
 
@@ -797,31 +825,27 @@ async def main():
                 if rotateRect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
                     rotating = True
             
+            if rotating:
+                # find the distance between center of the image and mouse pos and then use trig to find angle to rotate
+                try:
+                    center = (beachItemRects[selecting].centerx, beachItemRects[selecting].centery)
+                    mouse = pygame.mouse.get_pos()
+                    diff = (mouse[0]-center[0], mouse[1]-center[1])
+                    angle = int(math.atan2(diff[1],diff[0]) * 180/math.pi + 90)
+                    
+                    r = load_data("save")
+                    r = r.split(",")
+                    r[4] = r[4].split()
+                    r[4][selecting] = f"{beachData[selecting][0]}/{beachData[selecting][1][0]}-{beachData[selecting][1][1]}-{beachData[selecting][1][2]}-{angle}"
+                    r[4] = " ".join(r[4])
+                    r = ",".join(r)
+                    save_data(r, "save")
+
+                except: pass
+                
             if scaling:
                 if (pygame.mouse.get_pos()[0] - beachItemRects[selecting].x) / (w*0.2) > 0.3:
-                    beachData[selecting][1][2] = (pygame.mouse.get_pos()[0] - beachItemRects[selecting].x) / (w*0.2)
-                    shopItemImgs[beachData[selecting][0]] = pygame.transform.scale(ogShopItemImgs[beachData[selecting][0]], (w*0.2 * beachData[selecting][1][2],  w*0.2*beachData[selecting][1][2]))
-                    
-                    beachItemRects[selecting] = pygame.Rect(beachData[selecting][1][0], beachData[selecting][1][1], w*0.2 * beachData[selecting][1][2],  w*0.2*beachData[selecting][1][2])
-
-                    scaleRect.centerx = beachItemRects[moveItem[-1]].x + beachItemRects[moveItem[-1]].w
-                    scaleRect.centery = beachItemRects[moveItem[-1]].y + beachItemRects[moveItem[-1]].h
-
-                    rotateRect.centerx = beachItemRects[moveItem[-1]].x
-                    rotateRect.centery = beachItemRects[moveItem[-1]].y + beachItemRects[moveItem[-1]].h
-
-                    r = load_data("save")
-
-                    r = r.split(",")
-                    
-                    r[4] = r[4].split()
-                    r[4][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}"
-                    
-                    r[4] = " ".join(r[4])
-                    
-                    r = ",".join(r)
-
-                    save_data(r, "save")
+                    rotate_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopItemImgs, rotateRect, scaleRect, moveItem)
 
             if moveItem != [] and not scaleRect.collidepoint(pygame.mouse.get_pos()) and not rotateRect.collidepoint(pygame.mouse.get_pos()) and not scaling: # move item
                 selecting = moveItem[-1]
@@ -853,6 +877,7 @@ async def main():
             
             if not pygame.mouse.get_pressed()[0]:
                 scaling = False
+                rotating = False
                 stage = "beach setup"
             
             pygame.draw.rect(screen, (126, 166, 119), addButtonRect, border_radius=20)
@@ -893,6 +918,8 @@ async def main():
                     r = ",".join(r)
 
                     save_data(r, "save")
+
+                    selecting = -1
 
             else:
                 screen.blit(trashImgs[0], (trashButtonRect.x+w*0.01, trashButtonRect.y+w*0.01))
