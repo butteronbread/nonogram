@@ -1,8 +1,8 @@
-# Beach Bits v1.1
+# Sand Grounds v1.1
 
 **Collect sand dollars. Solve puzzles. Build your dream beach.**
 
-Beach Bits is a creative blend of logic puzzles and customization—solve nonograms to earn sand dollars, then spend them on decorations to personalize your very own beach paradise.
+Sand Grounds is a creative blend of logic puzzles and customization—solve nonograms to earn sand dollars, then spend them on decorations to personalize your very own beach paradise.
 
 ---
 
@@ -33,12 +33,12 @@ Beach Bits is a creative blend of logic puzzles and customization—solve nonogr
 ## File System
 
 ### Pygame Files
-**Versions used for saving backup code**: v[update-number].[mini-update-number].[backup-version].py
-**Most recent version**: main.py
+**Versions used for saving backup code**: v[update-number].[mini-update-number].[backup-version].py  
+**Most recent version**: main.py  
 **Game save files**: save.txt, gallery.txt
 
 ### Website Files
-**Zip file**: build/web.zip
+**Zip file**: build/web.zip  
 **Website file**: build/web/index.html
 
 ---
