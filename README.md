@@ -6,27 +6,34 @@ Sand Grounds is a creative blend of logic puzzles and customization—solve nono
 
 ---
 
-## New Aditions (v1.0 -> v1.1)
-- **Rotate and Scale** - Easy-to-use scaling and rotating tools to fully customize your beach
+## New Aditions (v1.1 -> v1.2)
+- **Sound** - Toggle your background music on and off
+- **Flip** - Allows flipping images on the beach horizontally
+- **Nonograms** - An option to solve your own custom nonograms or pre-drawn ones
 
 ---
 
 ## Game Features
 
 ### Puzzle System
-- **Self-drawn nonograms** – Create and publish your own puzzles for others to solve
-- **Puzzle Collection** – A library of nonograms to challenge yourself with
-- **Gallery** – View your complete history of created nonograms
-- **Rewards** – Earn **100× sand dollars** for every puzzle solved
+- **Nonograms** - An option to solve your own custom nonograms or pre-drawn ones
+- **Pre-drawn nonograms** - A library of pre-drawn nonograms to solve
+- **Self-drawn nonograms** – Create and publish your own puzzles to solve
+- **Rewards** – Earn **100× sand dollars** for every pre-drawn nonogram solved, and **10 sand dollars** for custom ones
 
 ### Beach Customization
-- **Shop** – Spend sand dollars on decorations and items for your beach
 - **Inventory** – Manage items you own but aren't currently displaying
 - **3 Beach Backgrounds** – Choose from different scenic backdrops
 - **Blue Box** - Each item complete with a blue box that shows the barrier of collision with edges of the screen
 - **Move Tool** - Drag your mouse on the blue box to rearange placed items
 - **Rotate and Scale** - Easy-to-use scaling and rotating tools to fully customize your beach
+- **Flip** - Allows flipping images on the beach horizontally
 - **Remove Tool** – Easily remove placed items, will be stored in inventory removal
+
+### Other Features
+- **Shop** – Spend sand dollars on decorations and items for your beach
+- **Gallery** – View your complete history of created nonograms
+- **Sound** - Toggle your background music on and off
 
 ---
 
@@ -35,11 +42,12 @@ Sand Grounds is a creative blend of logic puzzles and customization—solve nono
 ### Pygame Files
 **Versions used for saving backup code**: v[update-number].[mini-update-number].[backup-version].py  
 **Most recent version**: main.py  
+**Template file**: index.tmpl  
 **Game save files**: save.txt, gallery.txt
 
 ### Website Files
 **Zip file**: build/web.zip  
-**Website file**: build/web/index.html
+**Website file file**: build/web/index.html
 
 ---
 

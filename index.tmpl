@@ -1,16 +1,16 @@
-<html lang="en-us"><script src="https://pygame-web.github.io/cdn/0.9.3/pythons.js" type=module id="site" data-python="python3.12" data-LINES=42 data-COLUMNS=132 data-os="vtx,snd,gui" async defer>#<!--
+<html lang="en-us"><script src="{{cookiecutter.cdn}}pythons.js" type=module id="site" data-python="python{{cookiecutter.PYBUILD}}" data-LINES=42 data-COLUMNS=132 data-os="vtx,snd,gui" async defer>#<!--
 
 print("""
-Loading nonogram from nonogram.apk
-    Pygbag Version : 0.9.3
+Loading {{cookiecutter.title}} from {{cookiecutter.archive}}.apk
+    Pygbag Version : {{cookiecutter.version}}
     Template Version : 0.9.4
-    Python  : 3.12
-    CDN URL : https://pygame-web.github.io/cdn/0.9.3/
-    Screen  : 1280x720
-    Title   : nonogram
-    Folder  : nonogram
-    Authors : pgw
-    SPDX-License-Identifier: cookiecutter.spdx
+    Python  : {{cookiecutter.PYBUILD}}
+    CDN URL : {{cookiecutter.cdn}}
+    Screen  : {{cookiecutter.width}}x{{cookiecutter.height}}
+    Title   : {{cookiecutter.title}}
+    Folder  : {{cookiecutter.directory}}
+    Authors : {{cookiecutter.authors}}
+    SPDX-License-Identifier: {{cookiecutter.spdx}}
 
 """)
 
@@ -29,22 +29,22 @@ async def custom_site():
     platform.window.canvas.style.visibility = "visible"
 
 
-    bundle = "nonogram"
+    bundle = "{{cookiecutter.archive}}"
 
     # the C or js loader could do that but be explicit.
-    appdir = Path(f"/data/data/{bundle}") # /data/data/nonogram
+    appdir = Path(f"/data/data/{bundle}") # /data/data/{{cookiecutter.archive}}
     appdir.mkdir()
 
 
     # unpack filesystem from compressed archive into work dir
     if platform.window.location.host.find('.itch.zone')>0:
         import zipfile
-        async with platform.fopen("nonogram.apk", "rb") as archive:
+        async with platform.fopen("{{cookiecutter.archive}}.apk", "rb") as archive:
             with zipfile.ZipFile(archive) as zip_ref:
                 zip_ref.extractall(appdir.as_posix())
     else:
         import tarfile
-        async with platform.fopen("nonogram.tar.gz", "rb") as archive:
+        async with platform.fopen("{{cookiecutter.archive}}.tar.gz", "rb") as archive:
             tar = tarfile.open(fileobj=archive, mode="r:gz")
             tar.extractall(path=appdir.as_posix(), filter='tar')
             tar.close()
@@ -146,21 +146,21 @@ asyncio.run( custom_site() )
 // this dict is available under PyConfig.config from __main__
 
 config = {
-    xtermjs : "1" ,
+    xtermjs : "{{cookiecutter.xtermjs}}" ,
     _sdl2 : "canvas",
     user_canvas : 0,
     user_canvas_managed : 0,
     gui_divider : 2,
-    ume_block : 1,
-    can_close : 0,
-    archive : "nonogram",
+    ume_block : {{cookiecutter.ume_block}},
+    can_close : {{cookiecutter.can_close}},
+    archive : "{{cookiecutter.archive}}",
     gui_debug : 2,
-    cdn : "https://pygame-web.github.io/cdn/0.9.3/",
-    autorun : 0,
-    PYBUILD : "3.12",
+    cdn : "{{cookiecutter.cdn}}",
+    autorun : {{cookiecutter.autorun}},
+    PYBUILD : "{{cookiecutter.PYBUILD}}",
     fb_ar   :  1.77,
-    fb_width : "1280",
-    fb_height : "720"
+    fb_width : "{{cookiecutter.width}}",
+    fb_height : "{{cookiecutter.height}}"
 }
 
 function show_infobox() {
@@ -180,7 +180,7 @@ function show_infobox() {
 
 </script>
 
-    <title>nonogram</title>
+    <title>{{cookiecutter.title}}</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -300,7 +300,7 @@ function show_infobox() {
     <script>
 /*
         if (navigator.serviceWorker)
-            navigator.serviceWorker.register("https://pygame-web.github.io/cdn/0.9.3/pygbag0.9.3.js")
+            navigator.serviceWorker.register("{{cookiecutter.cdn}}pygbag{{cookiecutter.version}}.js")
         else
             console.warn("Service workers not supported")
 */
@@ -327,8 +327,8 @@ height="1px"
     </canvas>
 
     <canvas class="emscripten" id="canvas3d"
-width="1280px"
-height="720px"
+width="{{cookiecutter.width}}px"
+height="{{cookiecutter.height}}px"
     oncontextmenu="event.preventDefault()" tabindex=1 hidden>
     </canvas>
 
@@ -374,7 +374,7 @@ frameborder="1"
                 mozallowfullscreen="true"
                 sandbox="allow-same-origin allow-top-navigation allow-scripts allow-pointer-lock"
                 allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; monetization; xr-spatial-tracking; gamepad; gyroscope; accelerometer; xr; cross-origin-isolated"
-                src="https://pygame-web.github.io/cdn/0.9.3/empty.html"
+                src="{{cookiecutter.cdn}}empty.html"
                 scrolling="yes">
             </iframe>
         </div>
