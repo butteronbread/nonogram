@@ -1,4 +1,4 @@
-# Sand Grounds v1.1
+# Sand Grounds
 
 **Collect sand dollars. Solve puzzles. Build your dream beach.**
 
@@ -6,20 +6,14 @@ Sand Grounds is a creative blend of logic puzzles and customization—solve nono
 
 ---
 
-## New Aditions (v1.1 -> v1.2)
-- **Sound** - Toggle your background music on and off
-- **Flip** - Allows flipping images on the beach horizontally
-- **Nonograms** - An option to solve your own custom nonograms or pre-drawn ones
-
----
-
 ## Game Features
 
 ### Puzzle System
-- **Nonograms** - An option to solve your own custom nonograms or pre-drawn ones
-- **Pre-drawn nonograms** - A library of pre-drawn nonograms to solve
+- **Nonograms** - An option to solve your own **custom** nonograms or pre-drawn ones
+- **Pre-drawn nonograms** - A library of **pre-drawn** nonograms to solve
 - **Self-drawn nonograms** – Create and publish your own puzzles to solve
 - **Rewards** – Earn **100× sand dollars** for every pre-drawn nonogram solved, and **10 sand dollars** for custom ones
+- **Mobile Friendly** - A toggle to swap between **cross** and **fill** mode as opposed to single and double clicks
 
 ### Beach Customization
 - **Inventory** – Manage items you own but aren't currently displaying
@@ -34,6 +28,7 @@ Sand Grounds is a creative blend of logic puzzles and customization—solve nono
 - **Shop** – Spend sand dollars on decorations and items for your beach
 - **Gallery** – View your complete history of created nonograms
 - **Sound** - Toggle your background music on and off
+- **Information** - Information page to describe how to play and the controls
 
 ---
 
