@@ -121,7 +121,11 @@ def setupHome():
     soundImgs = [pygame.transform.scale(ogSoundImgs[1], (w*0.08, w*0.08)), pygame.transform.scale(ogSoundImgs[0], (w*0.08, w*0.08))]
     soundOn = True
 
-    return playRect, drawRect, playBubble, drawBubble, sanddollarRect, sanddollarImg, shopButtonRect, ogShopImg, shopImg, galleryButtonRect, ogGalleryImg, galleryImg, beachButtonRect, ogBeachImg, beachImg, soundButtonRect, ogSoundImgs, soundImgs, soundOn
+    infoButtonRect = pygame.Rect(w*0.72, w*0.86, w*0.12, w*0.12)
+    ogInfoImg = pygame.image.load("imgs/info.png")
+    infoImg = pygame.transform.scale(ogInfoImg, (w*0.08, w*0.08))
+
+    return playRect, drawRect, playBubble, drawBubble, sanddollarRect, sanddollarImg, shopButtonRect, ogShopImg, shopImg, galleryButtonRect, ogGalleryImg, galleryImg, beachButtonRect, ogBeachImg, beachImg, soundButtonRect, ogSoundImgs, soundImgs, soundOn, infoButtonRect, ogInfoImg, infoImg
 
 def setupChooseSolve():
     choosePredrawnRect = pygame.Rect(0,0,w*0.5,w*0.15)
@@ -252,9 +256,7 @@ def setupOthers():
     checkButtonRect = pygame.Rect(gap*0.1, gap*0.1, gap*0.8, gap*0.8)
     checkButtonImg = pygame.transform.scale(pygame.image.load("imgs/check.png"), (gap*0.8, gap*0.8))
 
-    heartImg = pygame.transform.scale(pygame.image.load("imgs/heart.png"), (gap, gap))
-
-    return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, checkButtonRect, checkButtonImg, heartImg
+    return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, checkButtonRect, checkButtonImg
 
 def setupChange():
     stage = "home" # index
@@ -269,7 +271,7 @@ def setup():
     if load_data("gallery") == None:
         save_data("", "gallery")
 
-    size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, checkButtonRect, checkButtonImg, heartImg = setupOthers()
+    size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, checkButtonRect, checkButtonImg = setupOthers()
 
     crossImg, cellTimers = setupPlayAnimations(cellW, size)
 
@@ -280,7 +282,7 @@ def setup():
     darken, opacity, fade, fadeo = setupDarkFade()
 
     # home screen stuff
-    playRect, drawRect, playBubble, drawBubble, sanddollarRect, sanddollarImg, shopButtonRect, ogShopImg, shopImg, galleryButtonRect, ogGalleryImg, galleryImg, beachButtonRect, ogBeachImg, beachImg, soundButtonRect, ogSoundImgs, soundImgs, soundOn = setupHome()
+    playRect, drawRect, playBubble, drawBubble, sanddollarRect, sanddollarImg, shopButtonRect, ogShopImg, shopImg, galleryButtonRect, ogGalleryImg, galleryImg, beachButtonRect, ogBeachImg, beachImg, soundButtonRect, ogSoundImgs, soundImgs, soundOn, infoButtonRect, ogInfoImg, infoImg = setupHome()
 
     # publish image yes no buttons
     yesRect, noRect, claimSanddollarRect = setupEndScreen()
@@ -302,8 +304,21 @@ def setup():
 
     choosePredrawnRect, chooseCustomRect = setupChooseSolve()
 
+    infoPageBg = pygame.transform.scale(pygame.image.load("imgs/infoPage.png"), (w*0.9,w*0.9))
+    infoPageBgBold = pygame.transform.scale(pygame.image.load("imgs/infoPageBold.png"), (w*0.9,w*0.9))
+    infoRect = pygame.Rect(166, 236, 160, 30)
+
+    instructionPages = []
+    for i in range(1,1):
+        instructionPages.append(pygame.transform.scale(pygame.image.load(f"imgs/instructions/{i}.png"), (w*0.9,w*0.9)))
+    instructionPageNo = 0
+
+    XO = "O"
+    heartXOimg = {"O": pygame.transform.scale(pygame.image.load("imgs/heartO.png"), (gap, gap)), "X": pygame.transform.scale(pygame.image.load("imgs/heartX.png"), (gap, gap))}
+    heartRect = pygame.Rect(0,0,gap,gap)
+
     return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, solveNext,\
-        checkButtonRect, checkButtonImg, heartImg, crossImg,\
+        checkButtonRect, checkButtonImg, crossImg,\
         cellTimers, boardSolution, boardSolving, boardRects,\
         yinfo, xinfo, yinfoRects, xinfoRects,\
         darken, opacity, fade, fadeo,\
@@ -326,7 +341,11 @@ def setup():
         rotateImg, rotateRect, scaleImg, scaleRect, flipImg, flipRect,\
         shopSDAnimate, shopSDAnimateTxt,\
         scaling, rotating, ogRotation,\
-        soundButtonRect, ogSoundImgs, soundImgs, soundOn
+        soundButtonRect, ogSoundImgs, soundImgs, soundOn,\
+        infoButtonRect, ogInfoImg, infoImg,\
+        infoPageBg, infoPageBgBold, infoRect,\
+        instructionPages, instructionPageNo,\
+        XO, heartXOimg, heartRect
 
 # other functions
 
@@ -590,7 +609,7 @@ async def main():
     # clickBg: if the background is selected to unselect items on the beach
 
     size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, solveNext,\
-        checkButtonRect, checkButtonImg, heartImg, crossImg,\
+        checkButtonRect, checkButtonImg, crossImg,\
         cellTimers, boardSolution, boardSolving, boardRects,\
         yinfo, xinfo, yinfoRects, xinfoRects,\
         darken, opacity, fade, fadeo,\
@@ -613,11 +632,15 @@ async def main():
         rotateImg, rotateRect, scaleImg, scaleRect, flipImg, flipRect,\
         shopSDAnimate, shopSDAnimateTxt,\
         scaling, rotating, ogRotation,\
-        soundButtonRect, ogSoundImgs, soundImgs, soundOn = setup()
+        soundButtonRect, ogSoundImgs, soundImgs, soundOn,\
+        infoButtonRect, ogInfoImg, infoImg,\
+        infoPageBg, infoPageBgBold, infoRect,\
+        instructionPages, instructionPageNo,\
+        XO, heartXOimg, heartRect = setup()
 
-    pygame.mixer.music.load("music/bgm.ogg")
-    pygame.mixer.music.set_volume(0.2)
-    pygame.mixer.music.play(-1)
+    # pygame.mixer.music.load("music/bgm.ogg")
+    # pygame.mixer.music.set_volume(0.2)
+    # pygame.mixer.music.play(-1)
 
     clickSFX = pygame.mixer.Sound("music/click.ogg")
     clickSFX.set_volume(0.2)
@@ -718,6 +741,22 @@ async def main():
             screen.blit(soundImgs, (soundButtonRect.centerx - soundImgs.get_size()[0]/2,
                                     soundButtonRect.centery-soundImgs.get_size()[1]/2))
 
+            # info button
+            pygame.draw.rect(screen, (248, 250, 247), infoButtonRect, border_radius=20)
+
+            if infoButtonRect.collidepoint(pygame.mouse.get_pos()):
+                infoImg = pygame.transform.scale(ogInfoImg, (w*0.09, w*0.09))
+
+                if pygame.mouse.get_pressed()[0] and not down:
+                    stage = "info"
+                    clickSFX.play()
+
+            else:
+                infoImg = pygame.transform.scale(ogInfoImg, (w*0.08, w*0.08))
+            
+            screen.blit(infoImg, (infoButtonRect.centerx - infoImg.get_size()[0]/2,
+                                  infoButtonRect.centery-infoImg.get_size()[1]/2))
+
             # play button
             pygame.draw.rect(screen, (66, 99, 52), playRect, border_radius=20)
 
@@ -771,6 +810,20 @@ async def main():
                 text = pygame.font.Font(FONT, 48).render("Draw", True, (66, 99, 52))
                 textpos = text.get_rect(centerx=drawRect.centerx, centery=drawRect.centery)
                 screen.blit(text, textpos)
+
+        elif stage == "info": # info page
+            pygame.draw.rect(screen, (241, 245, 237), galleryBg, border_radius=10)
+            
+            screen.blit(infoPageBg, (w*0.05,w*0.05))
+
+            if infoRect.collidepoint(pygame.mouse.get_pos()):
+                screen.blit(infoPageBgBold, (w*0.05,w*0.05))
+
+                if pygame.mouse.get_pressed()[0] and not down:
+                    stage = "instructions"
+                    clickSFX.play()
+            
+            stage = exit_button(popupExitRect, clickSFX, stage, down, "home")
 
         elif stage.split()[0] == "gallery": # view solved nonograms in gallery
             pygame.draw.rect(screen, (241, 245, 237), galleryBg, border_radius=10)
@@ -839,6 +892,7 @@ async def main():
 
                     if pygame.mouse.get_pressed()[0] and not down:
                         galleryPage -= 1
+                        flipSFX.play()
                 else:
                     text = pygame.font.Font(FONT, 64).render("<", True, (255,255,255))
                     textpos = text.get_rect(centerx=FlipLeftRect.centerx, centery=FlipLeftRect.centery)
@@ -854,6 +908,7 @@ async def main():
 
                     if pygame.mouse.get_pressed()[0] and not down:
                         galleryPage += 1
+                        flipSFX.play()
                 else:
                     text = pygame.font.Font(FONT, 64).render(">", True, (255,255,255))
                     textpos = text.get_rect(centerx=FlipRightRect.centerx, centery=FlipRightRect.centery)
@@ -1064,9 +1119,9 @@ async def main():
                 try:
                     center = (beachItemRects[selecting].centerx, beachItemRects[selecting].centery)
                     mouse = pygame.mouse.get_pos()
-                    diff = (mouse[0]-center[0], mouse[1]-center[1])
-                    angle = int(math.atan2(diff[1],diff[0]) * 180/math.pi + 90)
-                    
+                    diff = (mouse[0] - center[0], center[1] - mouse[1]) 
+                    angle = int(math.atan2(diff[1], diff[0]) * 180 / math.pi)
+
                     beachData[selecting][1][3] = (ogRotation - angle - 135) % 360
                     
                     r = load_data("save")
@@ -1397,6 +1452,12 @@ async def main():
 
             drawBoard(size, screen, colors, boardSolving, gap, w, cellW, boardRects, crossImg, cellTimers)
 
+            screen.blit(heartXOimg[XO], (0,0))
+
+            text = pygame.font.Font(FONT, 32).render(str(hp)+"%", True, (247, 225, 237))
+            textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
+            screen.blit(text, textpos)
+
             # draw background for info
             for y in yinfoRects:
                 pygame.draw.rect(screen, (52, 74, 36), y, border_top_left_radius=10, border_bottom_left_radius=10)
@@ -1441,6 +1502,12 @@ async def main():
         elif stage.split()[0] == "fade-for-solve": # fade from text animation to solving
             drawBoard(size, screen, colors, boardSolving, gap, w, cellW, boardRects, crossImg, cellTimers)
 
+            screen.blit(heartXOimg[XO], (0,0))
+
+            text = pygame.font.Font(FONT, 32).render(str(hp)+"%", True, (247, 225, 237))
+            textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
+            screen.blit(text, textpos)
+
             # draw background for info
             for y in yinfoRects:
                 pygame.draw.rect(screen, (52, 74, 36), y, border_top_left_radius=10, border_bottom_left_radius=10)
@@ -1473,6 +1540,14 @@ async def main():
         elif stage.split()[0] == "solve": # solve the nonogram
             drawBoard(size, screen, colors, boardSolving, gap, w, cellW, boardRects, crossImg, cellTimers)
 
+            screen.blit(heartXOimg[XO], heartRect)
+            if pygame.mouse.get_pressed()[0] and heartRect.collidepoint(pygame.mouse.get_pos()) and not down:
+                if XO == "X":
+                    XO = "O"
+                else:
+                    XO = "X"
+                clickSFX.play()
+
             # draw background for info
             for y in yinfoRects:
                 pygame.draw.rect(screen, (52, 74, 36), y, border_top_left_radius=10, border_bottom_left_radius=10)
@@ -1495,7 +1570,7 @@ async def main():
             # check for fill
             for y in range(size):
                 for x in range(size):
-                    if boardRects[y][x].collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] and (boardSolving[y][x] == 0 or boardSolving[y][x] == 3) and not solveDown:
+                    if boardRects[y][x].collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] and (boardSolving[y][x] == 0 or boardSolving[y][x] == 3) and not solveDown and XO == "O":
                         if boardSolution[y][x] == 1:
                             boardSolving[y][x] = 1
                         else:
@@ -1504,7 +1579,7 @@ async def main():
                             hp -= 8
                             solveDown = True
 
-                    if boardRects[y][x].collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[2] and (boardSolving[y][x] == 0 or boardSolving[y][x] == 3) and not solveDown:
+                    if boardRects[y][x].collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] and (boardSolving[y][x] == 0 or boardSolving[y][x] == 3) and not solveDown and XO == "X":
                         if boardSolution[y][x] == 0:
                             boardSolving[y][x] = 2
                         else:
@@ -1512,11 +1587,9 @@ async def main():
                             cellTimers[y][x] = 60
                             hp -= 8
                             solveDown = True
-            
-            screen.blit(heartImg, (0,0))
 
-            text = pygame.font.Font(FONT, 32).render(str(hp)+"%", True, (250, 215, 231))
-            textpos = text.get_rect(centerx=gap/2, centery=gap/5*2)
+            text = pygame.font.Font(FONT, 32).render(str(hp)+"%", True, (247, 225, 237))
+            textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
             screen.blit(text, textpos)
 
             won = True
