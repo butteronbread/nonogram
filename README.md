@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Sand Grounds
 
 **Collect sand dollars. Solve puzzles. Build your dream beach.**
