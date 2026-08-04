@@ -3,13 +3,6 @@
 **Collect sand dollars. Solve puzzles. Build your dream beach.**
 
 Sand Grounds is a creative blend of logic puzzles and customization—solve nonograms to earn sand dollars, then spend them on decorations to personalize your very own beach paradise.
-=======
-# Gram of Grain
-
-**Collect sand dollars. Solve puzzles. Build your dream beach.**
-
-Gram of Grain is a creative blend of logic puzzles and customization—solve nonograms to earn sand dollars, then spend them on decorations to personalize your very own beach paradise.
->>>>>>> workingon
 
 ---
 
