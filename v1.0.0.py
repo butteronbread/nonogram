@@ -19,13 +19,13 @@ if platform.system() == "Emscripten":
 async def main():
     size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, checkButtonRect, checkButtonImg, heartImg, crossImg, cellTimers, boardSolution, boardSolving, boardRects, yinfo, xinfo, yinfoRects, xinfoRects, darken, opacity, fade, fadeo, playRect, drawRect, playBubble, drawBubble, sanddollarRect, sanddollarImg, shopButtonRect, ogShopImg, shopImg, galleryButtonRect, ogGalleryImg, galleryImg, beachButtonRect, ogBeachImg, beachImg, yesRect, noRect, claimSanddollarRect, galleryBg, popupExitRect, galleryData, galleryBigRects, gallerySmallRects, galleryColors, chosen, galleryPage, FlipLeftRect, FlipRightRect, beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg, beachExitRect, addButtonRect, trashButtonRect, trashImgs, addBg, posOffset, shopBg, shopPage, shopItemRects, shopItemImgs, ogShopItemImgs, shopItemPrice, stage, sanddollar = setup()
 
-    pygame.mixer.music.load("bgm.ogg")
+    pygame.mixer.music.load("music/bgm.ogg")
     pygame.mixer.music.set_volume(0.2)
     pygame.mixer.music.play(-1)
 
-    clickSFX = pygame.mixer.Sound("click.ogg")
+    clickSFX = pygame.mixer.Sound("music/click.ogg")
     clickSFX.set_volume(0.2)
-    flipSFX = pygame.mixer.Sound("flip.ogg")
+    flipSFX = pygame.mixer.Sound("music/flip.ogg")
     flipSFX.set_volume(0.3)
 
     while True:
@@ -1009,9 +1009,9 @@ async def main():
             colors = ((185, 191, 153), (75, 83, 32), (255, 255, 255), (252, 93, 93)) # filled and not filled nonogram colors
 
             checkButtonRect = pygame.Rect(gap*0.1, gap*0.1, gap*0.8, gap*0.8)
-            checkButtonImg = pygame.transform.scale(pygame.image.load("check.png"), (gap*0.8, gap*0.8))
+            checkButtonImg = pygame.transform.scale(pygame.image.load("imgs/check.png"), (gap*0.8, gap*0.8))
 
-            heartImg = pygame.transform.scale(pygame.image.load("heart.png"), (gap, gap))
+            heartImg = pygame.transform.scale(pygame.image.load("imgs/heart.png"), (gap, gap))
 
             # info for the sides
             yinfo, xinfo, yinfoRects, xinfoRects = setupInfo(size, gap, cellW)
@@ -1123,7 +1123,7 @@ def setupBoards(size, cellW, gap):
     return boardSolution, boardSolving, boardRects
 
 def setupPlayAnimations(cellW, size):
-    crossImg = pygame.transform.scale(pygame.image.load("cross.png"), (cellW, cellW))
+    crossImg = pygame.transform.scale(pygame.image.load("imgs/cross.png"), (cellW, cellW))
     cellTimers = []
     for y in range(size):
         cellTimers.append([])
@@ -1155,23 +1155,23 @@ def setupHome():
     drawRect.centerx = w/2
     drawRect.centery = w*0.55
 
-    playBubble = pygame.transform.scale(pygame.image.load("upbubble.png"), (w*0.6, w*0.2))
-    drawBubble = pygame.transform.scale(pygame.image.load("downbubble.png"), (w*0.6, w*0.2))
+    playBubble = pygame.transform.scale(pygame.image.load("imgs/upbubble.png"), (w*0.6, w*0.2))
+    drawBubble = pygame.transform.scale(pygame.image.load("imgs/downbubble.png"), (w*0.6, w*0.2))
 
     sanddollarRect = pygame.Rect(w*0.63, w*0.02, w*0.35, w*0.1)
-    sanddollarImg = pygame.transform.scale(pygame.image.load("sanddollar.png"), (w*0.07, w*0.07))
+    sanddollarImg = pygame.transform.scale(pygame.image.load("imgs/sanddollar.png"), (w*0.07, w*0.07))
 
     shopButtonRect = pygame.Rect(w*0.02, w*0.02, w*0.12, w*0.12)
-    ogShopImg = pygame.image.load("shop.png")
-    shopImg = pygame.transform.scale(pygame.image.load("shop.png"), (w*0.08, w*0.08))
+    ogShopImg = pygame.image.load("imgs/shop.png")
+    shopImg = pygame.transform.scale(pygame.image.load("imgs/shop.png"), (w*0.08, w*0.08))
 
     galleryButtonRect = pygame.Rect(w*0.16, w*0.02, w*0.12, w*0.12)
-    ogGalleryImg = pygame.image.load("gallery.png")
-    galleryImg = pygame.transform.scale(pygame.image.load("gallery.png"), (w*0.08, w*0.08))
+    ogGalleryImg = pygame.image.load("imgs/gallery.png")
+    galleryImg = pygame.transform.scale(pygame.image.load("imgs/gallery.png"), (w*0.08, w*0.08))
 
     beachButtonRect = pygame.Rect(w*0.02, w*0.86, w*0.12, w*0.12)
-    ogBeachImg = pygame.image.load("beach.png")
-    beachImg = pygame.transform.scale(pygame.image.load("beach.png"), (w*0.08, w*0.08))
+    ogBeachImg = pygame.image.load("imgs/beach.png")
+    beachImg = pygame.transform.scale(pygame.image.load("imgs/beach.png"), (w*0.08, w*0.08))
 
     return playRect, drawRect, playBubble, drawBubble, sanddollarRect, sanddollarImg, shopButtonRect, ogShopImg, shopImg, galleryButtonRect, ogGalleryImg, galleryImg, beachButtonRect, ogBeachImg, beachImg
 
@@ -1229,14 +1229,14 @@ def setupBeach():
     beachBgImgs = [pygame.transform.scale(pygame.image.load("beachBg/1.png"), (w,w)), pygame.transform.scale(pygame.image.load("beachBg/2.png"), (w,w)), pygame.transform.scale(pygame.image.load("beachBg/3.png"), (w,w))]
 
     beachConfirmButtonRect = pygame.Rect(w*0.45,w*0.88,w*0.1,w*0.1)
-    beachConfirmButtonImg = pygame.transform.scale(pygame.image.load("check.png"), (w*0.1,w*0.1))
+    beachConfirmButtonImg = pygame.transform.scale(pygame.image.load("imgs/check.png"), (w*0.1,w*0.1))
 
     beachExitRect = pygame.Rect(w*0.88, w*0.02, w*0.1, w*0.1)
 
     addButtonRect = pygame.Rect(w*0.02, w*0.88, w*0.1, w*0.1)
     trashButtonRect = pygame.Rect(w*0.14, w*0.88, w*0.1, w*0.1)
 
-    trashImgs = [pygame.transform.scale(pygame.image.load("close.png"), (w*0.08, w*0.08)), pygame.transform.scale(pygame.image.load("open.png"), (w*0.08, w*0.08))]
+    trashImgs = [pygame.transform.scale(pygame.image.load("imgs/close.png"), (w*0.08, w*0.08)), pygame.transform.scale(pygame.image.load("imgs/open.png"), (w*0.08, w*0.08))]
 
     addBg = pygame.Rect(0,0,w*0.9,w*0.9)
     addBg.center = (w/2,w/2)
@@ -1282,9 +1282,9 @@ def setupOthers():
     colors = ((185, 191, 153), (75, 83, 32), (255, 255, 255), (252, 93, 93)) # filled and not filled nonogram colors
 
     checkButtonRect = pygame.Rect(gap*0.1, gap*0.1, gap*0.8, gap*0.8)
-    checkButtonImg = pygame.transform.scale(pygame.image.load("check.png"), (gap*0.8, gap*0.8))
+    checkButtonImg = pygame.transform.scale(pygame.image.load("imgs/check.png"), (gap*0.8, gap*0.8))
 
-    heartImg = pygame.transform.scale(pygame.image.load("heart.png"), (gap, gap))
+    heartImg = pygame.transform.scale(pygame.image.load("imgs/heart.png"), (gap, gap))
 
     return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, checkButtonRect, checkButtonImg, heartImg
 

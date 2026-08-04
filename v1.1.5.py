@@ -269,7 +269,7 @@ def setup():
     if load_data("save") == None:
         save_data("0,,,,,", "save")
     if load_data("gallery") == None:
-        save_data(" ", "gallery")
+        save_data("", "gallery")
 
     size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, checkButtonRect, checkButtonImg = setupOthers()
 
@@ -875,7 +875,7 @@ async def main():
 
 
                 saveR = load_data("save")
-                galleryR = load_data("gallery").strip().splitlines()
+                galleryR = load_data("gallery").splitlines()
                 
                 saveR = saveR.split(",")
                 galleryData = saveR[1].split("-")
@@ -1408,7 +1408,7 @@ async def main():
             if chooseCustomRect.collidepoint(pygame.mouse.get_pos()):
                 screen.blit(drawBubble, (w*0.2, chooseCustomRect.y + chooseCustomRect.h))
 
-                if load_data("gallery") != " ":
+                if load_data("gallery"):
                     text = pygame.font.Font(FONT, 24).render("Solve a nonogram you drew before", True, (51, 66, 44))
                     textpos = text.get_rect(centerx=w/2, centery=chooseCustomRect.y + w*0.23)
                     screen.blit(text, textpos)
@@ -1430,7 +1430,7 @@ async def main():
 
                     text = pygame.font.Font(FONT, 64).render("Custom", True, (66, 99, 52))
 
-                if pygame.mouse.get_pressed()[0] and not down and load_data("gallery") != " ":
+                if pygame.mouse.get_pressed()[0] and not down and load_data("gallery"):
                     stage = "animation-for-solve get-from-gallery custom"
                     clickSFX.play()
             
@@ -1445,12 +1445,12 @@ async def main():
         elif stage.split()[0] == "animation-for-solve": # text animation for starting to solve
             if len(stage.split()) > 1 and stage.split()[1] == "get-from-gallery":
                 if len(stage.split()) > 2 and stage.split()[2] == "custom":
-                    r = load_data("gallery").strip().splitlines()
+                    r = load_data("gallery").splitlines()
                     solveNext = random.randint(1,len(r)-1)
                     r = r[solveNext]
                     
                 elif len(stage.split()) > 2 and stage.split()[2] == "pre-drawn":
-                    r = load_data("gallery").strip().splitlines()
+                    r = load_data("gallery").splitlines()
                     solveNext = random.randint(0,len(PREDRAWN)-1)
                     r = PREDRAWN[solveNext]
 
@@ -1726,7 +1726,7 @@ async def main():
 
                     if yesRect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
                         clickSFX.play()
-                        r = load_data("gallery").strip()
+                        r = load_data("gallery")
 
                         r += "\n" + str(size)+" "
                         for y in boardSolution:
