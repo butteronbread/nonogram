@@ -22,7 +22,7 @@ Gram of Grain is a creative blend of logic puzzles and customization—solve non
 - **Move Tool** - Drag your mouse on the blue box to rearange placed items
 - **Rotate and Scale** - Easy-to-use scaling and rotating tools to fully customize your beach
 - **Flip** - Allows flipping images on the beach horizontally
-- **Remove Tool** – Easily remove placed items, will be stored in inventory removal
+- **Remove Tool** – Easily remove placed items, will be stored in inventory upon removal
 
 ### Other Features
 - **Shop** – Spend sand dollars on decorations and items for your beach

@@ -1,4 +1,4 @@
-import pygame, math, random, asyncio, platform, os
+import pygame, math, random, asyncio, platform, os, time
 
 w = 720
 
@@ -1451,7 +1451,9 @@ async def main():
                     
                 elif len(stage.split()) > 2 and stage.split()[2] == "pre-drawn":
                     r = load_data("gallery").strip().splitlines()
+                    random.seed(time.time_ns()) # makes sure it is random because when running with pygbag its always 2
                     solveNext = random.randint(0,len(PREDRAWN)-1)
+
                     r = PREDRAWN[solveNext]
 
                     solveNext = f"p{solveNext}"
