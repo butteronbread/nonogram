@@ -1,4 +1,4 @@
-import pygame, math, random, asyncio, platform, os, time
+import pygame, math, random, asyncio, platform, os, time, json
 
 w = 720
 
@@ -12,15 +12,15 @@ clock = pygame.time.Clock()
 
 pygame.display.set_caption("Gram of Grain")
 
-PREDRAWN = """15 000000000000000000000000000000011100011111000010010100000100010001000001010010001000000010010010100000100011100011111000000000000000000000111000100000000100010100000000111000111000000100010101000000100010101000000000000000000
-15 000000000000000000000000000000000111001111110001100000000010011000000000100010000000001000010000000001000011111000010000011001100010000010000100100000011001100100000001111001000000000000000000000000000000000000000000000000000
-15 111111111111111100000010000001101001010100101100000010000001101001010111101101111010100101100000010000001111111111111111100000010000001101001010100101100000010000001101111010100101101001010111101100000010000001111111111111111
-15 100011000110001010100101001010001000010000100010100101001010100011000110001011100111000000100011000100000100011000100000100011000100000011100111000000100010000001110010100000010001001000000010001010100000010001100010000001110
+PREDRAWN = """15 111111111111111100000010000001101001010100101100000010000001101001010111101101111010100101100000010000001111111111111111100000010000001101001010100101100000010000001101111010100101101001010111101100000010000001111111111111111
 15 000000000000000000000000000000000000000000000000000000000000000000000000000011100101001110001110111011100000111111111000000010111010000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000
 15 000000000000000000011111111100000100000001000000100000010000001000000100000001000001000000010000001110000011111000100000000001001000000000010010000000000010100000000000101000000000000110000000000000100000000000000000000000000
 15 000001111100000000111111111000001110000011100011000000000110011000000000110110001000100011110001000100011110001111100011110001000100011110001000100011011000000000110011000000000110001110000011100000111111111000000001111100000
 15 000000010000000010000010000010001000010000100000100010001000000010000010000000000111000000000001111100000111101111101111000001111100000000000111000000000010000010000000100010001000001000010000100010000010000010000000010000000
-15 000000000000000000000000000000001110000011100001011111110100000110000011000001000000000100010000000000010010001000100010010000000000010010000010000010001000101000100000100000001000000011111110000000000000000000000000000000000""".splitlines()
+15 000000000000000000000000000000001110000011100001011111110100000110000011000001000000000100010000000000010010001000100010010000000000010010000010000010001000101000100000100000001000000011111110000000000000000000000000000000000
+15 000000000000000000001000100000000000101000000001110101011100011111000111110011001101100110011100111001110001111111111100000001111100000000011111110000000110111011000000111101111000000011000110000000000000000000000000000000000
+15 000010000010000000001000100000000000111000000000001111100000000010111010000011011111110110000110010011000001100010001100001001010100100111000010110111001011010000100001101010101100000110010011000000011111110000001101111101100
+15 000000000000000000001000001110000011100011010000001000110110000000001101100000000011011000001000110110010011101101100111001111011000010000110110000000000111100000000001111110000000011100111000000001000010000000000000000000000""".splitlines()
 
 if platform.system() == "Emscripten":
     from js import window
@@ -260,14 +260,14 @@ def setupOthers():
 
 def setupChange():
     stage = "home" # index
-    r = load_data("save").split(",")
-    sanddollar = int(r[0])
+    r = json.loads(load_data("save"))
+    sanddollar = r["sanddollar"]
 
     return stage, sanddollar
 
 def setup():
     if load_data("save") == None:
-        save_data("0,,,,,", "save")
+        save_data('{"sanddollar": 0, "gallery": "", "beach_bg": "", "inv": "", "beach_items": ""}', "save") # default save value
     if load_data("gallery") == None:
         save_data(" ", "gallery")
 
@@ -408,13 +408,12 @@ def exit_button(exitRect, clickSFX, stage, down, target):
     return stage
 
 def beach_setup(shopItemImgs, ogShopItemImgs, stage):
-    r = load_data("save")
+    r = json.loads(load_data("save"))
     beachBgNo = 0
     beachData = ""
 
-    r = r.split(",")
-    beachBgNo = r[2]
-    beachData = r[4]
+    beachBgNo = r["beach_bg"]
+    beachData = r["beach_items"]
 
     if beachBgNo == '':
         stage = "pick-beach"
@@ -469,19 +468,17 @@ def display_selected_UI(beachItemRects, selecting, scaleRect, scaleImg, rotateRe
     if flipRect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] and not scaling and not rotating and not down:
         beachData[selecting][1][4] = (str((beachData[selecting][1][4] + 1) % 2))
         
-        r = load_data("save")
+        r = json.loads(load_data("save"))
 
-        r = r.split(",")
-        r[4] = r[4].split()
+        r["beach_items"] = r["beach_items"].split()
 
-        r[4][selecting] = r[4][selecting].split("-")
-        r[4][selecting][4] = str(beachData[selecting][1][4])
-        r[4][selecting] = "-".join(r[4][selecting])
+        r["beach_items"][selecting] = r["beach_items"][selecting].split("-")
+        r["beach_items"][selecting][4] = str(beachData[selecting][1][4])
+        r["beach_items"][selecting] = "-".join(r["beach_items"][selecting])
 
-        r[4] = " ".join(r[4])
-        r = ",".join(r)
+        r["beach_items"] = " ".join(r["beach_items"])
 
-        save_data(r, "save")
+        save_data(json.dumps(r), "save")
     
     return scaling, rotating, ogRotation
 
@@ -500,18 +497,14 @@ def scale_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopIt
     flipRect.centerx = beachItemRects[moveItem[-1]].x + beachItemRects[moveItem[-1]].h
     flipRect.centery = beachItemRects[moveItem[-1]].y
 
-    r = load_data("save")
+    r = json.loads(load_data("save"))
+    
+    r["beach_items"] = r["beach_items"].split()
+    r["beach_items"][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}-{beachData[moveItem[-1]][1][4]}"
+    
+    r["beach_items"] = " ".join(r["beach_items"])
 
-    r = r.split(",")
-    
-    r[4] = r[4].split()
-    r[4][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}-{beachData[moveItem[-1]][1][4]}"
-    
-    r[4] = " ".join(r[4])
-    
-    r = ",".join(r)
-
-    save_data(r, "save")
+    save_data(json.dumps(r), "save")
 
     return scaleRect, rotateRect, flipRect, beachItemRects
 
@@ -526,18 +519,14 @@ def move_beach_item(moveItem, beachData, posOffset, beachItemRects, scaleRect, r
     if beachData[moveItem[-1]][1][1] < 0:
         beachData[moveItem[-1]][1][1] = 0
 
-    r = load_data("save")
+    r = json.loads(load_data("save"))
+    
+    r["beach_items"] = r["beach_items"].split()
+    r["beach_items"][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}-{beachData[moveItem[-1]][1][4]}"
+    
+    r["beach_items"] = " ".join(r["beach_items"])
 
-    r = r.split(",")
-    
-    r[4] = r[4].split()
-    r[4][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}-{beachData[moveItem[-1]][1][4]}"
-    
-    r[4] = " ".join(r[4])
-    
-    r = ",".join(r)
-
-    save_data(r, "save")
+    save_data(json.dumps(r), "save")
 
     beachItemRects[moveItem[-1]].x = beachData[moveItem[-1]][1][0]
     beachItemRects[moveItem[-1]].y = beachData[moveItem[-1]][1][1]
@@ -562,20 +551,17 @@ def beach_trash_button(moveItem, beachData, trashButtonRect, trashImgs, selectin
         if moveItem != [] and not pygame.mouse.get_pressed()[0]:
             stage = "beach setup"
 
-            r = load_data("save")
+            r = json.loads(load_data("save"))
 
-            r = r.split(",")
-            r[4] = r[4].split()
-            r[4].pop(moveItem[-1])
-            r[4] = " ".join(r[4])
+            r["beach_items"] = r["beach_items"].split()
+            r["beach_items"].pop(moveItem[-1])
+            r["beach_items"] = " ".join(r["beach_items"])
 
-            r[3] = r[3].split()
-            r[3].append(str(beachData[moveItem[-1]][0]))
-            r[3] = " ".join(r[3])
+            r["inv"] = r["inv"].split()
+            r["inv"].append(str(beachData[moveItem[-1]][0]))
+            r["inv"] = " ".join(r["inv"])
 
-            r = ",".join(r)
-
-            save_data(r, "save")
+            save_data(json.dumps(r), "save")
 
             selecting = -1
 
@@ -874,16 +860,18 @@ async def main():
                 galleryColors = []
 
 
-                saveR = load_data("save")
+                saveR = json.loads(load_data("save"))
                 galleryR = load_data("gallery").strip().splitlines()
                 
-                saveR = saveR.split(",")
-                galleryData = saveR[1].split("-")
+                galleryData = saveR["gallery"].split("-")
 
                 if galleryData != [""]:
                     data = ""
                     for i in range(len(galleryData)):
-                        galleryBigRects.append(pygame.Rect(w*0.2+((i%4)%2 * w*0.35), w*0.2+((i%4)//2 * w*0.35), w*0.25, w*0.25))
+                        galleryBigRects.append(pygame.Rect(w*0.2+((i%4)%2 * w*0.35), 
+                                                           w*0.2+((i%4)//2 * w*0.35), 
+                                                           w*0.25, 
+                                                           w*0.25))
 
                         if galleryData[i][0] == "p":
                             galleryData[i] = galleryData[i][1:]
@@ -973,35 +961,35 @@ async def main():
 
                         if pygame.mouse.get_pressed()[0] and not down:
                             if sanddollar >= shopItemPrice[i]:
+                                # animation start + sfxs
                                 shopSDAnimateTxt = str(shopItemPrice[i])
                                 shopSDAnimate = 20
                                 clickSFX.play()
-                                r = load_data("save")
+
+                                r = json.loads(load_data("save"))
 
                                 # adding item to inventory
-                                r = r.split(",")
-                                r[3] = r[3].split(" ")
-                                r[3].append(str(i))
+                                r["inv"] = r["inv"].split(" ")
+                                r["inv"].append(str(i))
 
-                                r[3] = " ".join(r[3])
-                                r[3] = r[3].strip(" ")
-                                r = ",".join(r)
+                                r["inv"] = " ".join(r["inv"])
+                                r["inv"] = r["inv"].strip(" ")
 
                                 # minus money
                                 sanddollar -= shopItemPrice[i]
+                                r["sanddollar"] = str(sanddollar)
 
-                                r = r.split(",")
-                                r[0] = str(sanddollar)
-                                r = ",".join(r)
-
-                                save_data(r, "save")
+                                save_data(json.dumps(r), "save")
                     
                     else:
                         shopItemImgs[i] = pygame.transform.scale(ogShopItemImgs[i], (w*0.18, w*0.18))
-                        screen.blit(shopItemImgs[i], (shopItemRects[i].centerx - w*0.09, shopItemRects[i].centery - w*0.14))
+                        screen.blit(shopItemImgs[i], (shopItemRects[i].centerx - w*0.09, 
+                                                      shopItemRects[i].centery - w*0.14))
 
-                    text = pygame.font.Font(FONT, 48).render("$"+str(shopItemPrice[i]), True, (80, 82, 66))
-                    textpos = text.get_rect(centerx=shopItemRects[i].centerx, centery=shopItemRects[i].centery + w*0.1)
+                    text = pygame.font.Font(FONT, 48).render("$"+str(shopItemPrice[i]), 
+                                                             True, (80, 82, 66))
+                    textpos = text.get_rect(centerx=shopItemRects[i].centerx, 
+                                            centery=shopItemRects[i].centery + w*0.1)
                     screen.blit(text, textpos)
             
             if shopPage > 0:
@@ -1009,7 +997,8 @@ async def main():
 
                 if FlipLeftRect.collidepoint(pygame.mouse.get_pos()):
                     text = pygame.font.Font(FONT, 96).render("<", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipLeftRect.centerx, centery=FlipLeftRect.centery)
+                    textpos = text.get_rect(centerx=FlipLeftRect.centerx, 
+                                            centery=FlipLeftRect.centery)
                     screen.blit(text, textpos)
 
                     if pygame.mouse.get_pressed()[0] and not down:
@@ -1017,7 +1006,8 @@ async def main():
                         flipSFX.play()
                 else:
                     text = pygame.font.Font(FONT, 64).render("<", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipLeftRect.centerx, centery=FlipLeftRect.centery)
+                    textpos = text.get_rect(centerx=FlipLeftRect.centerx, 
+                                            centery=FlipLeftRect.centery)
                     screen.blit(text, textpos)
 
             if shopPage < (len(shopItemRects)-1)//4:
@@ -1025,7 +1015,8 @@ async def main():
 
                 if FlipRightRect.collidepoint(pygame.mouse.get_pos()):
                     text = pygame.font.Font(FONT, 96).render(">", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipRightRect.centerx, centery=FlipRightRect.centery)
+                    textpos = text.get_rect(centerx=FlipRightRect.centerx, 
+                                            centery=FlipRightRect.centery)
                     screen.blit(text, textpos)
 
                     if pygame.mouse.get_pressed()[0] and not down:
@@ -1033,7 +1024,8 @@ async def main():
                         flipSFX.play()
                 else:
                     text = pygame.font.Font(FONT, 64).render(">", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipRightRect.centerx, centery=FlipRightRect.centery)
+                    textpos = text.get_rect(centerx=FlipRightRect.centerx, 
+                                            centery=FlipRightRect.centery)
                     screen.blit(text, textpos)
 
             if key[pygame.K_LEFT] and shopPage > 0 and not down:
@@ -1044,7 +1036,8 @@ async def main():
             sanddollarRect = pygame.Rect(w*0.04, w*0.02, w*0.35, w*0.1)
 
             pygame.draw.rect(screen, "#CAD4C5", sanddollarRect, border_radius=20)
-            screen.blit(sanddollarImg, (sanddollarRect.x+w*0.02, sanddollarRect.centery-w*0.035))
+            screen.blit(sanddollarImg, (sanddollarRect.x+w*0.02, 
+                                        sanddollarRect.centery-w*0.035))
 
             sdShowTxt = str(sanddollar)
             if len(sdShowTxt) > 9:
@@ -1053,7 +1046,8 @@ async def main():
                 sdShowTxt = str(int(sanddollar/1000))+"K"
 
             text = pygame.font.Font(FONT, 48).render(sdShowTxt, True, (66, 99, 52))
-            textpos = text.get_rect(x=sanddollarRect.x+w*0.12, centery=sanddollarRect.centery-w*0.003)
+            textpos = text.get_rect(x=sanddollarRect.x+w*0.12, 
+                                    centery=sanddollarRect.centery-w*0.003)
             screen.blit(text, textpos)
 
             if shopSDAnimate > 0:
@@ -1109,18 +1103,16 @@ async def main():
 
             screen.blit(beachConfirmButtonImg, (w*0.45,w*0.88))
 
-            if beachConfirmButtonRect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] and not down:
+            if beachConfirmButtonRect.collidepoint(pygame.mouse.get_pos())\
+                and pygame.mouse.get_pressed()[0] and not down:
                 clickSFX.play()
                 stage = "beach setup"
 
-                r = load_data("save")
+                r = json.loads(load_data("save"))
 
-                r = r.split(",")
-                r[2] = str(beachBgNo)
+                r["beach_bg"] = str(beachBgNo)
 
-                r = ",".join(r)
-
-                save_data(r, "save")
+                save_data(json.dumps(r), "save")
 
         elif stage.split()[0] == "beach": # beach main screen
             if len(stage.split()) > 1 and stage.split()[1] == "setup":
@@ -1157,20 +1149,20 @@ async def main():
             if rotating:
                 # find the distance between center of the image and mouse pos and then use trig to find angle to rotate
                 try:
-                    center = (beachItemRects[selecting].centerx, beachItemRects[selecting].centery)
-                    mouse = pygame.mouse.get_pos()
-                    diff = (mouse[0] - center[0], center[1] - mouse[1]) 
-                    angle = int(math.atan2(diff[1], diff[0]) * 180 / math.pi)
+                    center = (beachItemRects[selecting].centerx, beachItemRects[selecting].centery) # find center of image
+                    mouse = pygame.mouse.get_pos() # get mouse pos
+                    diff = (mouse[0] - center[0], center[1] - mouse[1]) # calc difference between mouse and image center
+                    angle = int(math.atan2(diff[1], diff[0]) * 180 / math.pi) # calc angle that needs to be rotated
 
-                    beachData[selecting][1][3] = (ogRotation - angle - 135) % 360
+                    beachData[selecting][1][3] = (ogRotation - angle - 135) % 360 # idk
                     
-                    r = load_data("save")
-                    r = r.split(",")
-                    r[4] = r[4].split()
-                    r[4][selecting] = f"{beachData[selecting][0]}/{beachData[selecting][1][0]}-{beachData[selecting][1][1]}-{beachData[selecting][1][2]}-{beachData[selecting][1][3]}-{beachData[selecting][1][4]}"
-                    r[4] = " ".join(r[4])
-                    r = ",".join(r)
-                    save_data(r, "save")
+                    r = json.loads(load_data("save"))
+
+                    r["beach_items"] = r["beach_items"].split()
+                    r["beach_items"][selecting] = f"{beachData[selecting][0]}/{beachData[selecting][1][0]}-{beachData[selecting][1][1]}-{beachData[selecting][1][2]}-{beachData[selecting][1][3]}-{beachData[selecting][1][4]}"
+                    r["beach_items"] = " ".join(r["beach_items"])
+
+                    save_data(json.dumps(r), "save")
 
                 except: pass
                 
@@ -1178,7 +1170,9 @@ async def main():
                 if (pygame.mouse.get_pos()[0] - beachItemRects[selecting].x) / (w*0.2) > 0.3:
                     scaleRect, rotateRect, flipRect, beachItemRects = scale_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopItemImgs, rotateRect, scaleRect, flipRect, moveItem)
 
-            if moveItem != [] and not scaleRect.collidepoint(pygame.mouse.get_pos()) and not rotateRect.collidepoint(pygame.mouse.get_pos()) and not scaling and not rotating: # move item
+            if moveItem != []\
+                and not scaleRect.collidepoint(pygame.mouse.get_pos()) and not scaling\
+                and not rotateRect.collidepoint(pygame.mouse.get_pos()) and not rotating:
                 selecting, scaleRect, rotateRect, flipRect = move_beach_item(moveItem, beachData, posOffset, beachItemRects, scaleRect, rotateRect, flipRect)
             
             if not pygame.mouse.get_pressed()[0]:
@@ -1200,12 +1194,11 @@ async def main():
 
                 addPage = 0
                 
-                r = load_data("save")
+                r = json.loads(load_data("save"))
 
                 addData = ""
 
-                r = r.split(",")
-                addData = r[3]
+                addData = r["inv"]
                 
                 addData = addData.split()
 
@@ -1227,20 +1220,17 @@ async def main():
                         if pygame.mouse.get_pressed()[0]:
                             stage = "beach setup"
 
-                            r = load_data("save")
+                            r = json.loads(load_data("save"))
 
-                            r = r.split(",")
-                            r[4] = r[4].split()
-                            r[3] = r[3].split()
+                            r["beach_items"] = r["beach_items"].split()
+                            r["inv"] = r["inv"].split()
 
-                            r[3].remove(str(addData[i]))
-                            r[4].append(f"{str(addData[i])}/{int(random.randint(int(w/4), int(w/4)*3))}-{int(random.randint(int(w/4), int(w/4)*3))}-1-0-0")
-                            r[4] = " ".join(r[4])
-                            r[3] = " ".join(r[3])
+                            r["inv"].remove(str(addData[i]))
+                            r["beach_items"].append(f"{str(addData[i])}/{int(random.randint(int(w/4), int(w/4)*3))}-{int(random.randint(int(w/4), int(w/4)*3))}-1-0-0")
+                            r["beach_items"] = " ".join(r["beach_items"])
+                            r["inv"] = " ".join(r["inv"])
 
-                            r = ",".join(r)
-
-                            save_data(r, "save")
+                            save_data(json.dumps(r), "save")
                     
                     else:
                         shopItemImgs[addData[i]] = pygame.transform.scale(ogShopItemImgs[addData[i]], (w*0.15, w*0.15))
@@ -1446,7 +1436,7 @@ async def main():
             if len(stage.split()) > 1 and stage.split()[1] == "get-from-gallery":
                 if len(stage.split()) > 2 and stage.split()[2] == "custom":
                     r = load_data("gallery").strip().splitlines()
-                    solveNext = random.randint(1,len(r)-1)
+                    solveNext = random.randint(0,len(r)-1)
                     r = r[solveNext]
                     
                 elif len(stage.split()) > 2 and stage.split()[2] == "pre-drawn":
@@ -1697,17 +1687,15 @@ async def main():
                         sanddollar += earndollar
 
                         if stage.split()[0] == "win":
-                            r = load_data("save")
+                            r = json.loads(load_data("save"))
 
-                            r = r.split(",")
-                            r[0] = str(sanddollar)
-                            r[1] = r[1].split("-")
-                            r[1].append(str(solveNext))
-                            r[1] = "-".join(r[1])
-                            r[1] = r[1].strip("-")
-                            r = ",".join(r)
+                            r["sanddollar"] = str(sanddollar)
+                            r["gallery"] = r["gallery"].split("-")
+                            r["gallery"].append(str(solveNext))
+                            r["gallery"] = "-".join(r["gallery"])
+                            r["gallery"] = r["gallery"].strip("-")
 
-                            save_data(r, "save")
+                            save_data(json.dumps(r), "save")
 
                         stage = "reset"
 
@@ -1731,25 +1719,22 @@ async def main():
                         r = load_data("gallery").strip()
 
                         r += "\n" + str(size)+" "
-                        for y in boardSolution:
+                        for y in boardSolution: # go through and get binary map of nonogram
                             for x in y:
                                 r += str(x)
-                        
-                        solveNext = len(r.splitlines()) - 1
+
+                        solveNext = len(r.splitlines()) - 1 # find last one because it was just appended for the gallery
 
                         save_data(r, "gallery")
-                        print(solveNext)
 
-                        r = load_data("save")
+                        r = json.loads(load_data("save"))
 
-                        r = r.split(",")
-                        r[1] = r[1].split("-")
-                        r[1].append(str(solveNext))
-                        r[1] = "-".join(r[1])
-                        r[1] = r[1].strip("-")
-                        r = ",".join(r)
+                        r["gallery"] = r["gallery"].split("-")
+                        r["gallery"].append(str(solveNext))
+                        r["gallery"] = "-".join(r["gallery"])
+                        r["gallery"] = r["gallery"].strip("-")
 
-                        save_data(r, "save")
+                        save_data(json.dumps(r), "save")
 
                         solveNext = -1
 
