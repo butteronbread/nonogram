@@ -1157,7 +1157,7 @@ async def main():
                     diff = (mouse[0] - center[0], center[1] - mouse[1]) # calc difference between mouse and image center
                     angle = int(math.atan2(diff[1], diff[0]) * 180 / math.pi) # calc angle that needs to be rotated
 
-                    beachData[selecting][1][3] = (ogRotation - angle - 135) % 360 # idk
+                    beachData[selecting][1][3] = (ogRotation + angle + 135) % 360 # idk
                     
                     r = json.loads(load_data("save"))
 
