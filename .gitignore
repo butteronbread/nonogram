@@ -2,3 +2,5 @@ build/
 .DS_Store
 default.tmpl
 favicon.png
+title.png
+test.py
