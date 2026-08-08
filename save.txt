@@ -1,1 +1,1 @@
-{"sanddollar": "0", "gallery": "p0-p0-p0-p0-p0", "beach_bg": "2", "inv": "1 1 1 1 13 13", "beach_items": ""}
+{"sanddollar": "200", "gallery": "p0-p0-p0-p0-p0-p0-p0", "beach_bg": "2", "inv": "1 1 1 1 13 13", "beach_items": ""}

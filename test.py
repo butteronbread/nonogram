@@ -17,3 +17,5 @@ for i in range(0, len(binary_str), 15):
     print(row_output)
 
 print(json.dumps({"sanddollar": 0, "gallery": "", "beach_bg": "", "inv": "", "beach_items": ""}))
+
+print(len("15"))

@@ -12,18 +12,18 @@ clock = pygame.time.Clock()
 
 pygame.display.set_caption("Gram of Grain")
 
-PREDRAWN = """15 111111111111111100000010000001101001010100101100000010000001101001010111101101111010100101100000010000001111111111111111100000010000001101001010100101100000010000001101111010100101101001010111101100000010000001111111111111111
-15 000000000000000000000000000000000000000000000000000000000000000000000000000011100101001110001110111011100000111111111000000010111010000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000
-15 000000000000000000011111111100000100000001000000100000010000001000000100000001000001000000010000001110000011111000100000000001001000000000010010000000000010100000000000101000000000000110000000000000100000000000000000000000000
-15 000001111100000000111111111000001110000011100011000000000110011000000000110110001000100011110001000100011110001111100011110001000100011110001000100011011000000000110011000000000110001110000011100000111111111000000001111100000
-15 000000010000000010000010000010001000010000100000100010001000000010000010000000000111000000000001111100000111101111101111000001111100000000000111000000000010000010000000100010001000001000010000100010000010000010000000010000000
-15 000000000000000000000000000000001110000011100001011111110100000110000011000001000000000100010000000000010010001000100010010000000000010010000010000010001000101000100000100000001000000011111110000000000000000000000000000000000
-15 000000000000000000001000100000000000101000000001110101011100011111000111110011001101100110011100111001110001111111111100000001111100000000011111110000000110111011000000111101111000000011000110000000000000000000000000000000000
-15 000010000010000000001000100000000000111000000000001111100000000010111010000011011111110110000110010011000001100010001100001001010100100111000010110111001011010000100001101010101100000110010011000000011111110000001101111101100
-15 000000000000000000001000001110000011100011010000001000110110000000001101100000000011011000001000110110010011101101100111001111011000010000110110000000000111100000000001111110000000011100111000000001000010000000000000000000000""".splitlines()
+# PREDRAWN = """15 111111111111111100000010000001101001010100101100000010000001101001010111101101111010100101100000010000001111111111111111100000010000001101001010100101100000010000001101111010100101101001010111101100000010000001111111111111111
+# 15 000000000000000000000000000000000000000000000000000000000000000000000000000011100101001110001110111011100000111111111000000010111010000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000
+# 15 000000000000000000011111111100000100000001000000100000010000001000000100000001000001000000010000001110000011111000100000000001001000000000010010000000000010100000000000101000000000000110000000000000100000000000000000000000000
+# 15 000001111100000000111111111000001110000011100011000000000110011000000000110110001000100011110001000100011110001111100011110001000100011110001000100011011000000000110011000000000110001110000011100000111111111000000001111100000
+# 15 000000010000000010000010000010001000010000100000100010001000000010000010000000000111000000000001111100000111101111101111000001111100000000000111000000000010000010000000100010001000001000010000100010000010000010000000010000000
+# 15 000000000000000000000000000000001110000011100001011111110100000110000011000001000000000100010000000000010010001000100010010000000000010010000010000010001000101000100000100000001000000011111110000000000000000000000000000000000
+# 15 000000000000000000001000100000000000101000000001110101011100011111000111110011001101100110011100111001110001111111111100000001111100000000011111110000000110111011000000111101111000000011000110000000000000000000000000000000000
+# 15 000010000010000000001000100000000000111000000000001111100000000010111010000011011111110110000110010011000001100010001100001001010100100111000010110111001011010000100001101010101100000110010011000000011111110000001101111101100
+# 15 000000000000000000001000001110000011100011010000001000110110000000001101100000000011011000001000110110010011101101100111001111011000010000110110000000000111100000000001111110000000011100111000000001000010000000000000000000000""".splitlines()
 
 # testing
-# PREDRAWN = """15 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000""".splitlines()
+PREDRAWN = """15 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000""".splitlines()
 
 if platform.system() == "Emscripten":
     from js import window
@@ -79,7 +79,8 @@ def setupPlayAnimations(cellW, size):
     return crossImg, cellTimers
 
 def setupInfo(size, gap, cellW): # clues for nonogram
-    infos = {"x": [], "y": []}
+    yinfo = []
+    xinfo = []
 
     yinfoRects = []
     for y in range(size):
@@ -89,7 +90,34 @@ def setupInfo(size, gap, cellW): # clues for nonogram
     for x in range(size):
         xinfoRects.append(pygame.Rect(gap+cellW*x+3, 0, cellW-6, gap))
     
-    return infos, yinfoRects, xinfoRects
+    return yinfo, xinfo, yinfoRects, xinfoRects
+
+def addInfo(size, yinfo, boardSolution, xinfo):
+    # info stuff checking stuff
+    for y in range(size):
+        yinfo.append("") # add empty string
+        for x in range(size):
+            if boardSolution[y][x] == 0:
+                yinfo[y] += " " # if 0 then add space
+            else:
+                yinfo[y] += "#" # if not then add #
+        yinfo[y] = yinfo[y].split() # split string with spaces
+        for i in range(len(yinfo[y])):
+            yinfo[y][i] = str(len(yinfo[y][i])) # turn into list by finding length
+
+    for x in range(size):
+        xinfo.append("")
+        for y in range(size):
+            if boardSolution[y][x] == 0:
+                xinfo[x] += " "
+            else:
+                xinfo[x] += "#"
+        xinfo[x] = xinfo[x].split()
+        
+        for i in range(len(xinfo[x])):
+            xinfo[x][i] = str(len(xinfo[x][i]))
+
+    return xinfo, yinfo
 
 def setupHome():
     playRect = pygame.Rect(0,0,w*0.4,w*0.15) # play button: Solve a pre-drawn nonogram. Earn coins according to puzzle difficulty
@@ -302,7 +330,7 @@ def setup():
 
     boardSolution, boardSolving, boardRects = setupBoards(size, cellW, gap)
 
-    infos, yinfoRects, xinfoRects = setupInfo(size, gap, cellW)
+    yinfo, xinfo, yinfoRects, xinfoRects = setupInfo(size, gap, cellW)
 
     darken, opacity, fade, fadeo = setupDarkFade()
 
@@ -364,7 +392,7 @@ def setup():
     return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, solveNext,\
         checkButtonRect, checkButtonImg, crossImg,\
         cellTimers, boardSolution, boardSolving, boardRects,\
-        infos, yinfoRects, xinfoRects,\
+        yinfo, xinfo, yinfoRects, xinfoRects,\
         darken, opacity, fade, fadeo,\
         choosePredrawnRect, chooseCustomRect,\
         playRect, drawRect, playBubble, drawBubble,\
@@ -437,53 +465,27 @@ def drawBoard(size, screen, colors, board, gap, w, cellW, boardRects, crossImg, 
         lineEnd = (gap + cellW*x, w)
         pygame.draw.line(screen, (36,51,5), lineStart, lineEnd, 4)
 
-def addInfo(size, infos, boardSolution):
-    # info stuff checking stuff
-    for xy in ["x", "y"]:
-        for n in range(size): # n is each row/column
-            infos[xy].append("") # add empty string
-            if xy == "x":
-                for y in range(size):
-                    if boardSolution[y][n] == 0:
-                        infos[xy][n] += " " # if 0 then add space
-                    else:
-                        infos[xy][n] += "#" # if not then add #
-            else:
-                for x in range(size):
-                    if boardSolution[n][x] == 0:
-                        infos[xy][n] += " " # if 0 then add space
-                    else:
-                        infos[xy][n] += "#" # if not then add #
-            print(infos[xy][n])
-            infos[xy][n] = infos[xy][n].split() # split string with spaces
-            for i in range(len(infos[xy][n])):
-                infos[xy][n][i] = str(len(infos[xy][n][i])) # turn into list by finding length
-    print(infos)
-
-    return infos
-
-def drawInfo(yinfoRects, xinfoRects, size, infos):
+def drawInfo(yinfoRects, xinfoRects, size, yinfo, xinfo):
     # draw background for info
     for y in yinfoRects:
         pygame.draw.rect(screen, (52, 74, 36), y, border_top_left_radius=10, border_bottom_left_radius=10)
     
     for x in xinfoRects:
         pygame.draw.rect(screen, (52, 74, 36), x, border_top_left_radius=10, border_top_right_radius=10)
-
-    # y: infos for rows (y stays same, x changes)
-    # x: infos for columns (x stays same, y changes)
-    for xy in ["y", "x"]:
-        for n in range(size):
-            for i in range(len(infos[xy][n])):
-                text = pygame.font.Font(FONT, 24).render((infos[xy][n][i]), True, (255,255,255))
-                # position of rect + width * multiplier depending on which one it is
-                if xy == "y":
-                    textpos = text.get_rect(centerx=yinfoRects[n].x + yinfoRects[n].w * (i + 0.5) / len(infos[xy][n]), 
-                                            centery=yinfoRects[n].centery)
-                else:
-                    textpos = text.get_rect(centerx=xinfoRects[n].centerx, 
-                                            y=xinfoRects[n].y + xinfoRects[n].h*i/len(infos[xy][n]))
-                screen.blit(text, textpos)
+    
+    # draw info
+    for y in range(size):
+        text = pygame.font.Font(FONT, 24).render(" ".join(yinfo[y]), True, (255,255,255))
+        textpos = text.get_rect(centerx=yinfoRects[y].centerx, 
+                                centery=yinfoRects[y].centery)
+        screen.blit(text, textpos)
+    
+    for x in range(size):
+        for i in range(len(xinfo[x])):
+            text = pygame.font.Font(FONT, 24).render((xinfo[x][i]), True, (255,255,255))
+            textpos = text.get_rect(centerx=xinfoRects[x].centerx, 
+                                    y=xinfoRects[x].y + xinfoRects[x].h*i/len(xinfo[x]))
+            screen.blit(text, textpos)
 
 def textAnimations(offset, acceleration):
     """Animation for moving the text across the screen"""
@@ -768,7 +770,7 @@ async def main():
     size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, solveNext,\
         checkButtonRect, checkButtonImg, crossImg,\
         cellTimers, boardSolution, boardSolving, boardRects,\
-        infos, yinfoRects, xinfoRects,\
+        yinfo, xinfo, yinfoRects, xinfoRects,\
         darken, opacity, fade, fadeo,\
         choosePredrawnRect, chooseCustomRect,\
         playRect, drawRect, playBubble, drawBubble,\
@@ -1540,7 +1542,7 @@ async def main():
             if checkButtonRect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
                 stage = "animation-for-solve"
 
-                infos = addInfo(size, infos, boardSolution)
+                xinfo, yinfo = addInfo(size, yinfo, boardSolution, xinfo)
         
         elif stage == "choose-solve": # screen to chose to play custom drawn or pr-drawn
             # pre-drawn button
@@ -1632,7 +1634,7 @@ async def main():
                     for x in range(size):
                         boardSolution[y][x] = int(r[y*size+x])
                 
-                infos = addInfo(size, infos, boardSolution)
+                xinfo, yinfo = addInfo(size, yinfo, boardSolution, xinfo)
 
                 stage = stage.split()
                 stage[1] = "earn-sanddollar"
@@ -1646,7 +1648,7 @@ async def main():
             textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
             screen.blit(text, textpos)
 
-            drawInfo(yinfoRects, xinfoRects, size, infos)
+            drawInfo(yinfoRects, xinfoRects, size, yinfo, xinfo)
 
             screen.blit(fade, (0,0))
 
@@ -1671,7 +1673,7 @@ async def main():
             textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
             screen.blit(text, textpos)
 
-            drawInfo(yinfoRects, xinfoRects, size, infos)
+            drawInfo(yinfoRects, xinfoRects, size, yinfo, xinfo)
 
             fade.fill((0, 0, 0, fadeo))
             screen.blit(fade, (0,0))
@@ -1694,7 +1696,7 @@ async def main():
                     XO = "X"
                 clickSFX.play()
 
-            drawInfo(yinfoRects, xinfoRects, size, infos)
+            drawInfo(yinfoRects, xinfoRects, size, yinfo, xinfo)
             
             # check for fill
             for y in range(size):
@@ -1857,7 +1859,7 @@ async def main():
             checkButtonRect = pygame.Rect(gap*0.1, gap*0.1, gap*0.8, gap*0.8)
 
             # info for the sides
-            infos, yinfoRects, xinfoRects = setupInfo(size, gap, cellW)
+            yinfo, xinfo, yinfoRects, xinfoRects = setupInfo(size, gap, cellW)
 
             # for win and loose and animation word screen
             darken = pygame.Surface((w,w), pygame.SRCALPHA)
