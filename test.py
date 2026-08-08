@@ -1,3 +1,5 @@
+import json
+
 binary_str = "00000000000011000000000001110000000000111000000000011100000000001110000000000011100000000001110000000000111000000000111000000000011100000000000011001100000000000001100000000000011000000000000110000000000010000000000000"
 
 BG_WHITE = "\033[47m"  
@@ -13,3 +15,5 @@ for i in range(0, len(binary_str), 15):
         else:
             row_output += f"{BG_WHITE}  {RESET}"
     print(row_output)
+
+print(json.dumps({"sanddollar": 0, "gallery": "", "beach_bg": "", "inv": "", "beach_items": ""}))
