@@ -35,12 +35,14 @@ Grids and Grains is a creative blend of logic puzzles and customization—solve 
 ## File System
 
 ### Pygame Files
-**Versions used for saving backup code**: v[update-number].[mini-update-number].[backup-version].py  
+*/src folder*  
 **Most recent version**: main.py  
+**Versions used for saving backup code**: v[update-number].[mini-update-number].[backup-version].py  
 **Template file**: index.tmpl  
 **Game save files**: save.txt, gallery.txt
 
 ### Website Files
+*Only appears after building the website with pygbag*  
 **Zip file**: build/web.zip  
 **Website file file**: build/web/index.html
 
@@ -58,17 +60,19 @@ pip install pygbag
 ```
 
 ### Running Locally
+*Navigate to the main folder*
+
 #### Run with Pygame
 ```bash
-python main.py
+python src/main.py
 ```
 
 #### Run with Pygbag
 ```bash
-pygbag <folder>
+pygbag --template index.tmpl ../nonogram
 ```
 
-### Publish with Pygbag
+### Build the Website with Pygbag
 ```bash
-pygbag --build --archive <folder>
+pygbag --build --archive ../nonogram
 ```
