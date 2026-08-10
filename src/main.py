@@ -12,6 +12,8 @@ clock = pygame.time.Clock()
 
 pygame.display.set_caption("Gram of Grain")
 
+DIRECTORY = os.path.join(os.path.dirname(__file__), "../")
+
 PREDRAWN = """15 111111111111111100000010000001101001010100101100000010000001101001010111101101111010100101100000010000001111111111111111100000010000001101001010100101100000010000001101111010100101101001010111101100000010000001111111111111111
 15 000000000000000000000000000000000000000000000000000000000000000000000000000011100101001110001110111011100000111111111000000010111010000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000
 15 000000000000000000011111111100000100000001000000100000010000001000000100000001000001000000010000001110000011111000100000000001001000000000010010000000000010100000000000101000000000000110000000000000100000000000000000000000000
@@ -23,7 +25,7 @@ PREDRAWN = """15 111111111111111100000010000001101001010100101100000010000001101
 15 000000000000000000001000001110000011100011010000001000110110000000001101100000000011011000001000110110010011101101100111001111011000010000110110000000000111100000000001111110000000011100111000000001000010000000000000000000000""".splitlines()
 
 # testing
-# PREDRAWN = """15 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000""".splitlines()
+#PREDRAWN = """15 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000""".splitlines()
 
 if platform.system() == "Emscripten":
     from js import window
@@ -36,7 +38,7 @@ def save_data(data, file):
         window.localStorage.setItem(file, data)
     else:
         # PC: Use regular file saving
-        with open(f"{file}.txt", "w") as f:
+        with open(os.path.join(DIRECTORY, f"{file}.txt"), "w") as f:
             f.write(data)
 
 def load_data(file):
@@ -45,7 +47,7 @@ def load_data(file):
         return saved_data if saved_data else None
     else:
         # PC: Load from file
-        file = f"{file}.txt"
+        file = os.path.join(DIRECTORY, f"{file}.txt")
         if os.path.exists(file):
             with open(file, "r") as f:
                 return f.read()
@@ -69,7 +71,7 @@ def setupBoards(size, cellW, gap):
     return boardSolution, boardSolving, boardRects
 
 def setupPlayAnimations(cellW, size):
-    crossImg = pygame.transform.scale(pygame.image.load("imgs/cross.png"), (cellW, cellW))
+    crossImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "imgs/cross.png")), (cellW, cellW))
     cellTimers = [] # if its wrong it flashes red and then fades away as the cell timer goes by
     for y in range(size):
         cellTimers.append([])
@@ -100,33 +102,33 @@ def setupHome():
     drawRect.centerx = w/2
     drawRect.centery = w*0.55
 
-    playBubble = pygame.transform.scale(pygame.image.load("imgs/upbubble.png"), (w*0.6, w*0.2))
-    drawBubble = pygame.transform.scale(pygame.image.load("imgs/downbubble.png"), (w*0.6, w*0.2))
+    playBubble = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "imgs/upbubble.png")), (w*0.6, w*0.2))
+    drawBubble = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "imgs/downbubble.png")), (w*0.6, w*0.2))
 
     sanddollarRect = pygame.Rect(w*0.63, w*0.02, w*0.35, w*0.1)
-    sanddollarImg = pygame.transform.scale(pygame.image.load("imgs/sanddollar.png"), (w*0.07, w*0.07))
+    sanddollarImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "imgs/sanddollar.png")), (w*0.07, w*0.07))
 
     shopButtonRect = pygame.Rect(w*0.02, w*0.02, w*0.12, w*0.12)
-    ogShopImg = pygame.image.load("imgs/shop.png")
+    ogShopImg = pygame.image.load(os.path.join(DIRECTORY, "imgs/shop.png"))
     shopImg = pygame.transform.scale(ogShopImg, (w*0.08, w*0.08))
 
     galleryButtonRect = pygame.Rect(w*0.16, w*0.02, w*0.12, w*0.12)
-    ogGalleryImg = pygame.image.load("imgs/gallery.png")
+    ogGalleryImg = pygame.image.load(os.path.join(DIRECTORY, "imgs/gallery.png"))
     galleryImg = pygame.transform.scale(ogGalleryImg, (w*0.08, w*0.08))
 
     beachButtonRect = pygame.Rect(w*0.02, w*0.86, w*0.12, w*0.12)
-    ogBeachImg = pygame.image.load("imgs/beach.png")
+    ogBeachImg = pygame.image.load(os.path.join(DIRECTORY, "imgs/beach.png"))
     beachImg = pygame.transform.scale(ogBeachImg, (w*0.08, w*0.08))
 
     soundButtonRect = pygame.Rect(w*0.86, w*0.86, w*0.12, w*0.12)
-    ogSoundImgs = [pygame.image.load("imgs/off.png"), 
-                   pygame.image.load("imgs/on.png")]
+    ogSoundImgs = [pygame.image.load(os.path.join(DIRECTORY, "imgs/off.png")), 
+                   pygame.image.load(os.path.join(DIRECTORY, "imgs/on.png"))]
     soundImgs = [pygame.transform.scale(ogSoundImgs[1], (w*0.08, w*0.08)), 
                  pygame.transform.scale(ogSoundImgs[0], (w*0.08, w*0.08))]
     soundOn = True
 
     infoButtonRect = pygame.Rect(w*0.72, w*0.86, w*0.12, w*0.12)
-    ogInfoImg = pygame.image.load("imgs/info.png")
+    ogInfoImg = pygame.image.load(os.path.join(DIRECTORY, "imgs/info.png"))
     infoImg = pygame.transform.scale(ogInfoImg, (w*0.08, w*0.08))
 
     return playRect, drawRect, playBubble, drawBubble,\
@@ -201,29 +203,29 @@ def setupGallery():
             solveNext, galleryPage, FlipLeftRect, FlipRightRect
 
 def setupBeach():
-    beachBgImgs = [pygame.transform.scale(pygame.image.load("beachBg/1.png"), (w,w)),
-                   pygame.transform.scale(pygame.image.load("beachBg/2.png"), (w,w)),
-                   pygame.transform.scale(pygame.image.load("beachBg/3.png"), (w,w))]
+    beachBgImgs = [pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "beachBg/1.png")), (w,w)),
+                   pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "beachBg/2.png")), (w,w)),
+                   pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "beachBg/3.png")), (w,w))]
 
     beachConfirmButtonRect = pygame.Rect(w*0.45,w*0.88,w*0.1,w*0.1)
-    beachConfirmButtonImg = pygame.transform.scale(pygame.image.load("imgs/check.png"), (w*0.1,w*0.1))
+    beachConfirmButtonImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "imgs/check.png")), (w*0.1,w*0.1))
 
     mainExitRect = pygame.Rect(w*0.88, w*0.02, w*0.1, w*0.1)
 
     addButtonRect = pygame.Rect(w*0.02, w*0.88, w*0.1, w*0.1)
     trashButtonRect = pygame.Rect(w*0.14, w*0.88, w*0.1, w*0.1)
 
-    scaleImg = pygame.transform.scale(pygame.image.load("imgs/scale.png"), (w*0.05,w*0.05))
+    scaleImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "imgs/scale.png")), (w*0.05,w*0.05))
     scaleRect = pygame.Rect(0, 0, w*0.06, w*0.06)
 
-    rotateImg = pygame.transform.scale(pygame.image.load("imgs/rotate.png"), (w*0.05,w*0.05))
+    rotateImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "imgs/rotate.png")), (w*0.05,w*0.05))
     rotateRect = pygame.Rect(0, 0, w*0.06, w*0.06)
 
-    flipImg = pygame.transform.scale(pygame.image.load("imgs/flip.png"), (w*0.05,w*0.05))
+    flipImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "imgs/flip.png")), (w*0.05,w*0.05))
     flipRect = pygame.Rect(0, 0, w*0.06, w*0.06)
 
-    trashImgs = [pygame.transform.scale(pygame.image.load("imgs/close.png"), (w*0.08, w*0.08)), 
-                 pygame.transform.scale(pygame.image.load("imgs/open.png"), (w*0.08, w*0.08))]
+    trashImgs = [pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "imgs/close.png")), (w*0.08, w*0.08)), 
+                 pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "imgs/open.png")), (w*0.08, w*0.08))]
 
     addBg = pygame.Rect(0,0,w*0.9,w*0.9)
     addBg.center = (w/2,w/2)
@@ -251,8 +253,9 @@ def setupShop():
     shopItemImgs = []
     ogShopItemImgs = []
     for i in range(14):
-        shopItemImgs.append(pygame.transform.scale(pygame.image.load(f"shopItems/{i}.png"), (w*0.18, w*0.18)))
-        ogShopItemImgs.append(pygame.image.load(f"shopItems/{i}.png"))
+        shopItemImgs.append(pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, f"shopItems/{i}.png")), 
+                                                   (w*0.18, w*0.18)))
+        ogShopItemImgs.append(pygame.image.load(os.path.join(DIRECTORY, f"shopItems/{i}.png")))
 
     shopItemPrice = [300, 100, 500, 300, 1200, 1000, 1000, 200, 200, 300, 300, 200, 500, 200]
 
@@ -276,7 +279,7 @@ def setupOthers():
               (75, 83, 32)) # filled and not filled nonogram colors
 
     checkButtonRect = pygame.Rect(gap*0.1, gap*0.1, gap*0.8, gap*0.8)
-    checkButtonImg = pygame.transform.scale(pygame.image.load("imgs/check.png"), 
+    checkButtonImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "imgs/check.png")), 
                                             (gap*0.8, gap*0.8))
 
     return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors,\
@@ -347,18 +350,21 @@ def setup():
 
     choosePredrawnRect, chooseCustomRect = setupChooseSolve()
 
-    infoPageBg = pygame.transform.scale(pygame.image.load("imgs/infoPage.png"), (w*0.9,w*0.9))
-    infoPageBgBold = pygame.transform.scale(pygame.image.load("imgs/infoPageBold.png"), (w*0.9,w*0.9))
+    infoPageBg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "imgs/infoPage.png")), 
+                                        (w*0.9,w*0.9))
+    infoPageBgBold = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "imgs/infoPageBold.png")), 
+                                            (w*0.9,w*0.9))
     infoRect = pygame.Rect(166, 236, 160, 30)
 
     instructionPages = []
     for i in range(3):
-        instructionPages.append(pygame.transform.scale(pygame.image.load(f"imgs/infos/{i}.png"), (w*0.9,w*0.9)))
+        instructionPages.append(pygame.transform.scale(pygame.image.load(
+            os.path.join(DIRECTORY, f"imgs/infos/{i}.png")), (w*0.9,w*0.9)))
     instructionPageNo = 0
 
     XO = "O"
-    heartXOimg = {"O": pygame.transform.scale(pygame.image.load("imgs/heartO.png"), (gap, gap)), 
-                  "X": pygame.transform.scale(pygame.image.load("imgs/heartX.png"), (gap, gap))}
+    heartXOimg = {"O": pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "imgs/heartO.png")), (gap, gap)), 
+                  "X": pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "imgs/heartX.png")), (gap, gap))}
     heartRect = pygame.Rect(0,0,gap,gap)
 
     return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, solveNext,\
@@ -437,7 +443,7 @@ def drawBoard(size, screen, colors, board, gap, w, cellW, boardRects, crossImg, 
         lineEnd = (gap + cellW*x, w)
         pygame.draw.line(screen, (36,51,5), lineStart, lineEnd, 4)
 
-def addInfo(size, infos, boardSolution):
+def addInfo(size, infos, boardSolution, boardSolving):
     # info stuff checking stuff
     for xy in ["x", "y"]:
         for n in range(size): # n is each row/column
@@ -454,13 +460,26 @@ def addInfo(size, infos, boardSolution):
                         infos[xy][n] += " " # if 0 then add space
                     else:
                         infos[xy][n] += "#" # if not then add #
-            print(infos[xy][n])
+
             infos[xy][n] = infos[xy][n].split() # split string with spaces
             for i in range(len(infos[xy][n])):
                 infos[xy][n][i] = str(len(infos[xy][n][i])) # turn into list by finding length
-    print(infos)
 
-    return infos
+    for y in range(size):
+        if boardSolving[y] == boardSolution[y]:
+            boardSolving[y] = [2] * size
+
+    for x in range(size):
+        same = True
+        for y in range(size):
+            if boardSolving[y][x] != boardSolution[y][x] and boardSolving[y][x] != 2:
+                same = False
+
+        if same:
+            for y in range(size):
+                boardSolving[y][x] = 2
+
+    return infos, boardSolving
 
 def drawInfo(yinfoRects, xinfoRects, size, infos):
     # draw background for info
@@ -478,11 +497,11 @@ def drawInfo(yinfoRects, xinfoRects, size, infos):
                 text = pygame.font.Font(FONT, 24).render((infos[xy][n][i]), True, (255,255,255))
                 # position of rect + width * multiplier depending on which one it is
                 if xy == "y":
-                    textpos = text.get_rect(centerx=yinfoRects[n].x + yinfoRects[n].w * (i + 0.5) / len(infos[xy][n]), 
-                                            centery=yinfoRects[n].centery)
+                    textpos = text.get_rect(centerx = yinfoRects[n].x + yinfoRects[n].w * (i+0.5) / len(infos[xy][n]), 
+                                            centery = yinfoRects[n].centery)
                 else:
-                    textpos = text.get_rect(centerx=xinfoRects[n].centerx, 
-                                            y=xinfoRects[n].y + xinfoRects[n].h*i/len(infos[xy][n]))
+                    textpos = text.get_rect(centerx = xinfoRects[n].centerx, 
+                                            centery = xinfoRects[n].y + xinfoRects[n].h * (i+0.5) / len(infos[xy][n]))
                 screen.blit(text, textpos)
 
 def textAnimations(offset, acceleration):
@@ -796,13 +815,13 @@ async def main():
         XO, heartXOimg, heartRect = setup()
 
     # load music and sfx
-    pygame.mixer.music.load("music/bgm.ogg")
-    pygame.mixer.music.set_volume(1)
+    pygame.mixer.music.load(os.path.join(DIRECTORY, "music/bgm.ogg"))
+    pygame.mixer.music.set_volume(0.9)
     pygame.mixer.music.play(-1)
 
-    clickSFX = pygame.mixer.Sound("music/click.ogg")
+    clickSFX = pygame.mixer.Sound(os.path.join(DIRECTORY, "music/click.ogg"))
     clickSFX.set_volume(0.2)
-    flipSFX = pygame.mixer.Sound("music/flip.ogg")
+    flipSFX = pygame.mixer.Sound(os.path.join(DIRECTORY, "music/flip.ogg"))
     flipSFX.set_volume(0.3)
 
     while True:
@@ -1540,7 +1559,7 @@ async def main():
             if checkButtonRect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
                 stage = "animation-for-solve"
 
-                infos = addInfo(size, infos, boardSolution)
+                infos, boardSolving = addInfo(size, infos, boardSolution, boardSolving)
         
         elif stage == "choose-solve": # screen to chose to play custom drawn or pr-drawn
             # pre-drawn button
@@ -1632,7 +1651,7 @@ async def main():
                     for x in range(size):
                         boardSolution[y][x] = int(r[y*size+x])
                 
-                infos = addInfo(size, infos, boardSolution)
+                infos, boardSolving = addInfo(size, infos, boardSolution, boardSolving)
 
                 stage = stage.split()
                 stage[1] = "earn-sanddollar"
