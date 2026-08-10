@@ -13,6 +13,7 @@ Grids and Grains is a creative blend of logic puzzles and customization—solve 
 - **Pre-drawn nonograms** - A library of **pre-drawn** nonograms to solve
 - **Self-drawn nonograms** – Create and publish your own puzzles to solve
 - **Rewards** – Earn **100× sand dollars** for every pre-drawn nonogram solved, and **10 sand dollars** for custom ones
+- **Automated Crosses** - When a row/column is fufilled, crosses are **automatically** added to all empty pixels in that row/column for convenience 
 - **Mobile Friendly** - A toggle to swap between **cross** and **fill** mode as opposed to single and double clicks
 
 ### Beach Customization
@@ -28,13 +29,13 @@ Grids and Grains is a creative blend of logic puzzles and customization—solve 
 - **Shop** – Spend sand dollars on decorations and items for your beach
 - **Gallery** – View your complete history of created nonograms
 - **Sound** - Toggle your background music on and off
-- **Information** - Information page to describe how to play and the controls
+- **Information** - Information page to describe how to play, the controls, and a detailed description of how to solve a nonogram
 
 ---
 
 ## File System
 
-### Pygame Files
+### **/scr** Pygame Files
 **Versions used for saving backup code**: v[update-number].[mini-update-number].[backup-version].py  
 **Most recent version**: main.py  
 **Template file**: index.tmpl  
@@ -58,17 +59,19 @@ pip install pygbag
 ```
 
 ### Running Locally
+*Navigate to the main folder*
+
 #### Run with Pygame
 ```bash
-python main.py
+python src/main.py
 ```
 
 #### Run with Pygbag
 ```bash
-pygbag <folder>
+pygbag --template index.tmpl ../nonogram
 ```
 
 ### Publish with Pygbag
 ```bash
-pygbag --build --archive <folder>
+pygbag --build --archive ../nonogram
 ```
