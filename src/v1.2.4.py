@@ -25,7 +25,7 @@ PREDRAWN = """15 111111111111111100000010000001101001010100101100000010000001101
 15 000000000000000000001000001110000011100011010000001000110110000000001101100000000011011000001000110110010011101101100111001111011000010000110110000000000111100000000001111110000000011100111000000001000010000000000000000000000""".splitlines()
 
 # testing
-#PREDRAWN = """15 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000""".splitlines()
+PREDRAWN = """15 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000""".splitlines()
 
 if platform.system() == "Emscripten":
     from js import window
@@ -414,20 +414,9 @@ def drawBoard(size, screen, colors, board, gap, w, cellW, boardRects, crossImg, 
                 if cellTimers[y][x] <= 0:
                     cellTimers[y][x] = 0
                     board[y][x] = 0
-
-            elif 3 > board[y][x] > 2: # animation for crossed out (range = 3.9 -> 3.1)
-                pygame.draw.rect(screen, colors[0], boardRects[y][x])
-                newW = (3 - board[y][x]) * cellW
-                screen.blit(pygame.transform.scale(crossImg, (newW, newW)), (boardRects[y][x].x + (cellW - newW)/2, boardRects[y][x].y + (cellW - newW)/2))
-                board[y][x] -= 0.1
-
-                if board[y][x] < 2.1:
-                    board[y][x] = 2
-
             elif board[y][x] == 2: # crossed out
                 pygame.draw.rect(screen, colors[0], boardRects[y][x])
                 screen.blit(crossImg, (boardRects[y][x].x, boardRects[y][x].y))
-
             else: # filled in or empty
                 pygame.draw.rect(screen, colors[board[y][x]], boardRects[y][x])
 
@@ -476,6 +465,8 @@ def addInfo(size, infos, boardSolution, boardSolving):
             for i in range(len(infos[xy][n])):
                 infos[xy][n][i] = str(len(infos[xy][n][i])) # turn into list by finding length
 
+    boardSolving = autoCross(boardSolving, boardSolution, size)
+
     return infos, boardSolving
 
 def drawInfo(yinfoRects, xinfoRects, size, infos):
@@ -520,24 +511,24 @@ def autoCross(boardSolving, boardSolution, size):
     for y in range(size): # rows
         same = True
         for x in range(size):
-            if boardSolving[y][x] != boardSolution[y][x] and math.floor(boardSolving[y][x]) != 2:
+            if boardSolving[y][x] != boardSolution[y][x] and boardSolving[y][x] != 2:
                 same = False
 
         if same:
             for x in range(size):
-                if boardSolving[y][x] == 0:
-                    boardSolving[y][x] = 2.9
+                if boardSolving[y][x] != 1:
+                    boardSolving[y][x] = 2
 
     for x in range(size):
         same = True
         for y in range(size):
-            if boardSolving[y][x] != boardSolution[y][x] and math.floor(boardSolving[y][x]) != 2:
+            if boardSolving[y][x] != boardSolution[y][x] and boardSolving[y][x] != 2:
                 same = False
 
         if same:
             for y in range(size):
-                if boardSolving[y][x] == 0:
-                    boardSolving[y][x] = 2.9
+                if boardSolving[y][x] != 1:
+                    boardSolving[y][x] = 2
 
     return boardSolving
 
@@ -1760,7 +1751,7 @@ async def main():
                             and (boardSolving[y][x] == 0 or boardSolving[y][x] == 3)\
                                 and not solveDown and XO == "X":
                         if boardSolution[y][x] == 0:
-                            boardSolving[y][x] = 2.9
+                            boardSolving[y][x] = 2
                         else:
                             boardSolving[y][x] = 3
                             cellTimers[y][x] = 60
