@@ -4,4 +4,5 @@ default.tmpl
 favicon.png
 title.png
 test.py
-/data
+/data/save.txt
+/data/gallery.txt
