@@ -33,19 +33,32 @@ Grids and Grains is a creative blend of logic puzzles and customization—solve 
 
 ---
 
-## File System
+## Project Structure
 
-### Pygame Files
-*/src folder*  
-**Most recent version**: main.py  
-**Versions used for saving backup code**: v[update-number].[mini-update-number].[backup-version].py  
-**Template file**: index.tmpl  
-**Game save files**: save.txt, gallery.txt
-
-### Website Files
-*Only appears after building the website with pygbag*  
-**Zip file**: build/web.zip  
-**Website file file**: build/web/index.html
+```
+nonogram/
+├── src/                  # Source code
+│   └── main.py           # Main game entry point
+├── assets/               # All game assets
+│   ├── audio/            # Background music and sound effects
+│   ├── fonts/            # Custom fonts
+│   └── images/           # All image assets
+│       ├── backgrounds/  # Beach background images
+│       ├── icons/        # UI icons and buttons
+│       ├── infos/        # Information/tutorial page images
+│       └── shop/         # Shop item images
+├── data/                 # Runtime save data (generated)
+│   ├── save.txt          # Player progress and settings
+│   └── gallery.txt       # Created nonogram history
+├── templates/            # Pygbag web build templates
+│   ├── index.tmpl
+│   └── default.tmpl
+├── archive/              # Old version backups (not tracked by git)
+├── CONTRIBUTING.md       # Contribution guidelines
+├── requirements.txt      # Python dependencies
+├── LICENSE               # Project license
+└── README.md             # This file
+```
 
 ---
 
@@ -56,12 +69,11 @@ Make sure you have Python installed on your system.
 
 ### Installation
 ```bash
-pip install pygame
-pip install pygbag
+pip install -r requirements.txt
 ```
 
 ### Running Locally
-*Navigate to the main folder*
+*Navigate to the project root*
 
 #### Run with Pygame
 ```bash
@@ -70,7 +82,7 @@ python src/main.py
 
 #### Run with Pygbag
 ```bash
-pygbag --template index.tmpl ../nonogram
+pygbag --template templates/index.tmpl ../nonogram
 ```
 
 ### Build the Website with Pygbag
