@@ -37,8 +37,7 @@ Grids and Grains is a creative blend of logic puzzles and customization—solve 
 
 ```
 nonogram/
-├── src/                  # Source code
-│   └── main.py           # Main game entry point
+├── main.py           # Main game entry point
 ├── assets/               # All game assets
 │   ├── audio/            # Background music and sound effects
 │   ├── fonts/            # Custom fonts
@@ -53,7 +52,6 @@ nonogram/
 ├── templates/            # Pygbag web build templates
 │   ├── index.tmpl
 │   └── default.tmpl
-├── archive/              # Old version backups (not tracked by git)
 ├── CONTRIBUTING.md       # Contribution guidelines
 ├── requirements.txt      # Python dependencies
 ├── LICENSE               # Project license

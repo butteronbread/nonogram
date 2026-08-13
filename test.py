@@ -1,21 +1,10 @@
-import json
+def rgb_to_hex(r, g, b):
+    # Ensure values are within the valid 0-255 range
+    r, g, b = max(0, min(int(r), 255)), max(0, min(int(g), 255)), max(0, min(int(b), 255))
+    return f"#{r:02x}{g:02x}{b:02x}"
 
-binary_str = "00000000000011000000000001110000000000111000000000011100000000001110000000000011100000000001110000000000111000000000111000000000011100000000000011001100000000000001100000000000011000000000000110000000000010000000000000"
+# Example usage:
+rgb_tuple = input("tuple: ")[1:-1].split(", ")
+hex_code = rgb_to_hex(*rgb_tuple)
 
-BG_WHITE = "\033[47m"  
-BG_CYAN = "\033[46m"   
-RESET = "\033[0m"      
-
-for i in range(0, len(binary_str), 15):
-    row = binary_str[i:i+15]
-    row_output = ""
-    for char in row:
-        if char == "1":
-            row_output += f"{BG_CYAN}  {RESET}"
-        else:
-            row_output += f"{BG_WHITE}  {RESET}"
-    print(row_output)
-
-print(json.dumps({"sanddollar": 0, "gallery": "", "beach_bg": "", "inv": "", "beach_items": ""}))
-
-print([2]*15)
+print(f'"{hex_code}"')
