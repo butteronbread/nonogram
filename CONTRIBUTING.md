@@ -17,6 +17,7 @@ Keep the codebase **DRY** (*Don't Repeat Yourself*):
 
 * Write modular, general-purpose functions wherever possible.
 * Avoid hardcoding values or tightly coupling functions to single specific use cases if they can be designed to handle broader scenarios.
+* When creating classes, they must be generalized to fit most things the class is used for (e.g. if the class is for buttons, it can and will be used in most buttons)
 
 ### Dynamic Screen Scaling (`w` & `h` Variables)
 

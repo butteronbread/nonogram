@@ -267,26 +267,26 @@ def setupHome():
                  pygame.transform.scale(ogSoundImgs[0], (w*0.08, w*0.08))]
     soundOn = True
 
-    infoButtonRect = pygame.Rect(w*0.72, w*0.86, w*0.12, w*0.12)
-    ogInfoImg = pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/info.png"))
-    infoImg = pygame.transform.scale(ogInfoImg, (w*0.08, w*0.08))
+    infoButton = Button("img", w*0.12, w*0.12, "#f8faf7", 20, x=w*0.72, y=w*0.86, 
+                             imgFile=os.path.join(DIRECTORY, "assets/images/icons/info.png"),
+                             ogSize=w*0.08, hoverSize=w*0.09)
 
     return playButton, drawButton, playBubble, drawBubble,\
         sanddollarRect, sanddollarImg,\
         shopButton, galleryButton, beachButton,\
         soundButtonRect, ogSoundImgs, soundImgs, soundOn,\
-        infoButtonRect, ogInfoImg, infoImg
+        infoButton
 
 def setupChooseSolve():
-    choosePredrawnRect = pygame.Rect(0,0,w*0.5,w*0.15)
-    choosePredrawnRect.centerx = w/2
-    choosePredrawnRect.centery = w*0.35
+    choosePredrawnButton = Button("text", w*0.5, w*0.15, "#426334", 
+                          border_radius=20, centerx=w/2, centery=w*0.35, 
+                          text=Text("Pre-drawn", "#abcc9d", 64), hoverSize=72)
 
     chooseCustomRect = pygame.Rect(0,0,w*0.4,w*0.14)
     chooseCustomRect.centerx = w/2
     chooseCustomRect.centery = w*0.55
 
-    return choosePredrawnRect, chooseCustomRect
+    return choosePredrawnButton, chooseCustomRect
 
 def setupDarkFade():
     darken = pygame.Surface((w,w), pygame.SRCALPHA)
@@ -300,19 +300,19 @@ def setupDarkFade():
     return darken, opacity, fade, fadeo
 
 def setupEndScreen():
-    yesRect = pygame.Rect(0,0,w*0.3,w*0.1)
-    yesRect.centerx = w*0.3
-    yesRect.centery = w*0.7
+    yesButton = Button("text", w*0.3, w*0.1, "#9ebd73", 
+                       border_radius=20, centerx=w*0.3, centery=w*0.7, 
+                       text=Text("Yes", "#344024", 48), hoverSize=56)
 
-    noRect = pygame.Rect(0,0,w*0.3,w*0.1)
-    noRect.centerx = w*0.7
-    noRect.centery = w*0.7
+    noButton = Button("text", w*0.3, w*0.1, "#bd7573", 
+                      border_radius=20, centerx=w*0.7, centery=w*0.7, 
+                      text=Text("No", "#402424", 48), hoverSize=56)
 
-    claimSanddollarRect = pygame.Rect(0,0,w*0.75,w*0.1)
-    claimSanddollarRect.centerx = w/2
-    claimSanddollarRect.centery = w*0.6
+    claimSanddollarButton = Button("text", w*0.75, w*0.1, "#9ebd73", 
+                                 border_radius=20, centerx=w*0.5, centery=w*0.6, 
+                                 text=Text("Yes", "#344024", 48), hoverSize=56)
 
-    return yesRect, noRect, claimSanddollarRect
+    return yesButton, noButton, claimSanddollarButton
 
 def setupGallery():
     galleryBg = pygame.Rect(0,0,w*0.9,w*0.9)
@@ -423,13 +423,6 @@ def setupOthers():
     return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors,\
         checkButtonRect, checkButtonImg
 
-def setupChange():
-    stage = "home" # index
-    r = json.loads(load_data("save"))
-    sanddollar = int(r["sanddollar"])
-
-    return stage, sanddollar
-
 def setup():
     if load_data("save") == None:
         save_data('{"sanddollar": 0, "gallery": "", "beach_bg": "", "inv": "", "beach_items": ""}', "save") # default save value
@@ -453,10 +446,10 @@ def setup():
         sanddollarRect, sanddollarImg,\
         shopButton, galleryButton, beachButton,\
         soundButtonRect, ogSoundImgs, soundImgs, soundOn,\
-        infoButtonRect, ogInfoImg, infoImg = setupHome()
+        infoButton = setupHome()
 
     # publish image yes no buttons
-    yesRect, noRect, claimSanddollarRect = setupEndScreen()
+    yesButton, noButton, claimSanddollarButton = setupEndScreen()
 
     # gallery stuff
     galleryBg, popupExitRect, galleryData,\
@@ -477,14 +470,16 @@ def setup():
         shopItemRects, shopItemImgs, ogShopItemImgs,\
         shopItemPrice = setupShop()
 
-    stage, sanddollar = setupChange()
+    stage = "home" # index
+    r = json.loads(load_data("save"))
+    sanddollar = int(r["sanddollar"])
 
     selecting, clickBg = -1, False
 
     shopSDAnimate, shopSDAnimateTxt,\
         scaling, rotating, ogRotation = 0, "", False, False, 0
 
-    choosePredrawnRect, chooseCustomRect = setupChooseSolve()
+    choosePredrawnButton, chooseCustomRect = setupChooseSolve()
 
     infoPageBg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/infoPage.png")), 
                                         (w*0.9,w*0.9))
@@ -508,11 +503,11 @@ def setup():
         cellTimers, boardSolution, boardSolving, boardRects,\
         infos, yinfoRects, xinfoRects,\
         darken, opacity, fade, fadeo,\
-        choosePredrawnRect, chooseCustomRect,\
+        choosePredrawnButton, chooseCustomRect,\
         playButton, drawButton, playBubble, drawBubble,\
         sanddollarRect, sanddollarImg,\
         shopButton, galleryButton, beachButton,\
-        yesRect, noRect, claimSanddollarRect,\
+        yesButton, noButton, claimSanddollarButton,\
         popupExitRect, galleryBg, galleryData,\
         galleryBigRects, gallerySmallRects,\
         galleryColors, galleryPage, FlipLeftRect, FlipRightRect,\
@@ -526,8 +521,7 @@ def setup():
         shopSDAnimate, shopSDAnimateTxt,\
         scaling, rotating, ogRotation,\
         soundButtonRect, ogSoundImgs, soundImgs, soundOn,\
-        infoButtonRect, ogInfoImg, infoImg,\
-        infoPageBg, infoPageBgBold, infoRect,\
+        infoButton, infoPageBg, infoPageBgBold, infoRect,\
         instructionPages, instructionPageNo,\
         XO, heartXOimg, heartRect
 
@@ -946,6 +940,8 @@ def exit_button(exitRect, clickSFX, stage, down, target):
     
     return stage
 
+# pages
+
 async def main():
     # acceleration: the acceleration of the animation before solving
     # galleryColors: holds data of the images in the gallery (which one is 0 or 1)
@@ -956,11 +952,11 @@ async def main():
         cellTimers, boardSolution, boardSolving, boardRects,\
         infos, yinfoRects, xinfoRects,\
         darken, opacity, fade, fadeo,\
-        choosePredrawnRect, chooseCustomRect,\
+        choosePredrawnButton, chooseCustomRect,\
         playButton, drawButton, playBubble, drawBubble,\
         sanddollarRect, sanddollarImg,\
         shopButton, galleryButton, beachButton,\
-        yesRect, noRect, claimSanddollarRect,\
+        yesButton, noButton, claimSanddollarButton,\
         popupExitRect, galleryBg, galleryData,\
         galleryBigRects, gallerySmallRects,\
         galleryColors, galleryPage, FlipLeftRect, FlipRightRect,\
@@ -974,8 +970,7 @@ async def main():
         shopSDAnimate, shopSDAnimateTxt,\
         scaling, rotating, ogRotation,\
         soundButtonRect, ogSoundImgs, soundImgs, soundOn,\
-        infoButtonRect, ogInfoImg, infoImg,\
-        infoPageBg, infoPageBgBold, infoRect,\
+        infoButton, infoPageBg, infoPageBgBold, infoRect,\
         instructionPages, instructionPageNo,\
         XO, heartXOimg, heartRect = setup()
 
@@ -1019,7 +1014,6 @@ async def main():
 
             if shopButton.get_pressed():
                 stage = "shop"
-                shopPage = 0
                 clickSFX.play()
             
             # gallery
@@ -1057,20 +1051,11 @@ async def main():
                                     soundButtonRect.centery-soundImgs.get_size()[1]/2))
 
             # info button
-            pygame.draw.rect(screen, (248, 250, 247), infoButtonRect, border_radius=20)
-
-            if infoButtonRect.collidepoint(pygame.mouse.get_pos()):
-                infoImg = pygame.transform.scale(ogInfoImg, (w*0.09, w*0.09))
-
-                if pygame.mouse.get_pressed()[0] and not down:
-                    stage = "info"
-                    clickSFX.play()
-
-            else:
-                infoImg = pygame.transform.scale(ogInfoImg, (w*0.08, w*0.08))
-            
-            screen.blit(infoImg, (infoButtonRect.centerx - infoImg.get_size()[0]/2,
-                                  infoButtonRect.centery-infoImg.get_size()[1]/2))
+            infoButton.draw()
+                        
+            if infoButton.get_pressed():
+                stage = "info"
+                clickSFX.play()
 
             # play button
             playButton.draw()
@@ -1177,6 +1162,7 @@ async def main():
                 
                 galleryData = saveR["gallery"].split("-")
 
+                # if there is IndexError here, check the save.txt
                 if galleryData != [""]:
                     data = ""
                     for i in range(len(galleryData)):
@@ -1192,7 +1178,7 @@ async def main():
                             data = PREDRAWN[int(galleryData[i])].split(" ")
                         else:
                             data = galleryR[int(galleryData[i])].split(" ")
-                        datasize = int(data[0])
+                        datasize = int(data[0]) # SMTH WRONG HERE HELPPPPP
                         data = data[1]
 
                         dataW = (galleryBigRects[-1].w - w*0.02)/datasize
@@ -1684,31 +1670,22 @@ async def main():
         
         elif stage == "choose-solve": # screen to chose to play custom drawn or pr-drawn
             # pre-drawn button
-            pygame.draw.rect(screen, (66, 99, 52), choosePredrawnRect, border_radius=20)
+            choosePredrawnButton.draw()
 
-            if choosePredrawnRect.collidepoint(pygame.mouse.get_pos()):
-                text = pygame.font.Font(FONT, 72).render("Pre-drawn", True, (171, 204, 157))
-                textpos = text.get_rect(centerx=choosePredrawnRect.centerx, centery=choosePredrawnRect.centery)
-                screen.blit(text, textpos)
-
-                screen.blit(playBubble, (w*0.2, choosePredrawnRect.y - w*0.2))
+            if choosePredrawnButton.rect.collidepoint(pygame.mouse.get_pos()):
+                screen.blit(playBubble, (w*0.2, choosePredrawnButton.y - w*0.2))
 
                 text = pygame.font.Font(FONT, 24).render("Solve a pre-drawn nonogram", True, (51, 66, 44))
-                textpos = text.get_rect(centerx=w/2, centery=choosePredrawnRect.y - w*0.15)
+                textpos = text.get_rect(centerx=w/2, centery=choosePredrawnButton.y - w*0.15)
                 screen.blit(text, textpos)
 
                 text = pygame.font.Font(FONT, 24).render("Earn sand dollars", True, (51, 66, 44))
-                textpos = text.get_rect(centerx=w/2, centery=choosePredrawnRect.y - w*0.1)
+                textpos = text.get_rect(centerx=w/2, centery=choosePredrawnButton.y - w*0.1)
                 screen.blit(text, textpos)
 
                 if pygame.mouse.get_pressed()[0] and not down:
                     stage = "animation-for-solve get-from-gallery pre-drawn"
                     clickSFX.play()
-
-            else:
-                text = pygame.font.Font(FONT, 64).render("Pre-drawn", True, (171, 204, 157))
-                textpos = text.get_rect(centerx=choosePredrawnRect.centerx, centery=choosePredrawnRect.centery)
-                screen.blit(text, textpos)
 
             # custom button
             pygame.draw.rect(screen, (171, 204, 157), chooseCustomRect, border_radius=20)
@@ -1924,12 +1901,11 @@ async def main():
 
             if opacity >= 127:
                 if len(stage.split()) > 1 and stage.split()[1] == "earn-sanddollar":
-                    pygame.draw.rect(screen, (158, 189, 115), claimSanddollarRect, border_radius=20)
-                    text = pygame.font.Font(FONT, 48).render(f"Claim sand dollar {earndollar}x", True, (52, 64, 36))
-                    textpos = text.get_rect(centerx=claimSanddollarRect.centerx, centery=claimSanddollarRect.centery)
-                    screen.blit(text, textpos)
+                    claimSanddollarButton.text.modify(text=f"Claim sand dollar {earndollar}x")
+                    claimSanddollarButton.hoverText.modify(text=f"Claim sand dollar {earndollar}x")
+                    claimSanddollarButton.draw()
 
-                    if claimSanddollarRect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
+                    if claimSanddollarButton.get_pressed():
                         clickSFX.play()
                         sanddollar += earndollar
 
@@ -1952,17 +1928,9 @@ async def main():
                     textpos = text.get_rect(centerx=w/2, centery=w*0.55)
                     screen.blit(text, textpos)
 
-                    pygame.draw.rect(screen, (158, 189, 115), yesRect, border_radius=20)
-                    text = pygame.font.Font(FONT, 48).render("Yes", True, (52, 64, 36))
-                    textpos = text.get_rect(centerx=yesRect.centerx, centery=yesRect.centery)
-                    screen.blit(text, textpos)
+                    yesButton.draw()
 
-                    pygame.draw.rect(screen, (189, 117, 115), noRect, border_radius=20)
-                    text = pygame.font.Font(FONT, 48).render("No", True, (52, 64, 36))
-                    textpos = text.get_rect(centerx=noRect.centerx, centery=noRect.centery)
-                    screen.blit(text, textpos)
-
-                    if yesRect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
+                    if yesButton.get_pressed():
                         clickSFX.play()
                         r = load_data("gallery").strip()
 
@@ -1988,8 +1956,10 @@ async def main():
                         solveNext = -1
 
                         stage = "reset"
+
+                    noButton.draw()
                     
-                    if noRect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
+                    if noButton.get_pressed():
                         clickSFX.play()
                         stage = "reset"
 
