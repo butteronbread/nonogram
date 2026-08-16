@@ -328,17 +328,17 @@ def setupGallery():
 
     galleryPage = 0
 
-    FlipLeftRect = pygame.Rect(0,0,w*0.1,w*0.15)
-    FlipLeftRect.centerx = w*0.125
-    FlipLeftRect.centery = w*0.5
+    flipLeftButton = Button("text", w*0.1, w*0.15, "#5b6b4f", 
+                            border_radius=20, centerx=w*0.125, centery=w*0.5, 
+                            text=Text("<", "#ffffff", 64), hoverSize=96)
 
-    FlipRightRect = pygame.Rect(0,0,w*0.1,w*0.15)
-    FlipRightRect.centerx = w*0.875
-    FlipRightRect.centery = w*0.5
+    flipRightButton = Button("text", w*0.1, w*0.15, "#5b6b4f", 
+                            border_radius=20, centerx=w*0.875, centery=w*0.5, 
+                            text=Text(">", "#ffffff", 64), hoverSize=96)
 
     return galleryBg, popupExitRect, galleryData,\
         galleryBigRects, gallerySmallRects, galleryColors,\
-            solveNext, galleryPage, FlipLeftRect, FlipRightRect
+            solveNext, galleryPage, flipLeftButton, flipRightButton
 
 def setupBeach():
     beachBgImgs = [pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/backgrounds/1.png")), (w,w)),
@@ -399,9 +399,15 @@ def setupShop():
 
     return shopBg, shopPage, shopItemRects, shopItemImgs, ogShopItemImgs, shopItemPrice
 
-def setupOthers():
-    size = 15 # pixels for the drawing width and height
+def setup():
+    if load_data("save") == None:
+        save_data('{"sanddollar": 0, "gallery": "", "beach_bg": "", "inv": "", "beach_items": ""}', "save") # default save value
+    if load_data("gallery") == None:
+        save_data(" ", "gallery")
 
+    # general purpose
+    size = 15 # pixels for the drawing width and height
+    
     gap = w*0.122
     cellW = math.floor((w-gap)/size) # gap of 3 on top and left for numbers
 
@@ -414,23 +420,7 @@ def setupOthers():
     solveDown = False
 
     colors = ((185, 191, 153), # not filled
-              (75, 83, 32)) # filled and not filled nonogram colors
-
-    checkButtonRect = pygame.Rect(gap*0.1, gap*0.1, gap*0.8, gap*0.8)
-    checkButtonImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/check.png")), 
-                                            (gap*0.8, gap*0.8))
-
-    return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors,\
-        checkButtonRect, checkButtonImg
-
-def setup():
-    if load_data("save") == None:
-        save_data('{"sanddollar": 0, "gallery": "", "beach_bg": "", "inv": "", "beach_items": ""}', "save") # default save value
-    if load_data("gallery") == None:
-        save_data(" ", "gallery")
-
-    size, gap, cellW, hp, offset, acceleration, down, solveDown, colors,\
-        checkButtonRect, checkButtonImg = setupOthers()
+                (75, 83, 32)) # filled and not filled nonogram colors
 
     crossImg, cellTimers = setupPlayAnimations(cellW, size)
 
@@ -455,7 +445,7 @@ def setup():
     galleryBg, popupExitRect, galleryData,\
         galleryBigRects, gallerySmallRects,\
         galleryColors, solveNext, galleryPage,\
-        FlipLeftRect, FlipRightRect = setupGallery()
+        flipLeftButton, flipRightButton = setupGallery()
 
     # beach stuff
     beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg,\
@@ -498,6 +488,10 @@ def setup():
                   "X": pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/heartX.png")), (gap, gap))}
     heartRect = pygame.Rect(0,0,gap,gap)
 
+    checkButtonRect = pygame.Rect(gap*0.1, gap*0.1, gap*0.8, gap*0.8)
+    checkButtonImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/check.png")), 
+                                            (gap*0.8, gap*0.8))
+
     return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, solveNext,\
         checkButtonRect, checkButtonImg, crossImg,\
         cellTimers, boardSolution, boardSolving, boardRects,\
@@ -510,7 +504,7 @@ def setup():
         yesButton, noButton, claimSanddollarButton,\
         popupExitRect, galleryBg, galleryData,\
         galleryBigRects, gallerySmallRects,\
-        galleryColors, galleryPage, FlipLeftRect, FlipRightRect,\
+        galleryColors, galleryPage, flipLeftButton, flipRightButton,\
         beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg,\
         mainExitRect, addButtonRect, trashButtonRect, trashImgs,\
         addBg, posOffset, shopBg, shopPage,\
@@ -940,6 +934,23 @@ def exit_button(exitRect, clickSFX, stage, down, target):
     
     return stage
 
+def flip_page(changePage, maxPages, flipRightButton, flipLeftButton, sfx, down, show=False):
+    if changePage > 0 or show:
+        flipLeftButton.draw()
+
+        if flipLeftButton.get_pressed() and not down:
+            changePage -= 1
+            sfx.play()
+
+    if changePage < maxPages or show:
+        flipRightButton.draw()
+
+        if flipRightButton.get_pressed() and not down:
+            changePage += 1
+            sfx.play()
+
+    return changePage
+
 # pages
 
 async def main():
@@ -959,7 +970,7 @@ async def main():
         yesButton, noButton, claimSanddollarButton,\
         popupExitRect, galleryBg, galleryData,\
         galleryBigRects, gallerySmallRects,\
-        galleryColors, galleryPage, FlipLeftRect, FlipRightRect,\
+        galleryColors, galleryPage, flipLeftButton, flipRightButton,\
         beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg,\
         mainExitRect, addButtonRect, trashButtonRect, trashImgs,\
         addBg, posOffset, shopBg, shopPage,\
@@ -1113,37 +1124,8 @@ async def main():
             
             screen.blit(instructionPages[instructionPageNo], (w*0.05,w*0.05))
 
-            if instructionPageNo > 0:
-                pygame.draw.rect(screen, (91, 107, 79), FlipLeftRect, border_radius=20)
-
-                if FlipLeftRect.collidepoint(pygame.mouse.get_pos()):
-                    text = pygame.font.Font(FONT, 96).render("<", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipLeftRect.centerx, centery=FlipLeftRect.centery)
-                    screen.blit(text, textpos)
-
-                    if pygame.mouse.get_pressed()[0] and not down:
-                        instructionPageNo -= 1
-                        flipSFX.play()
-                else:
-                    text = pygame.font.Font(FONT, 64).render("<", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipLeftRect.centerx, centery=FlipLeftRect.centery)
-                    screen.blit(text, textpos)
-
-            if instructionPageNo < len(instructionPages)-1:
-                pygame.draw.rect(screen, (91, 107, 79), FlipRightRect, border_radius=20)
-
-                if FlipRightRect.collidepoint(pygame.mouse.get_pos()):
-                    text = pygame.font.Font(FONT, 96).render(">", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipRightRect.centerx, centery=FlipRightRect.centery)
-                    screen.blit(text, textpos)
-
-                    if pygame.mouse.get_pressed()[0] and not down:
-                        instructionPageNo += 1
-                        flipSFX.play()
-                else:
-                    text = pygame.font.Font(FONT, 64).render(">", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipRightRect.centerx, centery=FlipRightRect.centery)
-                    screen.blit(text, textpos)
+            instructionPageNo = flip_page(instructionPageNo, len(instructionPages)-1, 
+                                          flipRightButton, flipLeftButton, flipSFX, down)
 
             stage = exit_button(popupExitRect, clickSFX, stage, down, "info")
 
@@ -1220,43 +1202,8 @@ async def main():
                             pygame.draw.rect(screen, colors[int(galleryColors[y][x])], 
                                              gallerySmallRects[y][x])
 
-            # flip page - if theres more left on the left side
-            if galleryPage > 0:
-                pygame.draw.rect(screen, (91, 107, 79), FlipLeftRect, border_radius=20)
-
-                if FlipLeftRect.collidepoint(pygame.mouse.get_pos()):
-                    text = pygame.font.Font(FONT, 96).render("<", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipLeftRect.centerx, 
-                                            centery=FlipLeftRect.centery)
-                    screen.blit(text, textpos)
-
-                    if pygame.mouse.get_pressed()[0] and not down:
-                        galleryPage -= 1
-                        flipSFX.play()
-                else:
-                    text = pygame.font.Font(FONT, 64).render("<", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipLeftRect.centerx, 
-                                            centery=FlipLeftRect.centery)
-                    screen.blit(text, textpos)
-
-            # flip page - if theres more left on the right side
-            if galleryPage < (len(galleryBigRects)-1)//4:
-                pygame.draw.rect(screen, (91, 107, 79), FlipRightRect, border_radius=20)
-
-                if FlipRightRect.collidepoint(pygame.mouse.get_pos()):
-                    text = pygame.font.Font(FONT, 96).render(">", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipRightRect.centerx, 
-                                            centery=FlipRightRect.centery)
-                    screen.blit(text, textpos)
-
-                    if pygame.mouse.get_pressed()[0] and not down:
-                        galleryPage += 1
-                        flipSFX.play()
-                else:
-                    text = pygame.font.Font(FONT, 64).render(">", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipRightRect.centerx, 
-                                            centery=FlipRightRect.centery)
-                    screen.blit(text, textpos)
+            galleryPage = flip_page(galleryPage, (len(galleryBigRects)-1)//4, 
+                                    flipRightButton, flipLeftButton, flipSFX, down)
 
             stage = exit_button(popupExitRect, clickSFX, stage, down, "home")
 
@@ -1306,43 +1253,8 @@ async def main():
                                             centery=shopItemRects[i].centery + w*0.1)
                     screen.blit(text, textpos)
 
-            # flip page - check for more on left side
-            if shopPage > 0:
-                pygame.draw.rect(screen, (91, 107, 79), FlipLeftRect, border_radius=20)
-
-                if FlipLeftRect.collidepoint(pygame.mouse.get_pos()):
-                    text = pygame.font.Font(FONT, 96).render("<", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipLeftRect.centerx, 
-                                            centery=FlipLeftRect.centery)
-                    screen.blit(text, textpos)
-
-                    if pygame.mouse.get_pressed()[0] and not down:
-                        shopPage -= 1
-                        flipSFX.play()
-                else:
-                    text = pygame.font.Font(FONT, 64).render("<", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipLeftRect.centerx, 
-                                            centery=FlipLeftRect.centery)
-                    screen.blit(text, textpos)
-
-            # flip page - check for more on right side
-            if shopPage < (len(shopItemRects)-1)//4:
-                pygame.draw.rect(screen, (91, 107, 79), FlipRightRect, border_radius=20)
-
-                if FlipRightRect.collidepoint(pygame.mouse.get_pos()):
-                    text = pygame.font.Font(FONT, 96).render(">", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipRightRect.centerx, 
-                                            centery=FlipRightRect.centery)
-                    screen.blit(text, textpos)
-
-                    if pygame.mouse.get_pressed()[0] and not down:
-                        shopPage += 1
-                        flipSFX.play()
-                else:
-                    text = pygame.font.Font(FONT, 64).render(">", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipRightRect.centerx, 
-                                            centery=FlipRightRect.centery)
-                    screen.blit(text, textpos)
+            shopPage = flip_page(shopPage, (len(shopItemRects)-1)//4, 
+                                 flipRightButton, flipLeftButton, flipSFX, down)
 
             # display sand dollars
             sanddollarRect = pygame.Rect(w*0.04, w*0.02, w*0.35, w*0.1)
@@ -1378,41 +1290,9 @@ async def main():
 
         elif stage == "pick-beach": # startup screen to pick what beach background you want
             screen.blit(beachBgImgs[beachBgNo], (0,0))
-            
-            pygame.draw.rect(screen, (91, 107, 79), FlipLeftRect, border_radius=20)
 
-            # flip pages
-            if FlipLeftRect.collidepoint(pygame.mouse.get_pos()):
-                text = pygame.font.Font(FONT, 96).render("<", True, (255,255,255))
-                textpos = text.get_rect(centerx=FlipLeftRect.centerx, 
-                                        centery=FlipLeftRect.centery)
-                screen.blit(text, textpos)
-
-                if pygame.mouse.get_pressed()[0] and not down:
-                    beachBgNo -= 1
-                    flipSFX.play()
-            else:
-                text = pygame.font.Font(FONT, 64).render("<", True, (255,255,255))
-                textpos = text.get_rect(centerx=FlipLeftRect.centerx, 
-                                        centery=FlipLeftRect.centery)
-                screen.blit(text, textpos)
-
-            pygame.draw.rect(screen, (91, 107, 79), FlipRightRect, border_radius=20)
-
-            if FlipRightRect.collidepoint(pygame.mouse.get_pos()):
-                text = pygame.font.Font(FONT, 96).render(">", True, (255,255,255))
-                textpos = text.get_rect(centerx=FlipRightRect.centerx, 
-                                        centery=FlipRightRect.centery)
-                screen.blit(text, textpos)
-
-                if pygame.mouse.get_pressed()[0] and not down:
-                    beachBgNo += 1
-                    flipSFX.play()
-            else:
-                text = pygame.font.Font(FONT, 64).render(">", True, (255,255,255))
-                textpos = text.get_rect(centerx=FlipRightRect.centerx, 
-                                        centery=FlipRightRect.centery)
-                screen.blit(text, textpos)
+            beachBgNo = flip_page(beachBgNo, 3, 
+                                flipRightButton, flipLeftButton, flipSFX, down, show=True)
             
             beachBgNo = beachBgNo % 3
 
@@ -1563,43 +1443,8 @@ async def main():
                                     (addItemRects[i].centerx-w*0.075, 
                                      addItemRects[i].centery-w*0.075))
 
-            # flip page - check for more on left side
-            if addPage > 0:
-                pygame.draw.rect(screen, (91, 107, 79), FlipLeftRect, border_radius=20)
-
-                if FlipLeftRect.collidepoint(pygame.mouse.get_pos()):
-                    text = pygame.font.Font(FONT, 96).render("<", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipLeftRect.centerx, 
-                                            centery=FlipLeftRect.centery)
-                    screen.blit(text, textpos)
-
-                    if pygame.mouse.get_pressed()[0] and not down:
-                        addPage -= 1
-                        flipSFX.play()
-                else:
-                    text = pygame.font.Font(FONT, 64).render("<", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipLeftRect.centerx, 
-                                            centery=FlipLeftRect.centery)
-                    screen.blit(text, textpos)
-
-            # flip page - check for more on right side
-            if addPage < (len(addData)-1)//9:
-                pygame.draw.rect(screen, (91, 107, 79), FlipRightRect, border_radius=20)
-
-                if FlipRightRect.collidepoint(pygame.mouse.get_pos()):
-                    text = pygame.font.Font(FONT, 96).render(">", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipRightRect.centerx, 
-                                            centery=FlipRightRect.centery)
-                    screen.blit(text, textpos)
-
-                    if pygame.mouse.get_pressed()[0] and not down:
-                        addPage += 1
-                        flipSFX.play()
-                else:
-                    text = pygame.font.Font(FONT, 64).render(">", True, (255,255,255))
-                    textpos = text.get_rect(centerx=FlipRightRect.centerx, 
-                                            centery=FlipRightRect.centery)
-                    screen.blit(text, textpos)
+            addPage = flip_page(addPage, (len(addData)-1)//9, 
+                                flipRightButton, flipLeftButton, flipSFX, down)
 
             if key[pygame.K_LEFT] and addPage > 0 and not down:
                 addPage -= 1
