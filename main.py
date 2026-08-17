@@ -480,7 +480,7 @@ def setup():
     infoRect = pygame.Rect(166, 236, 160, 30)
 
     instructionPages = []
-    for i in range(3):
+    for i in range(7):
         instructionPages.append(pygame.transform.scale(pygame.image.load(
             os.path.join(DIRECTORY, f"assets/images/infos/{i}.png")), (w*0.9,w*0.9)))
     instructionPageNo = 0
