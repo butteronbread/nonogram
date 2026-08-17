@@ -1,6 +1,11 @@
 # Changelog
 
-## [1.2.6] - 2026-08-16
+## [1.2.7] - 2026-08-17
+
+### Changed
+- More detailed instructions page to make it clearer how to play nonograms
+
+## [1.2.6] - 2026-08-17
 
 ### Added
 - `Button` class that handles drawing, clicking, hover animation, and modification of buttons, including 2 modes - image and text
