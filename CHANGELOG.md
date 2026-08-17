@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.2.6] - 2026-08-16
+
+### Added
+- `Button` class that handles drawing, clicking, hover animation, and modification of buttons, including 2 modes - image and text
+- `Text` class, used in all text and the `Button` class for text mode
+- `flip_page` function to handle all page flipping, used in `instructions`, `gallery`, `shop`, `add`, and `pick-beach`
+- `check_info_done` function that runs every time the state on the board is changed while solving
+  - Checks if that clue has been fufilled
+  - If it has, the color of the number will be darker on the display
+
+### Changed
+- Swapped beach ball and shell image in shop to a better drawing
+- Modified `draw_info` to accomodate darker clues if it is finished
+- Drawing nonograms is mobile friendly - replaced double click to erase with click again
+  - If it starts the stroke on an empty cell, the rest of that stroke will erase any filled cells. Vice versa for filled cells
+
 ## [1.2.5] — 2026-08-11
 
 ### Changed

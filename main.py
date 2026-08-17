@@ -494,7 +494,10 @@ def setup():
     checkButtonImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/check.png")), 
                                             (gap*0.8, gap*0.8))
 
-    return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, solveNext,\
+    drawMode = 1
+
+    return size, gap, cellW, hp, drawMode,\
+        offset, acceleration, down, solveDown, colors, solveNext,\
         checkButtonRect, checkButtonImg, crossImg,\
         cellTimers, boardSolution, boardSolving, boardRects,\
         infos, yinfoRects, xinfoRects, infoDone,\
@@ -688,31 +691,44 @@ def check_info_done(infoDone, boardSolving, boardSolution, infos):
 
     # rows
     # getting data
-    markers = [] # 1d: every row, 2d: every run, 3d: start, end pos
+    markers = {"x": [], "y": []} # 1d: every row, 2d: every run, 3d: start, end pos
     start = None
     end = None
-    for y in range(size):
-        markers.append([])
-        for x in range(size):
-            if boardSolution[y][x] == 1 and (x == 0 or boardSolution[y][x-1] == 0):
-                start = x
-            if boardSolution[y][x] == 1 and (x == size-1 or boardSolution[y][x+1] == 0):
-                end = x
+    for xy in ["x", "y"]:
+        for a1 in range(size): # axis 1 (x or y)
+            markers[xy].append([])
+            for a2 in range(size): # axis 2
+                if xy == "y":
+                    # a1 = row (y), a2 = col (x)
+                    if boardSolution[a1][a2] == 1 and (a2 == 0 or boardSolution[a1][a2-1] == 0):
+                        start = a2
+                    if boardSolution[a1][a2] == 1 and (a2 == size-1 or boardSolution[a1][a2+1] == 0):
+                        end = a2
+                else:
+                    # a1 = col (x), a2 = row (y)
+                    if boardSolution[a2][a1] == 1 and (a2 == 0 or boardSolution[a2-1][a1] == 0):
+                        start = a2
+                    if boardSolution[a2][a1] == 1 and (a2 == size-1 or boardSolution[a2+1][a1] == 0):
+                        end = a2
 
-            if start != None and end != None:
-                markers[y].append([start, end])
-                start, end = None, None
+                if start is not None and end is not None:
+                    markers[xy][a1].append([start, end])
+                    start, end = None, None
 
     # applying data
-    for y in range(size):
-        for run in range(len(markers[y])):
-            done = True
-            for x in range(markers[y][run][0], markers[y][run][1] + 1):
-                if boardSolving[y][x] == 0:
-                    done = False
+    for xy in ["y", "x"]:
+        for a1 in range(size):
+            for run in range(len(markers[xy][a1])):
+                done = True
+                for a2 in range(markers[xy][a1][run][0], markers[xy][a1][run][1] + 1):
+                    # "y": a1 is row (y) and a2 is col (x)
+                    # "x": a1 is col (x) and a2 is row (y)
+                    row, col = (a1, a2) if xy == "y" else (a2, a1)
+                    
+                    if boardSolving[row][col] == 0:
+                        done = False
 
-            if done:
-                infoDone["y"][y][run] = True
+                infoDone[xy][a1][run] = done
     
     return infoDone
 
@@ -1005,7 +1021,8 @@ async def main():
     # galleryColors: holds data of the images in the gallery (which one is 0 or 1)
     # clickBg: if the background is selected to unselect items on the beach
 
-    size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, solveNext,\
+    size, gap, cellW, hp, drawMode,\
+        offset, acceleration, down, solveDown, colors, solveNext,\
         checkButtonRect, checkButtonImg, crossImg,\
         cellTimers, boardSolution, boardSolving, boardRects,\
         infos, yinfoRects, xinfoRects, infoDone,\
@@ -1549,10 +1566,10 @@ async def main():
             for y in range(size):
                 for x in range(size):
                     if boardRects[y][x].collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
-                        boardSolution[y][x] = 1
+                        if not down:
+                            drawMode = int(not boardSolution[y][x])
 
-                    if boardRects[y][x].collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[2]:
-                        boardSolution[y][x] = 0
+                        boardSolution[y][x] = drawMode
             
             # done
             if checkButtonRect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
