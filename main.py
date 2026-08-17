@@ -1,4 +1,5 @@
 import pygame, math, random, asyncio, platform, os, time, json
+from copy import deepcopy
 
 w = 720
 
@@ -222,6 +223,7 @@ def setupPlayAnimations(cellW, size):
 
 def setupInfo(size, gap, cellW): # clues for nonogram
     infos = {"x": [], "y": []}
+    infoDone = {"x": [], "y": []}
 
     yinfoRects = []
     for y in range(size):
@@ -231,7 +233,7 @@ def setupInfo(size, gap, cellW): # clues for nonogram
     for x in range(size):
         xinfoRects.append(pygame.Rect(gap+cellW*x+3, 0, cellW-6, gap))
     
-    return infos, yinfoRects, xinfoRects
+    return infos, yinfoRects, xinfoRects, infoDone
 
 def setupHome():
     playButton = Button("text", w*0.4, w*0.15, "#426334", 
@@ -426,7 +428,7 @@ def setup():
 
     boardSolution, boardSolving, boardRects = setupBoards(size, cellW, gap)
 
-    infos, yinfoRects, xinfoRects = setupInfo(size, gap, cellW)
+    infos, yinfoRects, xinfoRects, infoDone = setupInfo(size, gap, cellW)
 
     darken, opacity, fade, fadeo = setupDarkFade()
 
@@ -495,7 +497,7 @@ def setup():
     return size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, solveNext,\
         checkButtonRect, checkButtonImg, crossImg,\
         cellTimers, boardSolution, boardSolving, boardRects,\
-        infos, yinfoRects, xinfoRects,\
+        infos, yinfoRects, xinfoRects, infoDone,\
         darken, opacity, fade, fadeo,\
         choosePredrawnButton, chooseCustomRect,\
         playButton, drawButton, playBubble, drawBubble,\
@@ -525,6 +527,7 @@ def setup():
 
 def drawBoard(size, screen, colors, board, gap, w, cellW, boardRects, crossImg, cellTimers):
     """Draw the nonogram board, including filled cells, empty cells, crossed out cells, and wrong cells with animations."""
+    # 0 = empty, 1 = filled, 2 = crossed out, 2 < x < 3 = animation for crossed out, 3 = wrong
 
     for y in range(size):
         for x in range(size):
@@ -539,7 +542,7 @@ def drawBoard(size, screen, colors, board, gap, w, cellW, boardRects, crossImg, 
                     cellTimers[y][x] = 0
                     board[y][x] = 0
 
-            elif 3 > board[y][x] > 2: # animation for crossed out (range = 3.9 -> 3.1)
+            elif 3 > board[y][x] > 2: # animation for crossed out (range = 2.9 -> 2.1)
                 pygame.draw.rect(screen, colors[0], boardRects[y][x])
                 newW = (3 - board[y][x]) * cellW
                 screen.blit(pygame.transform.scale(crossImg, (newW, newW)), (boardRects[y][x].x + (cellW - newW)/2, boardRects[y][x].y + (cellW - newW)/2))
@@ -578,35 +581,34 @@ def drawBoard(size, screen, colors, board, gap, w, cellW, boardRects, crossImg, 
         lineEnd = (gap + cellW*x, w)
         pygame.draw.line(screen, (36,51,5), lineStart, lineEnd, 4)
 
-def addInfo(size, infos, boardSolution, boardSolving):
+def addInfo(size, infos, boardSolution, boardSolving, infoDone):
     # info stuff checking stuff
 
-    # Bug fixed: Clearing lists so that old data doesn't persist
-    infos["x"] = []
-    infos["y"] = []
     for xy in ["x", "y"]:
         for n in range(size): # n is each row/column
-            infos[xy].append("") # add empty string
+            infos[xy].append("")
+            infoDone[xy].append([])
             if xy == "x":
                 for y in range(size):
                     if boardSolution[y][n] == 0:
-                        infos[xy][n] += " " # if 0 then add space
+                        infos[xy][n] += " "
                     else:
-                        infos[xy][n] += "#" # if not then add #
+                        infos[xy][n] += "#"
             else:
                 for x in range(size):
                     if boardSolution[n][x] == 0:
-                        infos[xy][n] += " " # if 0 then add space
+                        infos[xy][n] += " "
                     else:
-                        infos[xy][n] += "#" # if not then add #
+                        infos[xy][n] += "#"
 
-            infos[xy][n] = infos[xy][n].split() # split string with spaces
+            infos[xy][n] = infos[xy][n].split()
             for i in range(len(infos[xy][n])):
-                infos[xy][n][i] = str(len(infos[xy][n][i])) # turn into list by finding length
+                infos[xy][n][i] = str(len(infos[xy][n][i]))
+                infoDone[xy][n].append(False)
 
-    return infos, boardSolving
+    return infos, boardSolving, infoDone
 
-def drawInfo(yinfoRects, xinfoRects, size, infos):
+def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone):
     # draw background for info
     for y in yinfoRects:
         pygame.draw.rect(screen, (52, 74, 36), y, border_top_left_radius=10, border_bottom_left_radius=10)
@@ -619,7 +621,11 @@ def drawInfo(yinfoRects, xinfoRects, size, infos):
     for xy in ["y", "x"]:
         for n in range(size):
             for i in range(len(infos[xy][n])):
-                text = pygame.font.Font(FONT, 24).render((infos[xy][n][i]), True, (255,255,255))
+                if infoDone[xy][n][i]:
+                    text = pygame.font.Font(FONT, 24).render((infos[xy][n][i]), True, "#80917a")
+                else:
+                    text = pygame.font.Font(FONT, 24).render((infos[xy][n][i]), True, "#ffffff")
+
                 # position of rect + width * multiplier depending on which one it is
                 if xy == "y":
                     textpos = text.get_rect(centerx = yinfoRects[n].x + yinfoRects[n].w * (i+0.5) / len(infos[xy][n]), 
@@ -668,6 +674,47 @@ def autoCross(boardSolving, boardSolution, size):
                     boardSolving[y][x] = 2.9
 
     return boardSolving
+
+def check_info_done(infoDone, boardSolving, boardSolution, infos):
+    size = len(boardSolution)
+
+    solving = deepcopy(boardSolving)
+    # processing data
+    # 0 = empty, 1 = filled, 2 = crossed out, 2 < x < 3 = animation for crossed out, 3 = wrong
+    for y in range(size):
+        for x in range(size):
+            if solving[y][x] >= 2: # make format match boardSolution
+                solving[y][x] = 0
+
+    # rows
+    # getting data
+    markers = [] # 1d: every row, 2d: every run, 3d: start, end pos
+    start = None
+    end = None
+    for y in range(size):
+        markers.append([])
+        for x in range(size):
+            if boardSolution[y][x] == 1 and (x == 0 or boardSolution[y][x-1] == 0):
+                start = x
+            if boardSolution[y][x] == 1 and (x == size-1 or boardSolution[y][x+1] == 0):
+                end = x
+
+            if start != None and end != None:
+                markers[y].append([start, end])
+                start, end = None, None
+
+    # applying data
+    for y in range(size):
+        for run in range(len(markers[y])):
+            done = True
+            for x in range(markers[y][run][0], markers[y][run][1] + 1):
+                if boardSolving[y][x] == 0:
+                    done = False
+
+            if done:
+                infoDone["y"][y][run] = True
+    
+    return infoDone
 
 # beach functions
 
@@ -961,7 +1008,7 @@ async def main():
     size, gap, cellW, hp, offset, acceleration, down, solveDown, colors, solveNext,\
         checkButtonRect, checkButtonImg, crossImg,\
         cellTimers, boardSolution, boardSolving, boardRects,\
-        infos, yinfoRects, xinfoRects,\
+        infos, yinfoRects, xinfoRects, infoDone,\
         darken, opacity, fade, fadeo,\
         choosePredrawnButton, chooseCustomRect,\
         playButton, drawButton, playBubble, drawBubble,\
@@ -1511,7 +1558,7 @@ async def main():
             if checkButtonRect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
                 stage = "animation-for-solve"
 
-                infos, boardSolving = addInfo(size, infos, boardSolution, boardSolving)
+                infos, boardSolving, infoDone = addInfo(size, infos, boardSolution, boardSolving, infoDone)
         
         elif stage == "choose-solve": # screen to chose to play custom drawn or pr-drawn
             # pre-drawn button
@@ -1594,7 +1641,7 @@ async def main():
                     for x in range(size):
                         boardSolution[y][x] = int(r[y*size+x])
                 
-                infos, boardSolving = addInfo(size, infos, boardSolution, boardSolving)
+                infos, boardSolving, infoDone = addInfo(size, infos, boardSolution, boardSolving, infoDone)
 
                 stage = stage.split()
                 stage[1] = "earn-sanddollar"
@@ -1608,7 +1655,7 @@ async def main():
             textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
             screen.blit(text, textpos)
 
-            drawInfo(yinfoRects, xinfoRects, size, infos)
+            drawInfo(yinfoRects, xinfoRects, size, infos, infoDone)
 
             screen.blit(fade, (0,0))
 
@@ -1633,7 +1680,7 @@ async def main():
             textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
             screen.blit(text, textpos)
 
-            drawInfo(yinfoRects, xinfoRects, size, infos)
+            drawInfo(yinfoRects, xinfoRects, size, infos, infoDone)
 
             fade.fill((0, 0, 0, fadeo))
             screen.blit(fade, (0,0))
@@ -1658,34 +1705,33 @@ async def main():
                     XO = "X"
                 clickSFX.play()
 
-            drawInfo(yinfoRects, xinfoRects, size, infos)
+            drawInfo(yinfoRects, xinfoRects, size, infos, infoDone)
             
             # check for fill
             for y in range(size):
                 for x in range(size):
                     if boardRects[y][x].collidepoint(pygame.mouse.get_pos())\
-                        and pygame.mouse.get_pressed()[0]\
-                            and (boardSolving[y][x] == 0 or boardSolving[y][x] == 3)\
-                                and not solveDown and XO == "O":
-                        if boardSolution[y][x] == 1:
-                            boardSolving[y][x] = 1
-                        else:
-                            boardSolving[y][x] = 3
-                            cellTimers[y][x] = 60
-                            hp -= 8
-                            solveDown = True
+                        and pygame.mouse.get_pressed()[0] and not solveDown:
+                            
+                            if (boardSolving[y][x] == 0 or boardSolving[y][x] == 3) and XO == "O":
+                                if boardSolution[y][x] == 1:
+                                    boardSolving[y][x] = 1
+                                else:
+                                    boardSolving[y][x] = 3
+                                    cellTimers[y][x] = 60
+                                    hp -= 8
+                                    solveDown = True
 
-                    if boardRects[y][x].collidepoint(pygame.mouse.get_pos())\
-                        and pygame.mouse.get_pressed()[0]\
-                            and (boardSolving[y][x] == 0 or boardSolving[y][x] == 3)\
-                                and not solveDown and XO == "X":
-                        if boardSolution[y][x] == 0:
-                            boardSolving[y][x] = 2.9
-                        else:
-                            boardSolving[y][x] = 3
-                            cellTimers[y][x] = 60
-                            hp -= 8
-                            solveDown = True
+                            if (boardSolving[y][x] == 0 or boardSolving[y][x] == 3) and XO == "X":
+                                if boardSolution[y][x] == 0:
+                                    boardSolving[y][x] = 2.9
+                                else:
+                                    boardSolving[y][x] = 3
+                                    cellTimers[y][x] = 60
+                                    hp -= 8
+                                    solveDown = True
+
+                            infoDone = check_info_done(infoDone, boardSolving, boardSolution, infos)
 
             text = pygame.font.Font(FONT, 32).render(str(hp)+"%", True, (247, 225, 237))
             textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
@@ -1814,7 +1860,7 @@ async def main():
             checkButtonRect = pygame.Rect(gap*0.1, gap*0.1, gap*0.8, gap*0.8)
 
             # info for the sides
-            infos, yinfoRects, xinfoRects = setupInfo(size, gap, cellW)
+            infos, yinfoRects, xinfoRects, infoDone = setupInfo(size, gap, cellW)
 
             # for win and loose and animation word screen
             darken = pygame.Surface((w,w), pygame.SRCALPHA)
