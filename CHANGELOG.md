@@ -1,11 +1,20 @@
 # Changelog
 
-## [1.2.7] - 2026-08-17
+## [1.2.6] - 2026-08-17
+
+### Added
+- When the player first enters the game, there is a dark overlay covering everything but instructions page
+  - This forces the user to look through how to play the game and nonogram mechanics
+  - The player is not allowed to click anything else before going into the instructions page
+  - Condition checked if `save.txt` exists
+- Clue dropdown
+  - If the column has more than 4 clues, there will be an openable dropdown
+  - This prevents overlapping of numbers
 
 ### Changed
 - More detailed instructions page to make it clearer how to play nonograms
 
-## [1.2.6] - 2026-08-17
+## [1.2.5] - 2026-08-17
 
 ### Added
 - `Button` class that handles drawing, clicking, hover animation, and modification of buttons, including 2 modes - image and text
@@ -21,7 +30,7 @@
 - Drawing nonograms is mobile friendly - replaced double click to erase with click again
   - If it starts the stroke on an empty cell, the rest of that stroke will erase any filled cells. Vice versa for filled cells
 
-## [1.2.5] — 2026-08-11
+## [1.2.4] — 2026-08-11
 
 ### Changed
 - Reorganized project into professional directory structure
@@ -42,7 +51,7 @@
 
 ---
 
-## [1.2.4] — 2026-08-10
+## [1.2.3] — 2026-08-10
 
 ### Added
 - **Auto-cross** — automatically crosses out empty cells in rows/columns that are already fully solved
@@ -53,7 +62,7 @@
 
 ---
 
-## [1.2.3] — 2026-08-10
+## [1.2.2] — 2026-08-10
 
 ### Changed
 - Introduced `DIRECTORY` constant using `os.path.dirname(__file__)` for reliable path resolution
@@ -62,7 +71,7 @@
 
 ---
 
-## [1.2.2] — 2026-08-08
+## [1.2.1] — 2026-08-08
 
 ### Changed
 - Refactored info/clue system to use a unified `infos` dictionary with `"x"` and `"y"` keys
@@ -71,7 +80,7 @@
 
 ---
 
-## [1.2.1] — 2026-08-08
+## [1.2.0] — 2026-08-08
 
 ### Changed
 - Extracted `addInfo()` into a standalone function for generating row/column clues
@@ -79,7 +88,7 @@
 
 ---
 
-## [1.2.0] — 2026-08-08
+## [1.1.5] — 2026-08-08
 
 ### Added
 - **Mobile-friendly toggle (XO mode)** — swap between cross ("X") and fill ("O") mode for touch-friendly gameplay
@@ -94,7 +103,7 @@
 
 ---
 
-## [1.1.6] — 2026-08-06
+## [1.1.4] — 2026-08-06
 
 ### Changed
 - Migrated save system from plain text to **JSON format** (`save.txt` now stores JSON)
@@ -102,16 +111,12 @@
 - Save data now uses structured keys: `sanddollar`, `gallery`, `beach_bg`, `inv`, `beach_items`
 - Updated all save/load calls throughout the codebase
 
----
-
-## [1.1.5] — 2026-08-06
-
 ### Fixed
 - Fixed beach item selection requiring mouse-down state check to prevent accidental selection
 
 ---
 
-## [1.1.4] — 2026-08-06
+## [1.1.3] — 2026-08-06
 
 ### Added
 - **Information page** — tutorial/help page with game instructions and nonogram-solving guide
@@ -125,7 +130,7 @@
 
 ---
 
-## [1.1.3] — 2026-08-06
+## [1.1.2] — 2026-08-06
 
 ### Added
 - **Pre-drawn nonogram library** — 9 built-in puzzles encoded as binary strings
@@ -134,7 +139,7 @@
 
 ---
 
-## [1.1.2] — 2026-08-06
+## [1.1.1] — 2026-08-06
 
 ### Added
 - **Sound toggle** — on/off button on home screen with `on.png` and `off.png` icons
@@ -143,7 +148,7 @@
 
 ---
 
-## [1.1.1] — 2026-08-06
+## [1.1.0] — 2026-08-06
 
 ### Added
 - **Rotate tool** — rotate placed beach items by dragging
@@ -155,29 +160,16 @@
 
 ---
 
-## [1.1.0] — 2026-05-22
+## [1.0.4] — 2026-05-18
 
 ### Changed
-- Renamed game from "Beach Bits" to **"Sand Grounds"**
+- Code cleanup
+- Minor bug fixes and adjustments
 - Major beach customization system rework
 
 ---
 
-## [1.0.6] — 2026-05-18
-
-### Changed
-- Minor bug fixes and cleanup
-
----
-
-## [1.0.5] — 2026-05-18
-
-### Changed
-- Code cleanup and minor adjustments
-
----
-
-## [1.0.4] — 2026-05-18
+## [1.0.3] — 2026-05-18
 
 ### Added
 - **Scale tool** — scale placed beach items by dragging
@@ -186,7 +178,7 @@
 
 ---
 
-## [1.0.3] — 2026-05-18
+## [1.0.2] — 2026-05-18
 
 ### Added
 - **Shop purchase animation** — sand dollar deduction animation when buying items
@@ -195,27 +187,22 @@
 
 ---
 
-## [1.0.2] — 2026-05-18
-
-### Changed
-- Moved all images into `imgs/` subdirectory (organized from root-level files)
-- Updated all image paths to use the new directory structure
-- Added scale and rotation image assets
-
----
-
-## [1.0.1] — 2026-03-30
+## [1.0.1] — 2026-05-18
 
 ### Added
 - **Cross mark rendering** — cells can now display cross marks to indicate "definitely empty"
 - Cross animation when marking cells
+
+### Changed
+- Moved all images into `imgs/` subdirectory (organized from root-level files)
+- Updated all image paths to use the new directory structure
 
 ---
 
 ## [1.0.0] — 2026-03-30
 
 ### Added
-- Initial release as **"Beach Bits"**
+- Initial release
 - Core nonogram puzzle gameplay (15×15 grid)
 - Drawing mode to create custom nonograms
 - Beach customization scene with background selection

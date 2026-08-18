@@ -669,11 +669,9 @@ def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSele
                     screen.blit(text, textpos)
 
                 if clueSelected == n:
-                    rect = pygame.Rect(xinfoRects[n].x, xinfoRects[n].y + xinfoRects[n].h - 10, # y: bottom edge - border radius
-                                       xinfoRects[n].w, xinfoRects[n].h * (len(infos[xy][n])-3) / 4 + 10)
-                    surf = pygame.Surface((rect.w, rect.h))
-
-                    pygame.draw.rect(surf, (52, 74, 36), rect,
+                    pygame.draw.rect(screen, (52, 74, 36), 
+                                     ( xinfoRects[n].x, xinfoRects[n].y + xinfoRects[n].h - 10, # y: bottom edge - border radius
+                                       xinfoRects[n].w, xinfoRects[n].h * (len(infos[xy][n])-3) / 4 + 10 ),
                                      border_top_left_radius=10, border_bottom_left_radius=10)
 
                     for i in range(len(infos[xy][n])-3):
@@ -685,12 +683,10 @@ def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSele
                         textpos = text.get_rect(centerx = xinfoRects[n].centerx, 
                                                 centery = xinfoRects[n].y + xinfoRects[n].h * (i+3.5) / 4)
     
-                        surf.blit(text, textpos)
+                        screen.blit(text, textpos)
 
-                    surf.blit(clueArrows["up"], (xinfoRects[n].centerx - clueArrows["down"].get_width()/2,
+                    screen.blit(clueArrows["up"], (xinfoRects[n].centerx - clueArrows["down"].get_width()/2,
                                                    xinfoRects[n].y + xinfoRects[n].h * len(infos[xy][n]) / 4))
-
-                    screen.blit(surf, (rect.x, rect.y))
                 else:
                     screen.blit(clueArrows["down"], (xinfoRects[n].centerx - clueArrows["down"].get_width()/2,
                                                      xinfoRects[n].y + xinfoRects[n].h * 3 / 4))
