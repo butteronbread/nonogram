@@ -402,8 +402,10 @@ def setupShop():
     return shopBg, shopPage, shopItemRects, shopItemImgs, ogShopItemImgs, shopItemPrice
 
 def setup():
+    tutorial = False
     if load_data("save") == None:
         save_data('{"sanddollar": 0, "gallery": "", "beach_bg": "", "inv": "", "beach_items": ""}', "save") # default save value
+        tutorial = True
     if load_data("gallery") == None:
         save_data(" ", "gallery")
 
@@ -496,11 +498,16 @@ def setup():
 
     drawMode = 1
 
+    clueArrows = {"down": pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/arrowDown.png")), ((cellW-6)*0.9, ((cellW-6)*0.9) * 0.6)),
+                  "up": pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/arrowUp.png")), ((cellW-6)*0.9, ((cellW-6)*0.9) * 0.6))}
+
+    clueSelected = None
+
     return size, gap, cellW, hp, drawMode,\
         offset, acceleration, down, solveDown, colors, solveNext,\
         checkButtonRect, checkButtonImg, crossImg,\
         cellTimers, boardSolution, boardSolving, boardRects,\
-        infos, yinfoRects, xinfoRects, infoDone,\
+        infos, yinfoRects, xinfoRects, infoDone, clueArrows, clueSelected,\
         darken, opacity, fade, fadeo,\
         choosePredrawnButton, chooseCustomRect,\
         playButton, drawButton, playBubble, drawBubble,\
@@ -522,7 +529,8 @@ def setup():
         soundButtonRect, ogSoundImgs, soundImgs, soundOn,\
         infoButton, infoPageBg, infoPageBgBold, infoRect,\
         instructionPages, instructionPageNo,\
-        XO, heartXOimg, heartRect
+        XO, heartXOimg, heartRect,\
+        tutorial
 
 # other functions
 
@@ -611,7 +619,16 @@ def addInfo(size, infos, boardSolution, boardSolving, infoDone):
 
     return infos, boardSolving, infoDone
 
-def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone):
+def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSelected, down):
+    # check which one selected
+    for i, info in enumerate(xinfoRects):
+        if info.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] and not down:
+            if clueSelected == i:
+                clueSelected = None
+            else:
+                clueSelected = i
+            break
+
     # draw background for info
     for y in yinfoRects:
         pygame.draw.rect(screen, (52, 74, 36), y, border_top_left_radius=10, border_bottom_left_radius=10)
@@ -623,20 +640,62 @@ def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone):
     # x: infos for columns (x stays same, y changes)
     for xy in ["y", "x"]:
         for n in range(size):
-            for i in range(len(infos[xy][n])):
-                if infoDone[xy][n][i]:
-                    text = pygame.font.Font(FONT, 24).render((infos[xy][n][i]), True, "#80917a")
-                else:
-                    text = pygame.font.Font(FONT, 24).render((infos[xy][n][i]), True, "#ffffff")
+            if (len(infos[xy][n]) < 5 and xy == "x") or xy == "y":
+                for i in range(len(infos[xy][n])):
+                    if infoDone[xy][n][i]:
+                        text = pygame.font.Font(FONT, 24).render((infos[xy][n][i]), True, "#80917a")
+                    else:
+                        text = pygame.font.Font(FONT, 24).render((infos[xy][n][i]), True, "#ffffff")
 
-                # position of rect + width * multiplier depending on which one it is
-                if xy == "y":
-                    textpos = text.get_rect(centerx = yinfoRects[n].x + yinfoRects[n].w * (i+0.5) / len(infos[xy][n]), 
-                                            centery = yinfoRects[n].centery)
-                else:
+                    # position of rect + width * multiplier depending on which one it is
+                    if xy == "y":
+                        textpos = text.get_rect(centerx = yinfoRects[n].x + yinfoRects[n].w * (i+0.5) / len(infos[xy][n]), 
+                                                centery = yinfoRects[n].centery)
+                    else:
+                        textpos = text.get_rect(centerx = xinfoRects[n].centerx, 
+                                                centery = xinfoRects[n].y + xinfoRects[n].h * (i+0.5) / len(infos[xy][n]))
+                    screen.blit(text, textpos)
+
+            else:
+                for i in range(3):
+                    if infoDone[xy][n][i]:
+                        text = pygame.font.Font(FONT, 24).render((infos[xy][n][i]), True, "#80917a")
+                    else:
+                        text = pygame.font.Font(FONT, 24).render((infos[xy][n][i]), True, "#ffffff")
+
                     textpos = text.get_rect(centerx = xinfoRects[n].centerx, 
-                                            centery = xinfoRects[n].y + xinfoRects[n].h * (i+0.5) / len(infos[xy][n]))
-                screen.blit(text, textpos)
+                                            centery = xinfoRects[n].y + xinfoRects[n].h * (i+0.5) / 4)
+
+                    screen.blit(text, textpos)
+
+                if clueSelected == n:
+                    rect = pygame.Rect(xinfoRects[n].x, xinfoRects[n].y + xinfoRects[n].h - 10, # y: bottom edge - border radius
+                                       xinfoRects[n].w, xinfoRects[n].h * (len(infos[xy][n])-3) / 4 + 10)
+                    surf = pygame.Surface((rect.w, rect.h))
+
+                    pygame.draw.rect(surf, (52, 74, 36), rect,
+                                     border_top_left_radius=10, border_bottom_left_radius=10)
+
+                    for i in range(len(infos[xy][n])-3):
+                        if infoDone[xy][n][i]:
+                            text = pygame.font.Font(FONT, 24).render((infos[xy][n][i+3]), True, "#80917a")
+                        else:
+                            text = pygame.font.Font(FONT, 24).render((infos[xy][n][i+3]), True, "#ffffff")
+    
+                        textpos = text.get_rect(centerx = xinfoRects[n].centerx, 
+                                                centery = xinfoRects[n].y + xinfoRects[n].h * (i+3.5) / 4)
+    
+                        surf.blit(text, textpos)
+
+                    surf.blit(clueArrows["up"], (xinfoRects[n].centerx - clueArrows["down"].get_width()/2,
+                                                   xinfoRects[n].y + xinfoRects[n].h * len(infos[xy][n]) / 4))
+
+                    screen.blit(surf, (rect.x, rect.y))
+                else:
+                    screen.blit(clueArrows["down"], (xinfoRects[n].centerx - clueArrows["down"].get_width()/2,
+                                                     xinfoRects[n].y + xinfoRects[n].h * 3 / 4))
+
+    return clueSelected
 
 def textAnimations(offset, acceleration):
     """Animation for moving the text across the screen"""
@@ -1025,7 +1084,7 @@ async def main():
         offset, acceleration, down, solveDown, colors, solveNext,\
         checkButtonRect, checkButtonImg, crossImg,\
         cellTimers, boardSolution, boardSolving, boardRects,\
-        infos, yinfoRects, xinfoRects, infoDone,\
+        infos, yinfoRects, xinfoRects, infoDone, clueArrows, clueSelected,\
         darken, opacity, fade, fadeo,\
         choosePredrawnButton, chooseCustomRect,\
         playButton, drawButton, playBubble, drawBubble,\
@@ -1047,7 +1106,8 @@ async def main():
         soundButtonRect, ogSoundImgs, soundImgs, soundOn,\
         infoButton, infoPageBg, infoPageBgBold, infoRect,\
         instructionPages, instructionPageNo,\
-        XO, heartXOimg, heartRect = setup()
+        XO, heartXOimg, heartRect,\
+        tutorial = setup()
 
     # load music and sfx
     pygame.mixer.music.load(os.path.join(DIRECTORY, "assets/audio/bgm.ogg"))
@@ -1168,6 +1228,18 @@ async def main():
                 if pygame.mouse.get_pressed()[0] and not down:
                     stage = "animation-for-draw"
                     clickSFX.play()
+
+            if tutorial:
+                stage = "home"
+                fade.fill((0,0,0,100))
+                screen.blit(fade)
+
+                infoButton.draw()
+                                        
+                if infoButton.get_pressed():
+                    stage = "info"
+                    clickSFX.play()
+                    tutorial = False
 
         elif stage == "info": # info page
             pygame.draw.rect(screen, (241, 245, 237), galleryBg, border_radius=10)
@@ -1577,7 +1649,7 @@ async def main():
 
                 infos, boardSolving, infoDone = addInfo(size, infos, boardSolution, boardSolving, infoDone)
         
-        elif stage == "choose-solve": # screen to chose to play custom drawn or pr-drawn
+        elif stage == "choose-solve": # screen to chose to play custom drawn or pre-drawn
             # pre-drawn button
             choosePredrawnButton.draw()
 
@@ -1672,7 +1744,7 @@ async def main():
             textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
             screen.blit(text, textpos)
 
-            drawInfo(yinfoRects, xinfoRects, size, infos, infoDone)
+            clueSelected = drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSelected, down)
 
             screen.blit(fade, (0,0))
 
@@ -1697,7 +1769,7 @@ async def main():
             textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
             screen.blit(text, textpos)
 
-            drawInfo(yinfoRects, xinfoRects, size, infos, infoDone)
+            clueSelected = drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSelected, down)
 
             fade.fill((0, 0, 0, fadeo))
             screen.blit(fade, (0,0))
@@ -1722,7 +1794,7 @@ async def main():
                     XO = "X"
                 clickSFX.play()
 
-            drawInfo(yinfoRects, xinfoRects, size, infos, infoDone)
+            clueSelected = drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSelected, down)
             
             # check for fill
             for y in range(size):
