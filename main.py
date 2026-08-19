@@ -669,24 +669,45 @@ def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSele
                     screen.blit(text, textpos)
 
                 if clueSelected == n:
-                    pygame.draw.rect(screen, (52, 74, 36), 
-                                     ( xinfoRects[n].x, xinfoRects[n].y + xinfoRects[n].h - 10, # y: bottom edge - border radius
-                                       xinfoRects[n].w, xinfoRects[n].h * (len(infos[xy][n])-3) / 4 + 10 ),
-                                     border_top_left_radius=10, border_bottom_left_radius=10)
+                    rect = pygame.Rect(
+                        xinfoRects[n].x, 
+                        xinfoRects[n].y + xinfoRects[n].h - 10,
+                        xinfoRects[n].w, 
+                        xinfoRects[n].h * (len(infos[xy][n]) - 3) / 4 + 10
+                    )
 
-                    for i in range(len(infos[xy][n])-3):
+                    surfRect = pygame.Rect(
+                        rect.x, 
+                        rect.y - rect.h/2,
+                        rect.w, 
+                        rect.h * 1.5
+                    )
+                    
+                    surf = pygame.Surface((surfRect.w, surfRect.h), pygame.SRCALPHA)
+
+                    pygame.draw.rect(surf, (0,0,0), (0, rect.h/2, rect.w, rect.h), #(52, 74, 36)
+                                    border_bottom_right_radius=10, border_bottom_left_radius=10)
+
+                    for i in range(3, len(infos[xy][n])):
                         if infoDone[xy][n][i]:
-                            text = pygame.font.Font(FONT, 24).render((infos[xy][n][i+3]), True, "#80917a")
+                            text = pygame.font.Font(FONT, 24).render((infos[xy][n][i]), True, "#80917a")
                         else:
-                            text = pygame.font.Font(FONT, 24).render((infos[xy][n][i+3]), True, "#ffffff")
-    
-                        textpos = text.get_rect(centerx = xinfoRects[n].centerx, 
-                                                centery = xinfoRects[n].y + xinfoRects[n].h * (i+3.5) / 4)
-    
-                        screen.blit(text, textpos)
+                            text = pygame.font.Font(FONT, 24).render((infos[xy][n][i]), True, "#ffffff")
 
-                    screen.blit(clueArrows["up"], (xinfoRects[n].centerx - clueArrows["down"].get_width()/2,
-                                                   xinfoRects[n].y + xinfoRects[n].h * len(infos[xy][n]) / 4))
+                        textpos = text.get_rect(
+                            centerx = surfRect.w/2, 
+                            centery = xinfoRects[n].y + xinfoRects[n].h * (i+0.5) / 4 - surfRect.y
+                        )
+                        #print((xinfoRects[n].y + xinfoRects[n].h * (i+0.5) / 4) - rect.y + rect.h/2)
+
+                        surf.blit(text, textpos)
+
+                    surf.blit(clueArrows["up"], (
+                        (xinfoRects[n].centerx - clueArrows["down"].get_width() / 2) - surfRect.x, 
+                        (xinfoRects[n].y + xinfoRects[n].h * len(infos[xy][n]) / 4) - surfRect.y
+                    ))
+
+                    screen.blit(surf, (surfRect.x, surfRect.y))
                 else:
                     screen.blit(clueArrows["down"], (xinfoRects[n].centerx - clueArrows["down"].get_width()/2,
                                                      xinfoRects[n].y + xinfoRects[n].h * 3 / 4))
