@@ -75,7 +75,7 @@ pip install -r requirements.txt
 
 #### Run with Pygame
 ```bash
-python src/main.py
+python main.py
 ```
 
 #### Run with Pygbag

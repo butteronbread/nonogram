@@ -502,12 +502,14 @@ def setup():
                   "up": pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/arrowUp.png")), ((cellW-6)*0.9, ((cellW-6)*0.9) * 0.6))}
 
     clueSelected = None
+    clueAnimation = {"out": 0, "in": 0}
 
     return size, gap, cellW, hp, drawMode,\
         offset, acceleration, down, solveDown, colors, solveNext,\
         checkButtonRect, checkButtonImg, crossImg,\
         cellTimers, boardSolution, boardSolving, boardRects,\
-        infos, yinfoRects, xinfoRects, infoDone, clueArrows, clueSelected,\
+        infos, yinfoRects, xinfoRects, infoDone,\
+        clueArrows, clueSelected, clueAnimation,\
         darken, opacity, fade, fadeo,\
         choosePredrawnButton, chooseCustomRect,\
         playButton, drawButton, playBubble, drawBubble,\
@@ -619,14 +621,26 @@ def addInfo(size, infos, boardSolution, boardSolving, infoDone):
 
     return infos, boardSolving, infoDone
 
-def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSelected, down):
-    # check which one selected
+def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSelected, down, clueAnimation):
+    # check which info should open
     for i, info in enumerate(xinfoRects):
-        if info.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] and not down:
+        if clueSelected == i:
+            rect = pygame.Rect(info.x, info.y + info.h - 10, info.w, info.h * (len(infos["x"][i]) - 3) / 4 + 10)
+            surfRect = pygame.Rect(rect.x, rect.y - rect.h / 2, rect.w, rect.h * 1.5)
+        else:
+            surfRect = pygame.Rect(0, 0, 0, 0)
+
+        if (info.collidepoint(pygame.mouse.get_pos()) or surfRect.collidepoint(pygame.mouse.get_pos())) and pygame.mouse.get_pressed()[0] and not down:
             if clueSelected == i:
-                clueSelected = None
+                if clueAnimation["out"] != 0:
+                    clueAnimation = {"in": 60 - clueAnimation["out"], "out": 0}
+                elif clueAnimation["in"] != 0:
+                    clueAnimation = {"out": 60 - clueAnimation["in"], "in": 0}
+                else:
+                    clueAnimation = {"in": 60, "out": 0}
             else:
                 clueSelected = i
+                clueAnimation = {"out": 60, "in": 0}
             break
 
     # draw background for info
@@ -647,7 +661,6 @@ def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSele
                     else:
                         text = pygame.font.Font(FONT, 24).render((infos[xy][n][i]), True, "#ffffff")
 
-                    # position of rect + width * multiplier depending on which one it is
                     if xy == "y":
                         textpos = text.get_rect(centerx = yinfoRects[n].x + yinfoRects[n].w * (i+0.5) / len(infos[xy][n]), 
                                                 centery = yinfoRects[n].centery)
@@ -685,7 +698,7 @@ def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSele
                     
                     surf = pygame.Surface((surfRect.w, surfRect.h), pygame.SRCALPHA)
 
-                    pygame.draw.rect(surf, (0,0,0), (0, rect.h/2, rect.w, rect.h), #(52, 74, 36)
+                    pygame.draw.rect(surf, (52, 74, 36), (0, rect.h/2, rect.w, rect.h),
                                     border_bottom_right_radius=10, border_bottom_left_radius=10)
 
                     for i in range(3, len(infos[xy][n])):
@@ -698,7 +711,6 @@ def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSele
                             centerx = surfRect.w/2, 
                             centery = xinfoRects[n].y + xinfoRects[n].h * (i+0.5) / 4 - surfRect.y
                         )
-                        #print((xinfoRects[n].y + xinfoRects[n].h * (i+0.5) / 4) - rect.y + rect.h/2)
 
                         surf.blit(text, textpos)
 
@@ -707,12 +719,25 @@ def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSele
                         (xinfoRects[n].y + xinfoRects[n].h * len(infos[xy][n]) / 4) - surfRect.y
                     ))
 
+                    if clueAnimation["out"] != 0:
+                        clueAnimation["out"] = max(0, clueAnimation["out"] - 3)
+                        sub_h = max(1, int(surfRect.h * (60 - clueAnimation["out"]) / 60))
+                        surf = surf.subsurface((0, 0, surfRect.w, sub_h))
+
+                    elif clueAnimation["in"] != 0:
+                        clueAnimation["in"] = max(0, clueAnimation["in"] - 3)
+                        sub_h = max(1, int(surfRect.h * clueAnimation["in"] / 60))
+                        surf = surf.subsurface((0, 0, surfRect.w, sub_h))
+
+                        if clueAnimation["in"] <= 0:
+                            clueSelected = None
+
                     screen.blit(surf, (surfRect.x, surfRect.y))
                 else:
                     screen.blit(clueArrows["down"], (xinfoRects[n].centerx - clueArrows["down"].get_width()/2,
                                                      xinfoRects[n].y + xinfoRects[n].h * 3 / 4))
 
-    return clueSelected
+    return clueSelected, clueAnimation, surfRect
 
 def textAnimations(offset, acceleration):
     """Animation for moving the text across the screen"""
@@ -1101,7 +1126,8 @@ async def main():
         offset, acceleration, down, solveDown, colors, solveNext,\
         checkButtonRect, checkButtonImg, crossImg,\
         cellTimers, boardSolution, boardSolving, boardRects,\
-        infos, yinfoRects, xinfoRects, infoDone, clueArrows, clueSelected,\
+        infos, yinfoRects, xinfoRects, infoDone,\
+        clueArrows, clueSelected, clueAnimation,\
         darken, opacity, fade, fadeo,\
         choosePredrawnButton, chooseCustomRect,\
         playButton, drawButton, playBubble, drawBubble,\
@@ -1761,7 +1787,7 @@ async def main():
             textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
             screen.blit(text, textpos)
 
-            clueSelected = drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSelected, down)
+            clueSelected, clueAnimation, dropdownRect = drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSelected, down, clueAnimation)
 
             screen.blit(fade, (0,0))
 
@@ -1786,7 +1812,7 @@ async def main():
             textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
             screen.blit(text, textpos)
 
-            clueSelected = drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSelected, down)
+            clueSelected, clueAnimation, dropdownRect = drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSelected, down, clueAnimation)
 
             fade.fill((0, 0, 0, fadeo))
             screen.blit(fade, (0,0))
@@ -1811,13 +1837,14 @@ async def main():
                     XO = "X"
                 clickSFX.play()
 
-            clueSelected = drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSelected, down)
+            clueSelected, clueAnimation, dropdownRect = drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSelected, down, clueAnimation)
             
             # check for fill
             for y in range(size):
                 for x in range(size):
                     if boardRects[y][x].collidepoint(pygame.mouse.get_pos())\
-                        and pygame.mouse.get_pressed()[0] and not solveDown:
+                        and pygame.mouse.get_pressed()[0] and not solveDown\
+                            and not dropdownRect.collidepoint(pygame.mouse.get_pos()):
                             
                             if (boardSolving[y][x] == 0 or boardSolving[y][x] == 3) and XO == "O":
                                 if boardSolution[y][x] == 1:

@@ -1,6 +1,12 @@
 # Changelog
 
-## [1.2.6] - 2026-08-17
+## [1.2.7] - 2026-08-XXXXXXX
+
+### Changed
+- Used a surface for the dropdown for overflowing clues
+- Sliding animation for opening and closing dropdown
+
+## [1.2.6] - 2026-08-18
 
 ### Added
 - When the player first enters the game, there is a dark overlay covering everything but instructions page
