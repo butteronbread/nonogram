@@ -267,7 +267,9 @@ def setupHome():
                    pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/on.png"))]
     soundImgs = [pygame.transform.scale(ogSoundImgs[1], (w*0.08, w*0.08)), 
                  pygame.transform.scale(ogSoundImgs[0], (w*0.08, w*0.08))]
-    soundOn = True
+
+    f = json.loads(load_data("save"))
+    soundOn = bool(f["sound"])
 
     infoButton = Button("img", w*0.12, w*0.12, "#f8faf7", 20, x=w*0.72, y=w*0.86, 
                              imgFile=os.path.join(DIRECTORY, "assets/images/icons/info.png"),
@@ -403,11 +405,19 @@ def setupShop():
 
 def setup():
     tutorial = False
+    loadSave = {"sanddollar": 0, "gallery": "", "beach_bg": "", "inv": "", "beach_items": "", "sound": 1}
     if load_data("save") == None:
-        save_data('{"sanddollar": 0, "gallery": "", "beach_bg": "", "inv": "", "beach_items": ""}', "save") # default save value
+        save_data(json.dumps(loadSave), "save") # default save value
         tutorial = True
     if load_data("gallery") == None:
         save_data(" ", "gallery")
+
+    save = json.loads(load_data("save"))
+    for key in list(loadSave):
+        if not key in save:
+            save[key] = loadSave[key]
+
+    save_data(json.dumps(save), "save")
 
     # general purpose
     size = 15 # pixels for the drawing width and height
@@ -1157,6 +1167,9 @@ async def main():
     pygame.mixer.music.set_volume(0.9)
     pygame.mixer.music.play(-1)
 
+    if not soundOn:
+        pygame.mixer.music.set_volume(0)
+
     clickSFX = pygame.mixer.Sound(os.path.join(DIRECTORY, "assets/audio/click.ogg"))
     clickSFX.set_volume(0.2)
     flipSFX = pygame.mixer.Sound(os.path.join(DIRECTORY, "assets/audio/flip.ogg"))
@@ -1217,10 +1230,14 @@ async def main():
                 if pygame.mouse.get_pressed()[0] and not down:
                     soundOn = not soundOn
 
+                    f = json.loads(load_data("save"))
+                    f["sound"] = int(soundOn)
+                    save_data(json.dumps(f), "save")
+
                     if not soundOn:
-                        pygame.mixer.music.pause()
+                        pygame.mixer.music.set_volume(0)
                     else:
-                        pygame.mixer.music.unpause()
+                        pygame.mixer.music.set_volume(0.9)
 
             else:
                 soundImgs = pygame.transform.scale(ogSoundImgs[soundOn], (w*0.08, w*0.08))
@@ -1323,26 +1340,32 @@ async def main():
                 
                 galleryData = saveR["gallery"].split("-")
 
-                # if there is IndexError here, check the save.txt
                 if galleryData != [""]:
                     data = ""
                     for i in range(len(galleryData)):
                         # w*0.2 = left margin, i%4 because 2*2 = 4, and 4 is the nonogram per page
                         # %2 because 2 columns, //2 because 2 rows
-                        galleryBigRects.append(pygame.Rect(w*0.2+((i%4)%2 * w*0.35),
-                                                           w*0.2+((i%4)//2 * w*0.35), 
-                                                           w*0.25, # size
-                                                           w*0.25))
 
                         if galleryData[i][0] == "p": # where to get the data from
                             galleryData[i] = galleryData[i][1:]
                             data = PREDRAWN[int(galleryData[i])].split(" ")
                         else:
-                            data = galleryR[int(galleryData[i])].split(" ")
+                            try:
+                                data = galleryR[int(galleryData[i])].split(" ")
+                            except:
+                                saveR["gallery"] = ""
+                                save_data(json.dumps(saveR), "save")
+                                break
+
                         datasize = int(data[0]) # SMTH WRONG HERE HELPPPPP
                         data = data[1]
 
                         dataW = (galleryBigRects[-1].w - w*0.02)/datasize
+
+                        galleryBigRects.append(pygame.Rect(w*0.2+((i%4)%2 * w*0.35),
+                                                           w*0.2+((i%4)//2 * w*0.35), 
+                                                           w*0.25, # size
+                                                           w*0.25))
 
                         gallerySmallRects.append([])
                         for y in range(datasize):

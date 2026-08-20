@@ -1,6 +1,19 @@
 # Changelog
 
-## [1.2.7] - 2026-08-XXXXXXX
+## [1.3.0] - 2026-08-20
+
+### Added
+- Added key `"sound"` to `save.txt` to keep sound state the same between sessions
+- `try` and `except` for seting up the gallery to prevent cases when `gallery.txt` has been cleared but `save.txt` hasn't, so the indexes in `save.txt` are out of range for `gallery.txt`, returning an `IndexError`
+- Checking in `setup` function to make sure all items that are needed are in `save.txt`
+
+### Changed
+- Sound toggle now mutes and unmutes background music instead of pausing it
+- Reordered `galleryBigRects` to be created just before `gallerySmallRects` to accomodate for removal of `IndexError`
+
+---
+
+## [1.2.7] - 2026-08-19
 
 ### Changed
 - Used a surface for the dropdown for overflowing clues
@@ -55,8 +68,6 @@
 ### Fixed
 - Fixed `addInfo()` not clearing old clue data, causing corrupted puzzle hints when solving multiple puzzles in a row
 
----
-
 ## [1.2.3] — 2026-08-10
 
 ### Added
@@ -66,8 +77,6 @@
 ### Changed
 - Auto-cross now checks against `math.floor()` to avoid interfering with animation states
 
----
-
 ## [1.2.2] — 2026-08-10
 
 ### Changed
@@ -75,16 +84,12 @@
 - All asset paths now use `os.path.join(DIRECTORY, ...)` instead of relative strings
 - Updated pre-drawn nonogram puzzle set (9 puzzles)
 
----
-
 ## [1.2.1] — 2026-08-08
 
 ### Changed
 - Refactored info/clue system to use a unified `infos` dictionary with `"x"` and `"y"` keys
 - Combined `xinfo`/`yinfo` lists into a single `infos` dict for cleaner code
 - Refactored `addInfo()` to iterate over both axes with a single loop
-
----
 
 ## [1.2.0] — 2026-08-08
 
@@ -107,8 +112,6 @@
 - Added comments and docstrings throughout the codebase
 - Formatted code for consistent spacing
 
----
-
 ## [1.1.4] — 2026-08-06
 
 ### Changed
@@ -119,8 +122,6 @@
 
 ### Fixed
 - Fixed beach item selection requiring mouse-down state check to prevent accidental selection
-
----
 
 ## [1.1.3] — 2026-08-06
 
@@ -134,8 +135,6 @@
 - Renamed game from "Sand Grounds" to **"Gram of Grain"**
 - Extracted `setupOthers()` and `setupHome()` as dedicated setup functions for cleaner initialization
 
----
-
 ## [1.1.2] — 2026-08-06
 
 ### Added
@@ -143,16 +142,12 @@
 - **Choose solve mode** — new screen to pick between pre-drawn and custom nonograms
 - `setupChooseSolve()` function with UI for the selection screen
 
----
-
 ## [1.1.1] — 2026-08-06
 
 ### Added
 - **Sound toggle** — on/off button on home screen with `on.png` and `off.png` icons
 - **Flip tool** — horizontally flip placed beach items
 - Flip button with `flip.png` icon on the beach item UI
-
----
 
 ## [1.1.0] — 2026-08-06
 
@@ -173,8 +168,6 @@
 - Minor bug fixes and adjustments
 - Major beach customization system rework
 
----
-
 ## [1.0.3] — 2026-05-18
 
 ### Added
@@ -182,16 +175,12 @@
 - Scale and rotate UI buttons displayed on selected beach items
 - `display_selected_UI()` function for beach item control overlay
 
----
-
 ## [1.0.2] — 2026-05-18
 
 ### Added
 - **Shop purchase animation** — sand dollar deduction animation when buying items
 - `shopSDAnimate` and `shopSDAnimateTxt` for animated price display
 - Sand dollar counter visible in shop view
-
----
 
 ## [1.0.1] — 2026-05-18
 
@@ -202,8 +191,6 @@
 ### Changed
 - Moved all images into `imgs/` subdirectory (organized from root-level files)
 - Updated all image paths to use the new directory structure
-
----
 
 ## [1.0.0] — 2026-03-30
 

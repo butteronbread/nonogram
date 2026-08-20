@@ -1,0 +1,1 @@
+This file's purposes are is for the folder data to remain and not to be ignored by .gitignore. This was ignored before because the folder would be empty as everything inside is ignored.

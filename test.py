@@ -9,4 +9,4 @@
 
 # print(f'"{hex_code}"')
 
-print(int(not not 1))
+print(bool(int("0")))
