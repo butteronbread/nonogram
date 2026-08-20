@@ -57,6 +57,14 @@ Keep the codebase **DRY** (*Don't Repeat Yourself*):
 
 ---
 
+## Do Not Change
+
+### 1. File System
+* `main.py`, `index.tmpl`, `favicon.png` and `title.png` must stay in `root` directory. This is required in order to run pygbag.
+* `placeholder.txt` must stay in the `/data` folder in order for `save.txt` and `gallery.txt` to be ignored, while the folder remains tracked.
+
+---
+
 ## Quality Assurance & Pre-Submission
 
 ### 1. Thorough Testing
@@ -65,4 +73,5 @@ Keep the codebase **DRY** (*Don't Repeat Yourself*):
 
 ### 2. Pygbag Compatibility
 * **Web Build Verification:** Always build and test the **Pygbag** version alongside the native Pygame version to ensure visuals, performance, and inputs match seamlessly across both platforms.
-* **Debug Tools:** After running Pygbag, open `http://localhost:8000/?-i` instead to have a full overview of everything happening, including `errors` and `print` statements.
+* **Debug Tools:** After running Pygbag, open <http://localhost:8000/?-i> instead to have a full overview of everything happening, including `errors` and `print` statements.
+* **Local Storage Issues:** If there is an issue regarding storage, go into the website inspector tool and remove or alter the data.
