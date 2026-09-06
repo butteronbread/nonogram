@@ -22,7 +22,7 @@ Keep the codebase **DRY** (*Don't Repeat Yourself*):
 ### Dynamic Screen Scaling (`w` & `h` Variables)
 
 * **Use Relative Coordinates:** Calculate object positions and layout sizes using fractions/multipliers of the screen width (`w`) and height (`h`) rather than hardcoding explicit pixel coordinates (e.g., `w * 0.5` or `h * 0.25`).
-* **Styling Exceptions:** Small UI styling properties—such as font sizes, border radii, line thicknesses, and minor padding—may use hardcoded integer values where relative scaling is unnecessary.
+* **Smaller Relatives:** Smaller values for setting size can be hardcoded based on the width `720`, however a `/mul` must be placed after. `mul` is a multilier of 720/`current screen width`.
 
 ### 3. Asset Management & Pygame Performance
 

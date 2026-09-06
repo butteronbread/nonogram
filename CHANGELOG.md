@@ -4,9 +4,15 @@
 
 ### Added
 - Added `self.hide` variable to `Button` class, defined in __init__. It can be set to either `"text"` or `"img"` to hide either one.
+- Pop SFX to play every time the player is filling up/erasing a new cell, as well as the audio file `pop.ogg`
+- `mul` divider to get the correct scale of everything when changing the screen size
 
 ### Changed
 - Updated all UI tools for items in the `beach` screen to use the `Button` class
+- Updated `CONTRIBUTING.md` to accomodate for the new `mul` scalar
+
+### Fixed
+- Rotations in the correct direction even when the item on the beach is flipped using calculations.
 
 ## [1.3.0] - 2026-08-20
 
