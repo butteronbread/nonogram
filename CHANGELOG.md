@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.1] - 2026-09-6
+
+### Added
+- Added `self.hide` variable to `Button` class, defined in __init__. It can be set to either `"text"` or `"img"` to hide either one.
+
+### Changed
+- Updated all UI tools for items in the `beach` screen to use the `Button` class
+
 ## [1.3.0] - 2026-08-20
 
 ### Added

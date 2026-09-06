@@ -47,13 +47,16 @@ Keep the codebase **DRY** (*Don't Repeat Yourself*):
 
 ---
 
-## Code Output Guidelines
+## Code Output and Placeholder Guidelines
 
 ### 1. Screens
-* For this project, there must only be **one** pygame screen - `main.py` - for pygbag and delay time purposes
+* For this project, there must only be **one** pygame screen - `main.py` - for pygbag and delay time purposes.
 
 ### 2. Terminal Usage
 * The terminal is for debuging purposes only. All `print` statements must be removed before contributing. Any information meant for the player must be displayed on the `pygame` window instead.
+
+### 3. Comments
+* All placeholder comments used to temporarily remove a part of the script must be removed before contributing.
 
 ---
 
@@ -61,7 +64,6 @@ Keep the codebase **DRY** (*Don't Repeat Yourself*):
 
 ### 1. File System
 * `main.py`, `index.tmpl`, `favicon.png` and `title.png` must stay in `root` directory. This is required in order to run pygbag.
-* `placeholder.txt` must stay in the `/data` folder in order for `save.txt` and `gallery.txt` to be ignored, while the folder remains tracked.
 
 ---
 

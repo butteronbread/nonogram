@@ -87,3 +87,7 @@ pygbag --template templates/index.tmpl ../nonogram
 ```bash
 pygbag --build --archive ../nonogram
 ```
+
+After running this command, ensure `title.png` and `favicon.png` (currently in root directory) is placed into all `/web` folders created, including the zipped folder if you wish to run it from there.  
+To add it to the zipped folder, you must first unzip it, add it, and then zip it.  
+After having built the website once, you may find some files have not been removed. This is expected and you do not need to replace those files with the same file, but you must make sure all files are there.

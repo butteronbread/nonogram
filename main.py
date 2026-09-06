@@ -108,7 +108,7 @@ class Text():
 class Button():
     def __init__(self, mode: str, w: int, h: int, color, 
                  border_radius=0, x=None, y=None, centerx=None, centery=None, 
-                 text: Text = None, imgFile=None, ogSize=None, hoverSize=None):
+                 text: Text = None, imgFile=None, ogSize=None, hoverSize=None, hide=None):
         
         self.mode = mode
         self.color = color
@@ -139,24 +139,28 @@ class Button():
             self.img = pygame.transform.scale(raw_img, (og_size, og_size))
             self.hoverImg = pygame.transform.scale(raw_img, (hover_size, hover_size))
 
+        self.hide = hide
+
     def draw(self, surface=None):
         """Draws the button onto the screen, checking for hover state."""
         target = surface if surface else screen
-        pygame.draw.rect(target, self.color, self.rect, border_radius=self.border_radius)
+        if self.hide != "rect":
+            pygame.draw.rect(target, self.color, self.rect, border_radius=self.border_radius)
 
-        mouse_pos = pygame.mouse.get_pos()
-        if self.rect.collidepoint(mouse_pos):
-            if self.mode == "text":
-                self.hoverText.draw(target)
+        if self.hide != "img":
+            mouse_pos = pygame.mouse.get_pos()
+            if self.rect.collidepoint(mouse_pos):
+                if self.mode == "text":
+                    self.hoverText.draw(target)
+                else:
+                    img_rect = self.hoverImg.get_rect(center=self.rect.center)
+                    target.blit(self.hoverImg, img_rect)
             else:
-                img_rect = self.hoverImg.get_rect(center=self.rect.center)
-                target.blit(self.hoverImg, img_rect)
-        else:
-            if self.mode == "text":
-                self.text.draw(target)
-            else:
-                img_rect = self.img.get_rect(center=self.rect.center)
-                target.blit(self.img, img_rect)
+                if self.mode == "text":
+                    self.text.draw(target)
+                else:
+                    img_rect = self.img.get_rect(center=self.rect.center)
+                    target.blit(self.img, img_rect)
 
     def get_pressed(self):
         """Checks if the left mouse button is clicked inside the button area."""
@@ -349,22 +353,29 @@ def setupBeach():
                    pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/backgrounds/2.png")), (w,w)),
                    pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/backgrounds/3.png")), (w,w))]
 
-    beachConfirmButtonRect = pygame.Rect(w*0.45,w*0.88,w*0.1,w*0.1)
-    beachConfirmButtonImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/check.png")), (w*0.1,w*0.1))
+    beachConfirmButton = Button("img", w*0.1, w*0.1, "#ffffff", 20, x=w*0.45, y=w*0.88, 
+                        imgFile=os.path.join(DIRECTORY, "assets/images/icons/check.png"),
+                        ogSize=w*0.1, hoverSize=w*0.1, hide="rect")
 
     mainExitRect = pygame.Rect(w*0.88, w*0.02, w*0.1, w*0.1)
 
-    addButtonRect = pygame.Rect(w*0.02, w*0.88, w*0.1, w*0.1)
+    addButton = Button("text", w*0.1, w*0.1, "#7ea677", 
+                  border_radius=20, x=w*0.02, y=w*0.88, 
+                  text=Text("+", "#ffffff", 64), hoverSize=96)
+    
     trashButtonRect = pygame.Rect(w*0.14, w*0.88, w*0.1, w*0.1)
 
-    scaleImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/scale.png")), (w*0.05,w*0.05))
-    scaleRect = pygame.Rect(0, 0, w*0.06, w*0.06)
+    scaleButton = Button("img", w*0.06, w*0.06, "#768F74", 10, x=0, y=0, 
+                                imgFile=os.path.join(DIRECTORY, "assets/images/icons/scale.png"),
+                                ogSize=w*0.05, hoverSize=w*0.05)
 
-    rotateImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/rotate.png")), (w*0.05,w*0.05))
-    rotateRect = pygame.Rect(0, 0, w*0.06, w*0.06)
+    rotateButton = Button("img", w*0.06, w*0.06, "#768F74", 10, x=0, y=0, 
+                                    imgFile=os.path.join(DIRECTORY, "assets/images/icons/rotate.png"),
+                                    ogSize=w*0.05, hoverSize=w*0.05)
 
-    flipImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/flip.png")), (w*0.05,w*0.05))
-    flipRect = pygame.Rect(0, 0, w*0.06, w*0.06)
+    flipButton = Button("img", w*0.06, w*0.06, "#768F74", 10, x=0, y=0, 
+                                        imgFile=os.path.join(DIRECTORY, "assets/images/icons/flip.png"),
+                                        ogSize=w*0.05, hoverSize=w*0.05)
 
     trashImgs = [pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/close.png")), (w*0.08, w*0.08)), 
                  pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/open.png")), (w*0.08, w*0.08))]
@@ -374,13 +385,11 @@ def setupBeach():
 
     posOffset = (0,0)
 
-    return beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg,\
-        mainExitRect, addButtonRect,\
+    return beachBgImgs, beachConfirmButton,\
+        mainExitRect, addButton,\
         trashButtonRect, trashImgs,\
         addBg, posOffset,\
-        rotateImg, scaleImg,\
-        rotateRect, scaleRect,\
-        flipImg, flipRect
+        scaleButton, rotateButton, flipButton
 
 def setupShop():
     shopBg = pygame.Rect(0,0,w*0.9,w*0.9)
@@ -462,12 +471,10 @@ def setup():
         flipLeftButton, flipRightButton = setupGallery()
 
     # beach stuff
-    beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg,\
-        mainExitRect, addButtonRect, trashButtonRect, trashImgs,\
+    beachBgImgs, beachConfirmButton,\
+        mainExitRect, addButton, trashButtonRect, trashImgs,\
         addBg, posOffset,\
-        rotateImg, scaleImg,\
-        rotateRect, scaleRect,\
-        flipImg, flipRect = setupBeach()
+        scaleButton, rotateButton, flipButton = setupBeach()
 
     # shop stuff
     shopBg, shopPage,\
@@ -529,13 +536,13 @@ def setup():
         popupExitRect, galleryBg, galleryData,\
         galleryBigRects, gallerySmallRects,\
         galleryColors, galleryPage, flipLeftButton, flipRightButton,\
-        beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg,\
-        mainExitRect, addButtonRect, trashButtonRect, trashImgs,\
+        beachBgImgs, beachConfirmButton,\
+        mainExitRect, addButton, trashButtonRect, trashImgs,\
         addBg, posOffset, shopBg, shopPage,\
         shopItemRects, shopItemImgs, ogShopItemImgs,\
         shopItemPrice, stage, sanddollar,\
         selecting, clickBg,\
-        rotateImg, rotateRect, scaleImg, scaleRect, flipImg, flipRect,\
+        rotateButton, scaleButton, flipButton,\
         shopSDAnimate, shopSDAnimateTxt,\
         scaling, rotating, ogRotation,\
         soundButtonRect, ogSoundImgs, soundImgs, soundOn,\
@@ -899,37 +906,28 @@ def beach_setup(shopItemImgs, ogShopItemImgs, stage):
 
     return beachBgNo, beachData, beachItemRects, moveItem, stage
 
-def display_selected_UI(beachItemRects, selecting, scaleRect, scaleImg, rotateRect, rotateImg, flipRect, flipImg, scaling, rotating, beachData, ogRotation, down):
+def display_selected_UI(beachItemRects, selecting, scaleButton: Button, rotateButton: Button, flipButton:Button, scaling, rotating, beachData, ogRotation, down):
     """Display the scale, rotate and flip button for the beach item currently selected"""
 
     # draw the UI rects
     pygame.draw.rect(screen, (100,100,255), beachItemRects[selecting], 5)
 
-    pygame.draw.rect(screen, "#768F74", scaleRect, border_radius=10)
-    screen.blit(scaleImg, (scaleRect.x+w*0.005, scaleRect.y+w*0.005))
+    scaleButton.draw()
 
-    pygame.draw.rect(screen, "#A3BF9F", rotateRect, border_radius=10)
-    screen.blit(rotateImg, (rotateRect.x+w*0.005, rotateRect.y+w*0.005))
+    rotateButton.draw()
 
-    pygame.draw.rect(screen, "#8CB48A", flipRect, border_radius=10)
-    screen.blit(flipImg, (flipRect.x+w*0.005, flipRect.y+w*0.005))
+    flipButton.draw()
 
     # check if the buttons are pressed and set variables
-    if scaleRect.collidepoint(pygame.mouse.get_pos())\
-        and pygame.mouse.get_pressed()[0]\
-            and not rotating and not scaling:
+    if scaleButton.get_pressed() and not rotating and not scaling:
         scaling = True
 
-    if rotateRect.collidepoint(pygame.mouse.get_pos())\
-        and pygame.mouse.get_pressed()[0]\
-            and not scaling and not rotating:
+    if rotateButton.get_pressed() and not scaling and not rotating:
         rotating = True
         ogRotation = beachData[selecting][1][3]
 
     # flip button
-    if flipRect.collidepoint(pygame.mouse.get_pos())\
-        and pygame.mouse.get_pressed()[0]\
-            and not scaling and not rotating and not down: # prevent accidentally press
+    if flipButton.get_pressed() and not scaling and not rotating and not down: # prevent accidentally press
         
         beachData[selecting][1][4] = (str((beachData[selecting][1][4] + 1) % 2)) # if its 0, set to 1, vice versa
         
@@ -947,7 +945,7 @@ def display_selected_UI(beachItemRects, selecting, scaleRect, scaleImg, rotateRe
     
     return scaling, rotating, ogRotation
 
-def scale_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopItemImgs, rotateRect, scaleRect, flipRect, moveItem):
+def scale_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopItemImgs, rotateButton:Button, scaleButton:Button, flipButton:Button, moveItem):
     """Scales the selected beach item based on mouse position and updates the rect and image accordingly, as well as the UI."""
     # take the diff between mouse and rect. divide by default size to get multiplier
     beachData[selecting][1][2] = (pygame.mouse.get_pos()[0] - beachItemRects[selecting].x) / (w*0.2)
@@ -965,15 +963,7 @@ def scale_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopIt
                     w*0.2 * beachData[selecting][1][2],  
                     w*0.2 * beachData[selecting][1][2])
 
-    # reposition UI
-    scaleRect.centerx = beachItemRects[moveItem[-1]].x + beachItemRects[moveItem[-1]].w
-    scaleRect.centery = beachItemRects[moveItem[-1]].y + beachItemRects[moveItem[-1]].h
-
-    rotateRect.centerx = beachItemRects[moveItem[-1]].x
-    rotateRect.centery = beachItemRects[moveItem[-1]].y + beachItemRects[moveItem[-1]].h
-
-    flipRect.centerx = beachItemRects[moveItem[-1]].x + beachItemRects[moveItem[-1]].h
-    flipRect.centery = beachItemRects[moveItem[-1]].y
+    update_beach_ui(beachItemRects, moveItem, scaleButton, rotateButton, flipButton)
 
     # save the data
     r = json.loads(load_data("save"))
@@ -985,9 +975,9 @@ def scale_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopIt
 
     save_data(json.dumps(r), "save")
 
-    return scaleRect, rotateRect, flipRect, beachItemRects
+    return scaleButton, rotateButton, flipButton, beachItemRects
 
-def move_beach_item(moveItem, beachData, posOffset, beachItemRects, scaleRect, rotateRect, flipRect):
+def move_beach_item(moveItem, beachData, posOffset, beachItemRects, scaleButton, rotateButton, flipButton):
     """Moves the selected beach item based on mouse position and updates the rect accordingly, as well as the UI."""
 
     selecting = moveItem[-1] # takes the last item in the list, which is the image layered on top in the screen
@@ -1023,17 +1013,23 @@ def move_beach_item(moveItem, beachData, posOffset, beachItemRects, scaleRect, r
     beachItemRects[moveItem[-1]].x = beachData[moveItem[-1]][1][0]
     beachItemRects[moveItem[-1]].y = beachData[moveItem[-1]][1][1]
 
-    # update UI
-    scaleRect.centerx = beachItemRects[moveItem[-1]].x + beachItemRects[moveItem[-1]].w
-    scaleRect.centery = beachItemRects[moveItem[-1]].y + beachItemRects[moveItem[-1]].h
+    update_beach_ui(beachItemRects, moveItem, scaleButton, rotateButton, flipButton)
 
-    rotateRect.centerx = beachItemRects[moveItem[-1]].x
-    rotateRect.centery = beachItemRects[moveItem[-1]].y + beachItemRects[moveItem[-1]].h
+    return selecting, scaleButton, rotateButton, flipButton
 
-    flipRect.centerx = beachItemRects[moveItem[-1]].x + beachItemRects[moveItem[-1]].w
-    flipRect.centery = beachItemRects[moveItem[-1]].y
+def update_beach_ui(beachItemRects, moveItem, scaleButton:Button, rotateButton:Button, flipButton:Button):
+    """Repositions the UI tools for items in the beach"""
+    scaleButton.modify(
+        centerx = beachItemRects[moveItem[-1]].x + beachItemRects[moveItem[-1]].w,
+        centery = beachItemRects[moveItem[-1]].y + beachItemRects[moveItem[-1]].h)
 
-    return selecting, scaleRect, rotateRect, flipRect
+    rotateButton.modify(
+            centerx = beachItemRects[moveItem[-1]].x,
+            centery = beachItemRects[moveItem[-1]].y + beachItemRects[moveItem[-1]].h)
+
+    flipButton.modify(
+                centerx = beachItemRects[moveItem[-1]].x + beachItemRects[moveItem[-1]].h,
+                centery = beachItemRects[moveItem[-1]].y)
 
 def beach_trash_button(moveItem, beachData, trashButtonRect, trashImgs, selecting, stage):
     """When beach item is added to trash, remove it from the beach and add it to the inventory, then save the data."""
@@ -1066,23 +1062,13 @@ def beach_trash_button(moveItem, beachData, trashButtonRect, trashImgs, selectin
     
     return selecting, stage
 
-def beach_add_button(addButtonRect, stage, clickSFX, down):
+def beach_add_button(addButton: Button, stage, clickSFX, down):
     """If add button is pressed, go to add setup stage to add an item to the beach."""
-    pygame.draw.rect(screen, (126, 166, 119), addButtonRect, border_radius=20)
+    addButton.draw()
 
-    if addButtonRect.collidepoint(pygame.mouse.get_pos()) and not down:
-        text = pygame.font.Font(FONT, 96).render("+", True, (255,255,255))
-        textpos = text.get_rect(centerx=addButtonRect.centerx, centery=addButtonRect.centery-w*0.01)
-        screen.blit(text, textpos)
-        
-        if pygame.mouse.get_pressed()[0]:
-            stage = "add setup"
-            clickSFX.play()
-
-    else:
-        text = pygame.font.Font(FONT, 64).render("+", True, (255,255,255))
-        textpos = text.get_rect(centerx=addButtonRect.centerx, centery=addButtonRect.centery-w*0.01)
-        screen.blit(text, textpos)
+    if addButton.get_pressed() and not down:
+        stage = "add setup"
+        clickSFX.play()
     
     return stage
 
@@ -1147,13 +1133,13 @@ async def main():
         popupExitRect, galleryBg, galleryData,\
         galleryBigRects, gallerySmallRects,\
         galleryColors, galleryPage, flipLeftButton, flipRightButton,\
-        beachBgImgs, beachConfirmButtonRect, beachConfirmButtonImg,\
+        beachBgImgs, beachConfirmButton,\
         mainExitRect, addButtonRect, trashButtonRect, trashImgs,\
         addBg, posOffset, shopBg, shopPage,\
         shopItemRects, shopItemImgs, ogShopItemImgs,\
         shopItemPrice, stage, sanddollar,\
         selecting, clickBg,\
-        rotateImg, rotateRect, scaleImg, scaleRect, flipImg, flipRect,\
+        rotateButton, scaleButton, flipButton,\
         shopSDAnimate, shopSDAnimateTxt,\
         scaling, rotating, ogRotation,\
         soundButtonRect, ogSoundImgs, soundImgs, soundOn,\
@@ -1498,12 +1484,11 @@ async def main():
             
             beachBgNo = beachBgNo % 3
 
-            screen.blit(beachConfirmButtonImg, (w*0.45,w*0.88))
-
-            if beachConfirmButtonRect.collidepoint(pygame.mouse.get_pos())\
-                and pygame.mouse.get_pressed()[0] and not down:
-                clickSFX.play()
+            beachConfirmButton.draw()
+            
+            if beachConfirmButton.get_pressed():
                 stage = "beach setup"
+                clickSFX.play()
 
                 # save data
                 r = json.loads(load_data("save"))
@@ -1548,7 +1533,7 @@ async def main():
             
             # do things to selected object (blit stuff)
             if selecting != -1:
-                scaling, rotating, ogRotation = display_selected_UI(beachItemRects, selecting, scaleRect, scaleImg, rotateRect, rotateImg, flipRect, flipImg, scaling, rotating, beachData, ogRotation, down)
+                scaling, rotating, ogRotation = display_selected_UI(beachItemRects, selecting, scaleButton, rotateButton, flipButton, scaling, rotating, beachData, ogRotation, down)
             
             if rotating:
                 # find the distance between center of the image and mouse pos and then use trig to find angle to rotate
@@ -1572,12 +1557,12 @@ async def main():
                 
             if scaling:
                 if (pygame.mouse.get_pos()[0] - beachItemRects[selecting].x) / (w*0.2) > 0.3:
-                    scaleRect, rotateRect, flipRect, beachItemRects = scale_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopItemImgs, rotateRect, scaleRect, flipRect, moveItem)
+                    scaleButton, rotateButton, flipButton, beachItemRects = scale_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopItemImgs, rotateButton, scaleButton, flipButton, moveItem)
 
             if moveItem != []\
-                and not scaleRect.collidepoint(pygame.mouse.get_pos()) and not scaling\
-                and not rotateRect.collidepoint(pygame.mouse.get_pos()) and not rotating:
-                selecting, scaleRect, rotateRect, flipRect = move_beach_item(moveItem, beachData, posOffset, beachItemRects, scaleRect, rotateRect, flipRect)
+                and not scaleButton.rect.collidepoint(pygame.mouse.get_pos()) and not scaling\
+                and not rotateButton.rect.collidepoint(pygame.mouse.get_pos()) and not rotating:
+                selecting, scaleButton, rotateButton, flipButton = move_beach_item(moveItem, beachData, posOffset, beachItemRects, scaleButton, rotateButton, flipButton)
             
             if not pygame.mouse.get_pressed()[0] and down:
                 scaling = False
