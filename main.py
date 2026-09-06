@@ -1,7 +1,7 @@
 import pygame, math, random, asyncio, platform, os, time, json
 from copy import deepcopy
 
-w = 720 # dynamic
+w = 900 # dynamic
 OGW = 720 # static
 mul = OGW/w
 
@@ -29,6 +29,37 @@ PREDRAWN = """15 111111111111111100000010000001101001010100101100000010000001101
 
 # testing
 #PREDRAWN = """15 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000""".splitlines()
+
+FONTSIZES = {int(24/mul): pygame.font.Font(FONT, int(24/mul)),
+            int(64/mul): pygame.font.Font(FONT, int(64/mul)),
+            int(48/mul): pygame.font.Font(FONT, int(48/mul)),
+            int(96/mul): pygame.font.Font(FONT, int(96/mul)),
+            int(72/mul): pygame.font.Font(FONT, int(72/mul)),
+            int(32/mul): pygame.font.Font(FONT, int(32/mul)),
+            int(128/mul): pygame.font.Font(FONT, int(128/mul))}
+
+TEXTS = {
+    "64-X": FONTSIZES[int(64/mul)].render("X", True, (255,255,255)),
+    "48-X": FONTSIZES[int(48/mul)].render("X", True, (255,255,255)),
+    "24-Solve a nonogram": FONTSIZES[int(24/mul)].render("Solve a nonogram", True, (51, 66, 44)),
+    "24-Earn sand dollars": FONTSIZES[int(24/mul)].render("Earn sand dollars", True, (51, 66, 44)),
+    "24-Draw and solve your own nonogram": FONTSIZES[int(24/mul)].render("Draw and solve your own nonogram", True, (51, 66, 44)),
+    "24-Doesn't earn sand dollars": FONTSIZES[int(24/mul)].render("Doesn't earn sand dollars", True, (51, 66, 44)),
+    "96-Draw your Nonogram!": FONTSIZES[int(96/mul)].render("Draw your Nonogram!", True, (255,255,255)),
+    "48-Have a friend draw it for a challenge": FONTSIZES[int(48/mul)].render("Have a friend draw it for a challenge", True, (255,255,255)),
+    "24-Solve a pre-drawn nonogram": FONTSIZES[int(24/mul)].render("Solve a pre-drawn nonogram", True, (51, 66, 44)),
+    "24-Earn sand dollars": FONTSIZES[int(24/mul)].render("Earn sand dollars", True, (51, 66, 44)),
+    "24-Solve a nonogram you drew before": FONTSIZES[int(24/mul)].render("Solve a nonogram you drew before", True, (51, 66, 44)),
+    "24-Doesn't earn sand dollars": FONTSIZES[int(24/mul)].render("Doesn't earn sand dollars", True, (51, 66, 44)),
+    "72-Custom": FONTSIZES[int(72/mul)].render("Custom", True, (66, 99, 52)),
+    "24-No nonogram available": FONTSIZES[int(24/mul)].render("No nonogram available", True, (51, 66, 44)),
+    "24-Draw one before solving": FONTSIZES[int(24/mul)].render("Draw one before solving", True, (51, 66, 44)),
+    "64-Custom": FONTSIZES[int(64/mul)].render("Custom", True, (66, 99, 52)),
+    "96-Solve!": FONTSIZES[int(96/mul)].render("Solve!", True, (255,255,255)),
+    "128-YOU WIN!": FONTSIZES[int(128/mul)].render("YOU WIN!", True, (211, 232, 179)),
+    "128-YOU LOSE!": FONTSIZES[int(128/mul)].render("YOU LOSE!", True, (232, 195, 195)),
+    "64-Publish image?": FONTSIZES[int(64/mul)].render("Publish image?", True, (157, 166, 144))
+}
 
 if platform.system() == "Emscripten":
     from js import window
@@ -684,9 +715,9 @@ def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSele
             if (len(infos[xy][n]) < 5 and xy == "x") or xy == "y":
                 for i in range(len(infos[xy][n])):
                     if infoDone[xy][n][i]:
-                        text = pygame.font.Font(FONT, int(24/mul)).render((infos[xy][n][i]), True, "#80917a")
+                        text = FONTSIZES[int(24/mul)].render((infos[xy][n][i]), True, "#80917a")
                     else:
-                        text = pygame.font.Font(FONT, int(24/mul)).render((infos[xy][n][i]), True, "#ffffff")
+                        text = FONTSIZES[int(24/mul)].render((infos[xy][n][i]), True, "#ffffff")
 
                     if xy == "y":
                         textpos = text.get_rect(centerx = yinfoRects[n].x + yinfoRects[n].w * (i+0.5) / len(infos[xy][n]), 
@@ -699,9 +730,9 @@ def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSele
             else:
                 for i in range(3):
                     if infoDone[xy][n][i]:
-                        text = pygame.font.Font(FONT, int(24/mul)).render((infos[xy][n][i]), True, "#80917a")
+                        text = FONTSIZES[int(24/mul)].render((infos[xy][n][i]), True, "#80917a")
                     else:
-                        text = pygame.font.Font(FONT, int(24/mul)).render((infos[xy][n][i]), True, "#ffffff")
+                        text = FONTSIZES[int(24/mul)].render((infos[xy][n][i]), True, "#ffffff")
 
                     textpos = text.get_rect(centerx = xinfoRects[n].centerx, 
                                             centery = xinfoRects[n].y + xinfoRects[n].h * (i+0.5) / 4)
@@ -730,9 +761,9 @@ def drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSele
 
                     for i in range(3, len(infos[xy][n])):
                         if infoDone[xy][n][i]:
-                            text = pygame.font.Font(FONT, int(24/mul)).render((infos[xy][n][i]), True, "#80917a")
+                            text = FONTSIZES[int(24/mul)].render((infos[xy][n][i]), True, "#80917a")
                         else:
-                            text = pygame.font.Font(FONT, int(24/mul)).render((infos[xy][n][i]), True, "#ffffff")
+                            text = FONTSIZES[int(24/mul)].render((infos[xy][n][i]), True, "#ffffff")
 
                         textpos = text.get_rect(
                             centerx = surfRect.w/2, 
@@ -1089,7 +1120,7 @@ def exit_button(exitRect, clickSFX, stage, down, target):
     pygame.draw.rect(screen, (222, 130, 126), exitRect, border_radius=int(20/mul)) # draw button
 
     if exitRect.collidepoint(pygame.mouse.get_pos()) and not down: # on hover
-        text = pygame.font.Font(FONT, int(64/mul)).render("X", True, (255,255,255))
+        text = TEXTS["64-X"]
         textpos = text.get_rect(centerx=exitRect.centerx, centery=exitRect.centery)
         screen.blit(text, textpos)
         
@@ -1098,7 +1129,7 @@ def exit_button(exitRect, clickSFX, stage, down, target):
             stage = target # change stage
 
     else: # not hovered
-        text = pygame.font.Font(FONT, int(64/mul)).render("X", True, (255,255,255))
+        text = TEXTS["48-X"]
         textpos = text.get_rect(centerx=exitRect.centerx, centery=exitRect.centery)
         screen.blit(text, textpos)
     
@@ -1195,7 +1226,7 @@ async def main():
             elif len(sdShowTxt) > 5:
                 sdShowTxt = str(int(sanddollar/1000))+"K"
 
-            text = pygame.font.Font(FONT, int(48/mul)).render(sdShowTxt, True, (66, 99, 52))
+            text = FONTSIZES[int(48/mul)].render(sdShowTxt, True, (66, 99, 52))
             textpos = text.get_rect(x=sanddollarRect.x+w*0.12, centery=sanddollarRect.centery-w*0.003)
             screen.blit(text, textpos)
 
@@ -1257,11 +1288,11 @@ async def main():
             if playButton.rect.collidepoint(pygame.mouse.get_pos()):
                 screen.blit(playBubble, (w*0.2, playButton.y - w*0.2))
 
-                text = pygame.font.Font(FONT, int(24/mul)).render("Solve a nonogram", True, (51, 66, 44))
+                text = TEXTS["24-Solve a nonogram"]
                 textpos = text.get_rect(centerx=w/2, centery=playButton.y - w*0.15)
                 screen.blit(text, textpos)
 
-                text = pygame.font.Font(FONT, int(24/mul)).render("Earn sand dollars", True, (51, 66, 44))
+                text = TEXTS["24-Earn sand dollars"]
                 textpos = text.get_rect(centerx=w/2, centery=playButton.y - w*0.1)
                 screen.blit(text, textpos)
 
@@ -1276,11 +1307,11 @@ async def main():
 
                 screen.blit(drawBubble, (w*0.2, drawButton.y + w*0.12))
 
-                text = pygame.font.Font(FONT, int(24/mul)).render("Draw and solve your own nonogram", True, (51, 66, 44))
+                text = TEXTS["24-Draw and solve your own nonogram"]
                 textpos = text.get_rect(centerx=w/2, centery=drawButton.y + w*0.21)
                 screen.blit(text, textpos)
 
-                text = pygame.font.Font(FONT, int(24/mul)).render("Doesn't earn sand dollars", True, (51, 66, 44))
+                text = TEXTS["24-Doesn't earn sand dollars"]
                 textpos = text.get_rect(centerx=w/2, centery=drawButton.y + w*0.26)
                 screen.blit(text, textpos)
 
@@ -1448,7 +1479,7 @@ async def main():
                         screen.blit(shopItemImgs[i], (shopItemRects[i].centerx - w*0.09, 
                                                       shopItemRects[i].centery - w*0.14))
 
-                    text = pygame.font.Font(FONT, int(48/mul)).render("$"+str(shopItemPrice[i]), 
+                    text = FONTSIZES[int(48/mul)].render("$"+str(shopItemPrice[i]), 
                                                              True, (80, 82, 66))
                     textpos = text.get_rect(centerx=shopItemRects[i].centerx, 
                                             centery=shopItemRects[i].centery + w*0.1)
@@ -1472,7 +1503,7 @@ async def main():
                 sdShowTxt = str(int(sanddollar/1000))+"K"
 
             # display text
-            text = pygame.font.Font(FONT, int(48/mul)).render(sdShowTxt, True, (66, 99, 52))
+            text = FONTSIZES[int(48/mul)].render(sdShowTxt, True, (66, 99, 52))
             textpos = text.get_rect(x=sanddollarRect.x+w*0.12, 
                                     centery=sanddollarRect.centery-w*0.003)
             screen.blit(text, textpos)
@@ -1669,11 +1700,11 @@ async def main():
 
             screen.blit(fade, (0,0))
 
-            text = pygame.font.Font(FONT, int(96/mul)).render("Draw your Nonogram!", True, (255,255,255))
+            text = TEXTS["96-Draw your Nonogram!"]
             textpos = text.get_rect(centerx=w/2-offset, centery=w*0.4)
             screen.blit(text, textpos)
 
-            text = pygame.font.Font(FONT, int(48/mul)).render("Have a friend draw it for a challenge", True, (255,255,255))
+            text = TEXTS["48-Have a friend draw it for a challenge"]
             textpos = text.get_rect(centerx=w/2-offset, centery=w*0.6)
             screen.blit(text, textpos)
 
@@ -1735,11 +1766,11 @@ async def main():
             if choosePredrawnButton.rect.collidepoint(pygame.mouse.get_pos()):
                 screen.blit(playBubble, (w*0.2, choosePredrawnButton.y - w*0.2))
 
-                text = pygame.font.Font(FONT, int(24/mul)).render("Solve a pre-drawn nonogram", True, (51, 66, 44))
+                text = TEXTS["24-Solve a pre-drawn nonogram"]
                 textpos = text.get_rect(centerx=w/2, centery=choosePredrawnButton.y - w*0.15)
                 screen.blit(text, textpos)
 
-                text = pygame.font.Font(FONT, int(24/mul)).render("Earn sand dollars", True, (51, 66, 44))
+                text = TEXTS["24-Earn sand dollars"]
                 textpos = text.get_rect(centerx=w/2, centery=choosePredrawnButton.y - w*0.1)
                 screen.blit(text, textpos)
 
@@ -1754,33 +1785,33 @@ async def main():
                 screen.blit(drawBubble, (w*0.2, chooseCustomRect.y + chooseCustomRect.h))
 
                 if load_data("gallery") != " ":
-                    text = pygame.font.Font(FONT, int(24/mul)).render("Solve a nonogram you drew before", True, (51, 66, 44))
+                    text = TEXTS["24-Solve a nonogram you drew before"]
                     textpos = text.get_rect(centerx=w/2, centery=chooseCustomRect.y + w*0.23)
                     screen.blit(text, textpos)
 
-                    text = pygame.font.Font(FONT, int(24/mul)).render("Doesn't earn sand dollars", True, (51, 66, 44))
+                    text = TEXTS["24-Doesn't earn sand dollars"]
                     textpos = text.get_rect(centerx=w/2, centery=chooseCustomRect.y + w*0.28)
                     screen.blit(text, textpos)
 
-                    text = pygame.font.Font(FONT, int(72/mul)).render("Custom", True, (66, 99, 52))
+                    text = TEXTS["72-Custom"]
 
                 else:
-                    text = pygame.font.Font(FONT, int(24/mul)).render("No nonogram available", True, (51, 66, 44))
+                    text = TEXTS["24-No nonogram available"]
                     textpos = text.get_rect(centerx=w/2, centery=chooseCustomRect.y + w*0.23)
                     screen.blit(text, textpos)
 
-                    text = pygame.font.Font(FONT, int(24/mul)).render("Draw one before solving", True, (51, 66, 44))
+                    text = TEXTS["24-Draw one before solving"]
                     textpos = text.get_rect(centerx=w/2, centery=chooseCustomRect.y + w*0.28)
                     screen.blit(text, textpos)
 
-                    text = pygame.font.Font(FONT, int(64/mul)).render("Custom", True, (66, 99, 52))
+                    text = TEXTS["64-Custom"]
 
                 if pygame.mouse.get_pressed()[0] and not down and load_data("gallery") != " ":
                     stage = "animation-for-solve get-from-gallery custom"
                     clickSFX.play()
             
             else:
-                text = pygame.font.Font(FONT, int(64/mul)).render("Custom", True, (66, 99, 52))
+                text = TEXTS["64-Custom"]
             
             textpos = text.get_rect(centerx=chooseCustomRect.centerx, centery=chooseCustomRect.centery)
             screen.blit(text, textpos)
@@ -1819,7 +1850,7 @@ async def main():
 
             screen.blit(heartXOimg[XO], (0,0))
 
-            text = pygame.font.Font(FONT, int(32/mul)).render(str(hp)+"%", True, (247, 225, 237))
+            text = FONTSIZES[int(32/mul)].render(str(hp)+"%", True, (247, 225, 237))
             textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
             screen.blit(text, textpos)
 
@@ -1827,7 +1858,7 @@ async def main():
 
             screen.blit(fade, (0,0))
 
-            text = pygame.font.Font(FONT, int(96/mul)).render("Solve!", True, (255,255,255))
+            text = TEXTS["96-Solve!"]
             textpos = text.get_rect(centerx=w/2+offset, centery=w/2)
             screen.blit(text, textpos)
 
@@ -1844,7 +1875,7 @@ async def main():
 
             screen.blit(heartXOimg[XO], (0,0))
 
-            text = pygame.font.Font(FONT, int(32/mul)).render(str(hp)+"%", True, (247, 225, 237))
+            text = FONTSIZES[int(32/mul)].render(str(hp)+"%", True, (247, 225, 237))
             textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
             screen.blit(text, textpos)
 
@@ -1904,7 +1935,7 @@ async def main():
 
                             infoDone = check_info_done(infoDone, boardSolving, boardSolution, infos)
 
-            text = pygame.font.Font(FONT, int(32/mul)).render(str(hp)+"%", True, (247, 225, 237))
+            text = FONTSIZES[int(32/mul)].render(str(hp)+"%", True, (247, 225, 237))
             textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
             screen.blit(text, textpos)
 
@@ -1945,13 +1976,13 @@ async def main():
             screen.blit(darken, (0,0))
 
             if stage.split()[0] == "win":
-                text = pygame.font.Font(FONT, int(128/mul)).render("YOU WIN!", True, (211, 232, 179))
+                text = TEXTS["128-YOU WIN!"]
                 if "pre-drawn" in stage:
                     earndollar = 100
                 else:
                     earndollar = 10
             elif stage.split()[0] == "lose":
-                text = pygame.font.Font(FONT, int(128/mul)).render("YOU LOSE!", True, (232, 195, 195))
+                text = TEXTS["128-YOU LOSE!"]
                 earndollar = 0
             text.set_alpha(opacity*2)
 
@@ -1986,7 +2017,7 @@ async def main():
                         stage = "reset"
 
                 else:
-                    text = pygame.font.Font(FONT, int(64/mul)).render("Publish image?", True, (157, 166, 144))
+                    text = TEXTS["64-Publish image?"]
                     textpos = text.get_rect(centerx=w/2, centery=w*0.55)
                     screen.blit(text, textpos)
 
