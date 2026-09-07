@@ -1,7 +1,7 @@
 import pygame, math, random, asyncio, platform, os, time, json
 from copy import deepcopy
 
-w = 900 # dynamic
+w = 720 # dynamic
 OGW = 720 # static
 mul = OGW/w
 
@@ -30,41 +30,6 @@ PREDRAWN = """15 111111111111111100000010000001101001010100101100000010000001101
 # testing
 #PREDRAWN = """15 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000""".splitlines()
 
-FONTSIZES = {int(24/mul): pygame.font.Font(FONT, int(24/mul)),
-            int(64/mul): pygame.font.Font(FONT, int(64/mul)),
-            int(48/mul): pygame.font.Font(FONT, int(48/mul)),
-            int(96/mul): pygame.font.Font(FONT, int(96/mul)),
-            int(72/mul): pygame.font.Font(FONT, int(72/mul)),
-            int(32/mul): pygame.font.Font(FONT, int(32/mul)),
-            int(128/mul): pygame.font.Font(FONT, int(128/mul))}
-
-TEXTS = {
-    "64-X": FONTSIZES[int(64/mul)].render("X", True, (255,255,255)),
-    "48-X": FONTSIZES[int(48/mul)].render("X", True, (255,255,255)),
-    "24-Solve a nonogram": FONTSIZES[int(24/mul)].render("Solve a nonogram", True, (51, 66, 44)),
-    "24-Earn sand dollars": FONTSIZES[int(24/mul)].render("Earn sand dollars", True, (51, 66, 44)),
-    "24-Draw and solve your own nonogram": FONTSIZES[int(24/mul)].render("Draw and solve your own nonogram", True, (51, 66, 44)),
-    "24-Doesn't earn sand dollars": FONTSIZES[int(24/mul)].render("Doesn't earn sand dollars", True, (51, 66, 44)),
-    "96-Draw your Nonogram!": FONTSIZES[int(96/mul)].render("Draw your Nonogram!", True, (255,255,255)),
-    "48-Have a friend draw it for a challenge": FONTSIZES[int(48/mul)].render("Have a friend draw it for a challenge", True, (255,255,255)),
-    "24-Solve a pre-drawn nonogram": FONTSIZES[int(24/mul)].render("Solve a pre-drawn nonogram", True, (51, 66, 44)),
-    "24-Earn sand dollars": FONTSIZES[int(24/mul)].render("Earn sand dollars", True, (51, 66, 44)),
-    "24-Solve a nonogram you drew before": FONTSIZES[int(24/mul)].render("Solve a nonogram you drew before", True, (51, 66, 44)),
-    "24-Doesn't earn sand dollars": FONTSIZES[int(24/mul)].render("Doesn't earn sand dollars", True, (51, 66, 44)),
-    "72-Custom": FONTSIZES[int(72/mul)].render("Custom", True, (66, 99, 52)),
-    "24-No nonogram available": FONTSIZES[int(24/mul)].render("No nonogram available", True, (51, 66, 44)),
-    "24-Draw one before solving": FONTSIZES[int(24/mul)].render("Draw one before solving", True, (51, 66, 44)),
-    "64-Custom": FONTSIZES[int(64/mul)].render("Custom", True, (66, 99, 52)),
-    "96-Solve!": FONTSIZES[int(96/mul)].render("Solve!", True, (255,255,255)),
-    "128-YOU WIN!": FONTSIZES[int(128/mul)].render("YOU WIN!", True, (211, 232, 179)),
-    "128-YOU LOSE!": FONTSIZES[int(128/mul)].render("YOU LOSE!", True, (232, 195, 195)),
-    "64-Publish image?": FONTSIZES[int(64/mul)].render("Publish image?", True, (157, 166, 144))
-}
-
-if platform.system() == "Emscripten":
-    from js import window
-    platform.window.onbeforeunload = None
-
 # save load functions
 
 def save_data(data, file):
@@ -86,6 +51,39 @@ def load_data(file):
             with open(file, "r") as f:
                 return f.read()
         return None
+
+def setupText():
+    global FONTSIZES, TEXTS
+    FONTSIZES = {int(24/mul): pygame.font.Font(FONT, int(24/mul)),
+            int(64/mul): pygame.font.Font(FONT, int(64/mul)),
+            int(48/mul): pygame.font.Font(FONT, int(48/mul)),
+            int(96/mul): pygame.font.Font(FONT, int(96/mul)),
+            int(72/mul): pygame.font.Font(FONT, int(72/mul)),
+            int(32/mul): pygame.font.Font(FONT, int(32/mul)),
+            int(128/mul): pygame.font.Font(FONT, int(128/mul))}
+
+    TEXTS = {
+        "64-X": FONTSIZES[int(64/mul)].render("X", True, (255,255,255)),
+        "48-X": FONTSIZES[int(48/mul)].render("X", True, (255,255,255)),
+        "24-Solve a nonogram": FONTSIZES[int(24/mul)].render("Solve a nonogram", True, (51, 66, 44)),
+        "24-Earn sand dollars": FONTSIZES[int(24/mul)].render("Earn sand dollars", True, (51, 66, 44)),
+        "24-Draw and solve your own nonogram": FONTSIZES[int(24/mul)].render("Draw and solve your own nonogram", True, (51, 66, 44)),
+        "24-Doesn't earn sand dollars": FONTSIZES[int(24/mul)].render("Doesn't earn sand dollars", True, (51, 66, 44)),
+        "96-Draw your Nonogram!": FONTSIZES[int(96/mul)].render("Draw your Nonogram!", True, (255,255,255)),
+        "48-Have a friend draw it for a challenge": FONTSIZES[int(48/mul)].render("Have a friend draw it for a challenge", True, (255,255,255)),
+        "24-Solve a pre-drawn nonogram": FONTSIZES[int(24/mul)].render("Solve a pre-drawn nonogram", True, (51, 66, 44)),
+        "24-Earn sand dollars": FONTSIZES[int(24/mul)].render("Earn sand dollars", True, (51, 66, 44)),
+        "24-Solve a nonogram you drew before": FONTSIZES[int(24/mul)].render("Solve a nonogram you drew before", True, (51, 66, 44)),
+        "24-Doesn't earn sand dollars": FONTSIZES[int(24/mul)].render("Doesn't earn sand dollars", True, (51, 66, 44)),
+        "72-Custom": FONTSIZES[int(72/mul)].render("Custom", True, (66, 99, 52)),
+        "24-No nonogram available": FONTSIZES[int(24/mul)].render("No nonogram available", True, (51, 66, 44)),
+        "24-Draw one before solving": FONTSIZES[int(24/mul)].render("Draw one before solving", True, (51, 66, 44)),
+        "64-Custom": FONTSIZES[int(64/mul)].render("Custom", True, (66, 99, 52)),
+        "96-Solve!": FONTSIZES[int(96/mul)].render("Solve!", True, (255,255,255)),
+        "128-YOU WIN!": FONTSIZES[int(128/mul)].render("YOU WIN!", True, (211, 232, 179)),
+        "128-YOU LOSE!": FONTSIZES[int(128/mul)].render("YOU LOSE!", True, (232, 195, 195)),
+        "64-Publish image?": FONTSIZES[int(64/mul)].render("Publish image?", True, (157, 166, 144))
+    }
 
 # classes
 
@@ -1155,6 +1153,10 @@ def flip_page(changePage, maxPages, flipRightButton, flipLeftButton, sfx, down, 
 # pages
 
 async def main():
+    if platform.system() == "Emscripten":
+        from js import window
+        window.onbeforeunload = None
+
     # acceleration: the acceleration of the animation before solving
     # galleryColors: holds data of the images in the gallery (which one is 0 or 1)
     # clickBg: if the background is selected to unselect items on the beach
@@ -1189,6 +1191,8 @@ async def main():
         XO, heartXOimg, heartRect,\
         tutorial,\
         prevx, prevy = setup()
+
+    setupText()
 
     # load music and sfx
     pygame.mixer.music.load(os.path.join(DIRECTORY, "assets/audio/bgm.ogg"))
