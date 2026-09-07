@@ -1,12 +1,20 @@
 # Changelog
 
-## [1.3.2] - 2026-09-6
+## [1.3.3] - 2026-09-07
+
+### Added
+- 2 more beach backgrounds to choose from
+- Swipe the X/O toggle to exit the game when solving nonograms
+
+## [1.3.2] - 2026-09-06
+
+### Added
 - New dictionaries initialized in global scope: `FONTSIZES` and `TEXTS`.
   - This increases performance by only initializing fonts and renders once to make up for larger screens.
   - The key for `FONTSIZES` is the exact font, and the value is the font with the key font size with the `FONT` font. This is used in the `TEXTS` dictionary and dynamic texts in the main loop (text where the words will change).
   - The key for `TEXTS` is "[font-size]-[text]", where the value is a `.render`, using the values from `FONTSIZES` as the `pygame.font.Font`. This is used in all static texts.
 
-## [1.3.1] - 2026-09-6
+## [1.3.1] - 2026-09-06
 
 ### Added
 - Added `self.hide` variable to `Button` class, defined in __init__. It can be set to either `"text"` or `"img"` to hide either one.

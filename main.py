@@ -385,9 +385,9 @@ def setupGallery():
             solveNext, galleryPage, flipLeftButton, flipRightButton
 
 def setupBeach():
-    beachBgImgs = [pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/backgrounds/1.png")), (w,w)),
-                   pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/backgrounds/2.png")), (w,w)),
-                   pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/backgrounds/3.png")), (w,w))]
+    beachBgImgs = []
+    for i in range(5):
+        beachBgImgs.append(pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, f"assets/images/backgrounds/{i+1}.png")), (w,w)))
 
     beachConfirmButton = Button("img", w*0.1, w*0.1, "#ffffff", int(20/mul), x=w*0.45, y=w*0.88, 
                         imgFile=os.path.join(DIRECTORY, "assets/images/icons/check.png"),
@@ -545,6 +545,12 @@ def setup():
                   "X": pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/heartX.png")), (gap, gap))}
     heartRect = pygame.Rect(0,0,gap,gap)
 
+    exitImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/exit.png")), (gap, gap))
+
+    gapSurf = pygame.Surface((gap, gap), pygame.SRCALPHA)
+    gapPrevPoint = (None, None)
+    gapOffset = 0
+
     checkButtonRect = pygame.Rect(gap*0.1, gap*0.1, gap*0.8, gap*0.8)
     checkButtonImg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/check.png")), 
                                             (gap*0.8, gap*0.8))
@@ -588,7 +594,8 @@ def setup():
         instructionPages, instructionPageNo,\
         XO, heartXOimg, heartRect,\
         tutorial,\
-        prevx, prevy
+        prevx, prevy,\
+        exitImg, gapSurf, gapPrevPoint, gapOffset
 
 # other functions
 
@@ -1190,7 +1197,8 @@ async def main():
         instructionPages, instructionPageNo,\
         XO, heartXOimg, heartRect,\
         tutorial,\
-        prevx, prevy = setup()
+        prevx, prevy,\
+        exitImg, gapSurf, gapPrevPoint, gapOffset = setup()
 
     setupText()
 
@@ -1527,10 +1535,10 @@ async def main():
         elif stage == "pick-beach": # startup screen to pick what beach background you want
             screen.blit(beachBgImgs[beachBgNo], (0,0))
 
-            beachBgNo = flip_page(beachBgNo, 3, 
+            beachBgNo = flip_page(beachBgNo, 5, 
                                 flipRightButton, flipLeftButton, flipSFX, down, show=True)
             
-            beachBgNo = beachBgNo % 3
+            beachBgNo = beachBgNo % 5
 
             beachConfirmButton.draw()
             
@@ -1900,13 +1908,39 @@ async def main():
 
             drawBoard(size, screen, colors, boardSolving, gap, w, cellW, boardRects, crossImg, cellTimers)
 
-            screen.blit(heartXOimg[XO], heartRect)
-            if pygame.mouse.get_pressed()[0] and heartRect.collidepoint(pygame.mouse.get_pos()) and not down:
-                if XO == "X":
-                    XO = "O"
-                else:
-                    XO = "X"
-                clickSFX.play()
+            # gap heart/exit stuff
+            # normal press
+            if down and heartRect.collidepoint(pygame.mouse.get_pos()) and not pygame.mouse.get_pressed()[0]\
+                and gapPrevPoint != pygame.mouse.get_pos():
+                    if XO == "X":
+                        XO = "O"
+                    else:
+                        XO = "X"
+                    clickSFX.play()
+
+            # hold swipe
+            if heartRect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] and not down:
+                gapPrevPoint = pygame.mouse.get_pos()
+
+            if pygame.mouse.get_pressed()[0] and down and gapOffset <= gap:
+                gapOffset = pygame.mouse.get_pos()[0] - gapPrevPoint[0]
+
+            if not pygame.mouse.get_pressed()[0]:
+                if gapOffset >= gap:
+                    stage = "reset"
+                gapOffset = 0
+                gapPrevPoint = (None, None)
+
+            # blit stuff
+            gapSurf.fill((0,0,0,0))
+            gapSurf.blit(heartXOimg[XO], (0 + gapOffset,0))
+            gapSurf.blit(exitImg, (-gap + gapOffset, 0))
+
+            text = FONTSIZES[int(32/mul)].render(str(hp)+"%", True, (247, 225, 237))
+            textpos = text.get_rect(centerx=gap/2 + gapOffset, centery=gap/5*4)
+            gapSurf.blit(text, textpos)
+
+            screen.blit(gapSurf, (0,0))
 
             clueSelected, clueAnimation, dropdownRect = drawInfo(yinfoRects, xinfoRects, size, infos, infoDone, clueArrows, clueSelected, down, clueAnimation)
             
@@ -1938,10 +1972,6 @@ async def main():
                                     solveDown = True
 
                             infoDone = check_info_done(infoDone, boardSolving, boardSolution, infos)
-
-            text = FONTSIZES[int(32/mul)].render(str(hp)+"%", True, (247, 225, 237))
-            textpos = text.get_rect(centerx=gap/2, centery=gap/5*4)
-            screen.blit(text, textpos)
 
             # check if won
             won = True
