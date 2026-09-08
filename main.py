@@ -389,16 +389,19 @@ def setupGallery():
     galleryPage = 0
 
     flipLeftButton = Button("text", w*0.1, w*0.15, "#5b6b4f", 
-                            border_radius=int(20/mul), centerx=w*0.125, centery=w*0.5, 
-                            text=Text("<", "#ffffff", int(64/mul)), hoverSize=int(96/mul))
+                            border_radius=int(20/mul), x=0, y=0, 
+                            text=Text("<", "#ffffff", int(64/mul)), hoverSize=int(64/mul))
 
     flipRightButton = Button("text", w*0.1, w*0.15, "#5b6b4f", 
-                            border_radius=int(20/mul), centerx=w*0.875, centery=w*0.5, 
-                            text=Text(">", "#ffffff", int(64/mul)), hoverSize=int(96/mul))
+                            border_radius=int(20/mul), x=0, y=0, 
+                            text=Text(">", "#ffffff", int(64/mul)), hoverSize=int(64/mul))
+
+    flipLeftSurf = pygame.Surface((flipLeftButton.w, flipLeftButton.h), pygame.SRCALPHA)
+    flipRightSurf = pygame.Surface((flipRightButton.w, flipRightButton.h), pygame.SRCALPHA)
 
     return galleryBg, popupExitRect, galleryData,\
         galleryBigRects, gallerySmallRects, galleryColors,\
-            solveNext, galleryPage, flipLeftButton, flipRightButton
+            solveNext, galleryPage, flipLeftButton, flipRightButton, flipLeftSurf, flipRightSurf
 
 def setupBeach():
     beachBgImgs = []
@@ -520,7 +523,7 @@ def setup():
     galleryBg, popupExitRect, galleryData,\
         galleryBigRects, gallerySmallRects,\
         galleryColors, solveNext, galleryPage,\
-        flipLeftButton, flipRightButton = setupGallery()
+        flipLeftButton, flipRightButton, flipLeftSurf, flipRightSurf = setupGallery()
 
     # beach stuff
     beachBgImgs, beachConfirmButton,\
@@ -595,7 +598,7 @@ def setup():
         yesButton, noButton, claimSanddollarButton,\
         popupExitRect, galleryBg, galleryData,\
         galleryBigRects, gallerySmallRects,\
-        galleryColors, galleryPage, flipLeftButton, flipRightButton,\
+        galleryColors, galleryPage, flipLeftButton, flipRightButton, flipLeftSurf, flipRightSurf,\
         beachBgImgs, beachConfirmButton,\
         mainExitRect, addButton, trashButtonRect, trashImgs,\
         addBg, posOffset, shopBg, shopPage,\
@@ -1156,20 +1159,36 @@ def exit_button(exitRect, clickSFX, stage, down, target):
     
     return stage
 
-def flip_page(changePage, maxPages, flipRightButton, flipLeftButton, sfx, down, show=False):
-    if changePage > 0 or show:
-        flipLeftButton.draw()
+def flip_page(changePage, maxPages, flipRightButton:Button, flipLeftButton:Button, flipLeftSurf, flipRightSurf, sfx, down, show=False):
+    flipLeftSurf.fill((0,0,0,0))
 
-        if flipLeftButton.get_pressed() and not down:
-            changePage -= 1
-            sfx.play()
+    if changePage > 0 or show:
+        flipLeftButton.draw(flipLeftSurf)
+
+        flipLeftSurf.set_alpha(127)
+        
+        if pygame.Rect(w*0.125 - flipLeftButton.w/2, w*0.5 - flipLeftButton.h/2, flipLeftButton.w, flipLeftButton.h).collidepoint(pygame.mouse.get_pos()):
+            flipLeftSurf.set_alpha(255)
+
+            if pygame.mouse.get_pressed()[0] and not down:
+                changePage -= 1
+                sfx.play()
+
+        screen.blit(flipLeftSurf, (w*0.125 - flipLeftButton.w/2, w*0.5 - flipLeftButton.h/2))
 
     if changePage < maxPages or show:
-        flipRightButton.draw()
+        flipRightButton.draw(flipRightSurf)
 
-        if flipRightButton.get_pressed() and not down:
-            changePage += 1
-            sfx.play()
+        flipRightSurf.set_alpha(127)
+
+        if pygame.Rect(w*0.875 - flipRightButton.w/2, w*0.5 - flipRightButton.h/2, flipRightButton.w, flipRightButton.h).collidepoint(pygame.mouse.get_pos()):
+            flipRightSurf.set_alpha(255)
+
+            if pygame.mouse.get_pressed()[0] and not down:
+                changePage += 1
+                sfx.play()
+
+        screen.blit(flipRightSurf, (w*0.875 - flipRightButton.w/2, w*0.5 - flipRightButton.h/2))
 
     return changePage
 
@@ -1198,7 +1217,7 @@ async def main():
         yesButton, noButton, claimSanddollarButton,\
         popupExitRect, galleryBg, galleryData,\
         galleryBigRects, gallerySmallRects,\
-        galleryColors, galleryPage, flipLeftButton, flipRightButton,\
+        galleryColors, galleryPage, flipLeftButton, flipRightButton, flipLeftSurf, flipRightSurf,\
         beachBgImgs, beachConfirmButton,\
         mainExitRect, addButtonRect, trashButtonRect, trashImgs,\
         addBg, posOffset, shopBg, shopPage,\
@@ -1379,7 +1398,8 @@ async def main():
             screen.blit(instructionPages[instructionPageNo], (w*0.05,w*0.05))
 
             instructionPageNo = flip_page(instructionPageNo, len(instructionPages)-1, 
-                                          flipRightButton, flipLeftButton, flipSFX, down)
+                                          flipRightButton, flipLeftButton, flipLeftSurf, flipRightSurf, 
+                                          flipSFX, down)
 
             stage = exit_button(popupExitRect, clickSFX, stage, down, "info")
 
@@ -1463,7 +1483,8 @@ async def main():
                                              gallerySmallRects[y][x])
 
             galleryPage = flip_page(galleryPage, (len(galleryBigRects)-1)//4, 
-                                    flipRightButton, flipLeftButton, flipSFX, down)
+                                    flipRightButton, flipLeftButton, flipLeftSurf, flipRightSurf, 
+                                    flipSFX, down)
 
             stage = exit_button(popupExitRect, clickSFX, stage, down, "home")
 
@@ -1514,7 +1535,8 @@ async def main():
                     screen.blit(text, textpos)
 
             shopPage = flip_page(shopPage, (len(shopItemRects)-1)//4, 
-                                 flipRightButton, flipLeftButton, flipSFX, down)
+                                 flipRightButton, flipLeftButton, flipLeftSurf, flipRightSurf,
+                                flipSFX, down)
 
             # display sand dollars
             sanddollarRect = pygame.Rect(w*0.04, w*0.02, w*0.35, w*0.1)
@@ -1552,7 +1574,8 @@ async def main():
             screen.blit(beachBgImgs[beachBgNo], (0,0))
 
             beachBgNo = flip_page(beachBgNo, 5, 
-                                flipRightButton, flipLeftButton, flipSFX, down, show=True)
+                                flipRightButton, flipLeftButton, flipLeftSurf, flipRightSurf, 
+                                flipSFX, down, show=True)
             
             beachBgNo = beachBgNo % 5
 
@@ -1712,7 +1735,8 @@ async def main():
                                      addItemRects[i].centery-w*0.075))
 
             addPage = flip_page(addPage, (len(addData)-1)//9, 
-                                flipRightButton, flipLeftButton, flipSFX, down)
+                                flipRightButton, flipLeftButton, flipLeftSurf, flipRightSurf, 
+                                flipSFX, down)
 
             if key[pygame.K_LEFT] and addPage > 0 and not down:
                 addPage -= 1
