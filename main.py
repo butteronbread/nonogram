@@ -40,13 +40,13 @@ if platform.system() == "Emscripten":
         resolution = r["screen-res"] if "screen-res" in r else "Medium"
 
 if resolution == "Low":
-    w = 540
+    w = 360
 elif resolution == "Medium":
     w = 720
 elif resolution == "High":
     w = 1080
 
-OGW = 720 # static
+OGW = 800 # static
 mul = OGW/w
 
 screen = pygame.display.set_mode((w,w))
@@ -1962,7 +1962,7 @@ async def main():
             if heartRect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] and not down:
                 gapPrevPoint = pygame.mouse.get_pos()
 
-            if pygame.mouse.get_pressed()[0] and down:
+            if pygame.mouse.get_pressed()[0] and down and gapPrevPoint != (None, None):
                 gapOffset = pygame.mouse.get_pos()[0] - gapPrevPoint[0]
 
             if gapOffset > gap:

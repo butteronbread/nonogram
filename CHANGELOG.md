@@ -4,6 +4,10 @@
 
 ### Changed
 - Flip pages to be 50% transparent when mouse not over. This allows the user to easily see the content underneath that the button may be covering.
+- Updated low resolution to be 360 for grid alignment
+
+### Fixed
+- Fixed TypeError while solving due to swipe to exit feature
 
 ## [1.3.3] - 2026-09-08
 
