@@ -56,12 +56,24 @@ async def custom_site():
 
     main = appdir / "assets" / "main.py"
 
-    # prompt user for resolution choice
-    platform.window.show_resolution_selector()
-    print("\n"*4, "    * Waiting for resolution selection. *" , "\n"*4)
+    # Check browser local storage for "save"
+    has_save = platform.window.localStorage.getItem("save")
 
-    while platform.window.selected_resolution is None:
-        await asyncio.sleep(.1)
+    if has_save:
+        # Save data exists -> display tap screen prompt
+        msg = "Tap screen to start"
+        platform.window.infobox.innerHTML = msg
+        platform.window.show_infobox()
+
+        while not platform.window.MM.UME:
+            await asyncio.sleep(.1)
+    else:
+        # No save data -> display resolution buttons
+        platform.window.show_resolution_selector()
+        print("\n"*4, "    * Waiting for resolution selection. *" , "\n"*4)
+
+        while platform.window.selected_resolution is None:
+            await asyncio.sleep(.1)
 
     # Pass the selected resolution to Python
     resolution = str(platform.window.selected_resolution)

@@ -8,8 +8,12 @@
 - Choose resolution
   - Pick between low, medium, and high resolutions in the `index.tmpl`
   - Resolution updated in `main.py`
+  - Saved using `"screen-res"` key in `save.txt`, and won't ask again if it's already saved.
   - This is to accomodate for devices with low processing power while allowing more powerful computers to access high quality graphics
   - Added this feature to `README.md`
+
+### Changed
+- Higher resolution `info` images
 
 ## [1.3.2] - 2026-09-06
 
