@@ -1,11 +1,22 @@
 import pygame, math, random, asyncio, platform, os, time, json
 from copy import deepcopy
 
-w = 720 # dynamic
-OGW = 720 # static
-mul = OGW/w
+w = 720
 
 pygame.init()
+
+if platform.system() == "Emscripten":
+    resolution = platform.window.config.resolution
+
+    if resolution == "Low":
+        w = 540
+    elif resolution == "Medium":
+        w = 720
+    elif resolution == "High":
+        w = 1080
+
+OGW = 720 # static
+mul = OGW/w
 
 screen = pygame.display.set_mode((w,w))
 

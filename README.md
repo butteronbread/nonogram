@@ -30,6 +30,7 @@ Grids and Grains is a creative blend of logic puzzles and customization—solve 
 - **Gallery** – View your complete history of created nonograms
 - **Sound** - Toggle your background music on and off
 - **Information** - Information page to describe how to play, the controls, and a detailed description of how to solve a nonogram
+- **Resolution** - Pick between low, medium, and high resolutions before starting the game. This is to accomodate for devices with low processing power, while allowing more powerful computers to enjoy high quality graphics.
 
 ---
 

@@ -28,13 +28,11 @@ async def custom_site():
     platform.window.transfer.hidden = true
     platform.window.canvas.style.visibility = "visible"
 
-
     bundle = "{{cookiecutter.archive}}"
 
     # the C or js loader could do that but be explicit.
     appdir = Path(f"/data/data/{bundle}") # /data/data/{{cookiecutter.archive}}
     appdir.mkdir()
-
 
     # unpack filesystem from compressed archive into work dir
     if platform.window.location.host.find('.itch.zone')>0:
@@ -48,10 +46,9 @@ async def custom_site():
             tar = tarfile.open(fileobj=archive, mode="r:gz")
             tar.extractall(path=appdir.as_posix(), filter='tar')
             tar.close()
- 
+
     # preloader will change to work dir and prepend it to sys.path
     platform.run_main(PyConfig, loaderhome= appdir / "assets", loadermain=None)
-
 
     # wait preloading complete : that includes images and wasm compilation of bundled modules
     while embed.counter()<0:
@@ -59,24 +56,15 @@ async def custom_site():
 
     main = appdir / "assets" / "main.py"
 
-    # TODO: test for window.webkitAudioContext and block aio loop until gesture if accessing media manager play
-    # before a gesture is recorded ( touch or click )
+    # prompt user for resolution choice
+    platform.window.show_resolution_selector()
+    print("\n"*4, "    * Waiting for resolution selection. *" , "\n"*4)
 
-    # test/wait user media interaction
-    if not platform.window.MM.UME:
+    while platform.window.selected_resolution is None:
+        await asyncio.sleep(.1)
 
-        # now that apk is mounted we have access to font cache
-        # but we need to fill __file__ that is not yet set
-        __import__(__name__).__file__ = main
-
-        # now make a prompt with image above text
-        msg  = "Tap screen to start"
-        platform.window.infobox.innerHTML = msg
-        platform.window.show_infobox()
-        print("\n"*4, f"    * Waiting for media user engagement. {msg} *" , "\n"*4)
-
-        while not platform.window.MM.UME:
-            await asyncio.sleep(.1)
+    # Pass the selected resolution to Python
+    resolution = str(platform.window.selected_resolution)
 
     # start async top level machinery if not started and add a console in any case if requested.
     await TopLevel_async_handler.start_toplevel(platform.shell, console=window.python.config.debug)
@@ -85,15 +73,11 @@ async def custom_site():
     # but we need to fill __file__/__name__ that are not yet set
     __import__(__name__).__file__ = main
 
-
     def ui_callback(pkg):
         platform.window.infobox.innerText = f"installing {pkg}"
         platform.window.show_infobox()
 
     await shell.source(main, callback=ui_callback)
-
-    # if you don't reach that step
-    # your main.py has an infinite sync loop somewhere !
 
     platform.window.infobox.style.display = "none"
     platform.window.config.gui_divider = 1
@@ -103,17 +87,6 @@ async def custom_site():
     shell.interactive()
 
 asyncio.run( custom_site() )
-
-
-
-
-
-
-
-
-
-
-
 
 # BEGIN BLOCK
 #
@@ -125,14 +98,6 @@ asyncio.run( custom_site() )
 # do not alter that comment block it is separating python code from html code
 # =============================================================================
 # --></script><head><!--
-//=============================================================================
-//
-//
-//
-//
-//
-//
-//
 
     {%- if cookiecutter.comment != "" -%}
 {{cookiecutter.comment}}
@@ -141,9 +106,7 @@ asyncio.run( custom_site() )
 --><script type="application/javascript">
 // END BLOCK
 
-
-
-// this dict is available under PyConfig.config from __main__
+window.selected_resolution = null;
 
 config = {
     xtermjs : "{{cookiecutter.xtermjs}}" ,
@@ -160,7 +123,8 @@ config = {
     PYBUILD : "{{cookiecutter.PYBUILD}}",
     fb_ar   :  1.77,
     fb_width : "{{cookiecutter.width}}",
-    fb_height : "{{cookiecutter.height}}"
+    fb_height : "{{cookiecutter.height}}",
+    resolution : "Medium"
 }
 
 function show_infobox() {
@@ -178,6 +142,27 @@ function show_infobox() {
     infobox.style.top = top + "px";
 }
 
+function select_resolution(res) {
+    window.selected_resolution = res;
+    config.resolution = res;
+    if (window.MM) {
+        window.MM.UME = true;
+    }
+}
+
+function show_resolution_selector() {
+    const box = document.getElementById("infobox");
+    box.innerHTML = `
+        <div style="margin-bottom: 10px; font-size: 18px;">Resolution</div>
+        <div class="res-button-container">
+            <button class="res-btn" onclick="select_resolution('Low')">Low</button>
+            <button class="res-btn" onclick="select_resolution('Medium')">Medium</button>
+            <button class="res-btn" onclick="select_resolution('High')">High</button>
+        </div>
+    `;
+    show_infobox();
+}
+
 </script>
 
     <title>{{cookiecutter.title}}</title>
@@ -187,7 +172,6 @@ function show_infobox() {
     <meta name="viewport" content="height=device-height, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes"/>
-
 
     <link rel="icon" type="image/png" href="favicon.png" sizes="16x16">
 
@@ -211,12 +195,39 @@ function show_infobox() {
             background: #91a28e;
             color: #454f43;
             font-weight: bold;
-            padding: 12px 24px;
+            padding: 16px 28px;
             border-radius: 12px;
             z-index: 999999;
             text-align: center;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
             white-space: nowrap;
+        }
+
+        .res-button-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .res-btn {
+            background: #454f43;
+            color: #d8e9d6;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .res-btn:hover {
+            background: #2d352b;
+            transform: scale(1.05);
+        }
+
+        .res-btn:active {
+            transform: scale(0.95);
         }
         
         #transfer {
@@ -240,7 +251,6 @@ function show_infobox() {
         div.thick_border { border: 4px solid black; }
 
         /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
-        /* average size of droid screen 470dp x 320dp  */
         canvas.emscripten {
             box-sizing: border-box;
             background-color: transparent;
@@ -318,8 +328,6 @@ function show_infobox() {
         </div>
     </div>
 
-
-
     <canvas class="emscripten" id="canvas"
 width="1px"
 height="1px"
@@ -381,7 +389,6 @@ frameborder="1"
 
     </div>
 
-
     <div id="dlg" hidden>
         <input type="file" id="dlg_multifile" multiple accept="image/*">
         <label for="dlg_multifile">Select files</label>
@@ -397,8 +404,6 @@ frameborder="1"
     }
 
     async function custom_onload(debug_hidden) {
-        // this is called before anything python is loaded
-        // make your js customization here
         console.log(__FILE__, "custom_onload")
 
         pyconsole.hidden = debug_hidden
@@ -411,20 +416,14 @@ frameborder="1"
     }
 
     function custom_prerun(){
-        // no python main and no (MEMFS + VFS) yet.
         console.log(__FILE__, "custom_prerun")
-
     }
 
     function custom_postrun(){
-        // python main and no VFS filesystem yet.
         console.log(__FILE__, "custom_postrun")
-
     }
 
     function debug() {
-        // allow to gain access to dev tools from js console
-        // but only on desktop. difficult to reach when in iframe
         python.config.debug = true
         custom_onload(false)
         Module.PyRun_SimpleString("shell.uptime()")
@@ -436,8 +435,7 @@ frameborder="1"
     }
 
     function info_online(url) {
-        // display info about current APK
-        fetch( url /*, options */)
+        fetch( url )
             .then((response) => response.text())
             .then((html) => {
                 info_inline(html);

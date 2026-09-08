@@ -1,10 +1,15 @@
 # Changelog
 
-## [1.3.3] - 2026-09-07
+## [1.3.3] - 2026-09-08
 
 ### Added
 - 2 more beach backgrounds to choose from
 - Swipe the X/O toggle to exit the game when solving nonograms
+- Choose resolution
+  - Pick between low, medium, and high resolutions in the `index.tmpl`
+  - Resolution updated in `main.py`
+  - This is to accomodate for devices with low processing power while allowing more powerful computers to access high quality graphics
+  - Added this feature to `README.md`
 
 ## [1.3.2] - 2026-09-06
 
