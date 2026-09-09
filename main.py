@@ -46,7 +46,7 @@ elif resolution == "Medium":
 elif resolution == "High":
     w = 1080
 
-OGW = 800 # static
+OGW = 720 # static
 mul = OGW/w
 
 screen = pygame.display.set_mode((w,w))
@@ -56,16 +56,16 @@ clock = pygame.time.Clock()
 pygame.display.set_caption("Gram of Grain")
 
 PREDRAWN = """15 111111111111111100000010000001101001010100101100000010000001101001010111101101111010100101100000010000001111111111111111100000010000001101001010100101100000010000001101111010100101101001010111101100000010000001111111111111111
-15 000000000000000000000000000000000000000000000000000000000000000000000000000011100101001110001110111011100000111111111000000010111010000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000
-15 000000000000000000011111111100000100000001000000100000010000001000000100000001000001000000010000001110000011111000100000000001001000000000010010000000000010100000000000101000000000000110000000000000100000000000000000000000000
-15 000001111100000000111111111000001110000011100011000000000110011000000000110110001000100011110001000100011110001111100011110001000100011110001000100011011000000000110011000000000110001110000011100000111111111000000001111100000
-15 000000010000000010000010000010001000010000100000100010001000000010000010000000000111000000000001111100000111101111101111000001111100000000000111000000000010000010000000100010001000001000010000100010000010000010000000010000000
-15 000000000000000000000000000000001110000011100001011111110100000110000011000001000000000100010000000000010010001000100010010000000000010010000010000010001000101000100000100000001000000011111110000000000000000000000000000000000
 15 000000000000000000001000100000000000101000000001110101011100011111000111110011001101100110011100111001110001111111111100000001111100000000011111110000000110111011000000111101111000000011000110000000000000000000000000000000000
-15 000010000010000000001000100000000000111000000000001111100000000010111010000011011111110110000110010011000001100010001100001001010100100111000010110111001011010000100001101010101100000110010011000000011111110000001101111101100
-15 000000000000000000001000001110000011100011010000001000110110000000001101100000000011011000001000110110010011101101100111001111011000010000110110000000000111100000000001111110000000011100111000000001000010000000000000000000000
 15 000000011111110000000110111111000000111111111000000111111111000000111110000100001111111110110011111100000110111111111000111111111101000111111111100000011111111100000001111111000000000110110000000000100010000000000110010000000
-5 0000001000001000000000000""".splitlines()
+5 1010110101111110010000100
+10 0111001110111111101111111111011111111111111111111101111111100111111110001111110000011110000000110000
+5 0011000101001001110011100
+5 1101111111111110111000100
+5 1111101110101011101111111
+5 0010001110111110111001010
+5 1111111111011100010011111
+15 000001101100000000011111110000000011111110000000011111110000011101111101110111110111011111111111010111111011111101111110111111010111111111110010011111011100010001110000000110000000000001100000000000111000000000011100000000000""".splitlines()
 
 # testing
 #PREDRAWN = """15 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000""".splitlines()
@@ -353,11 +353,15 @@ def setupChooseSolve():
                           border_radius=int(20/mul), centerx=w/2, centery=w*0.35, 
                           text=Text("15x15", "#abcc9d", int(64/mul)), hoverSize=int(72/mul))
 
+    size10Button = Button("text", w*0.5, w*0.15, "#426334", 
+                              border_radius=int(20/mul), centerx=w/2, centery=w*0.55, 
+                              text=Text("10x10", "#abcc9d", int(64/mul)), hoverSize=int(72/mul))
+
     size5Button = Button("text", w*0.5, w*0.15, "#abcc9d", 
-                        border_radius=int(20/mul), centerx=w/2, centery=w*0.55, 
+                        border_radius=int(20/mul), centerx=w/2, centery=w*0.75, 
                         text=Text("5x5", "#426334", int(64/mul)), hoverSize=int(72/mul))
 
-    return choosePredrawnButton, chooseCustomRect, size15Button, size5Button
+    return choosePredrawnButton, chooseCustomRect, size15Button, size10Button, size5Button
 
 def setupDarkFade():
     darken = pygame.Surface((w,w), pygame.SRCALPHA)
@@ -464,17 +468,17 @@ def setupShop():
     shopPage = 0
 
     shopItemRects = []
-    for i in range(14):
+    for i in range(16):
         shopItemRects.append(pygame.Rect(w*0.2+((i%4)%2 * w*0.35), w*0.15+((i%4)//2 * w*0.4), w*0.25, w*0.35))
 
     shopItemImgs = []
     ogShopItemImgs = []
-    for i in range(14):
+    for i in range(16):
         shopItemImgs.append(pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, f"assets/images/shop/{i}.png")), 
                                                    (w*0.18, w*0.18)))
         ogShopItemImgs.append(pygame.image.load(os.path.join(DIRECTORY, f"assets/images/shop/{i}.png")))
 
-    shopItemPrice = [300, 100, 500, 300, 1200, 1000, 1000, 200, 200, 300, 300, 200, 500, 200]
+    shopItemPrice = [300, 100, 500, 300, 1200, 1000, 1000, 200, 200, 300, 300, 200, 500, 200, 200, 1200]
 
     return shopBg, shopPage, shopItemRects, shopItemImgs, ogShopItemImgs, shopItemPrice
 
@@ -556,13 +560,13 @@ def setup():
     shopSDAnimate, shopSDAnimateTxt,\
         scaling, rotating, ogRotation = 0, "", False, False, 0
 
-    choosePredrawnButton, chooseCustomRect, size15Button, size5Button = setupChooseSolve()
+    choosePredrawnButton, chooseCustomRect, size15Button, size10Button, size5Button = setupChooseSolve()
 
     infoPageBg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/infoPage.png")), 
                                         (w*0.9,w*0.9))
     infoPageBgBold = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/infoPageBold.png")), 
                                             (w*0.9,w*0.9))
-    infoRect = pygame.Rect(int(166/mul), int(236/mul), int(160/mul), int(30/mul))
+    infoRect = pygame.Rect(int(170/mul), int(240/mul), int(160/mul), int(30/mul))
 
     instructionPages = []
     for i in range(7):
@@ -602,7 +606,7 @@ def setup():
         infos, yinfoRects, xinfoRects, infoDone,\
         clueArrows, clueSelected, clueAnimation,\
         darken, opacity, fade, fadeo,\
-        choosePredrawnButton, chooseCustomRect, size15Button, size5Button,\
+        choosePredrawnButton, chooseCustomRect, size15Button, size10Button, size5Button,\
         playButton, drawButton, playBubble, drawBubble,\
         sanddollarRect, sanddollarImg,\
         shopButton, galleryButton, beachButton,\
@@ -926,28 +930,19 @@ def check_info_done(infoDone, boardSolving, boardSolution, infos):
     return infoDone
 
 def getSolveNext(num):
-    five = []
-    fifteen = []
+    sizes = {"5": [], "10": [], "15": []}
 
     for i in PREDRAWN:
-        if i.split()[0] == "5":
-            five.append(i)
-        elif i.split()[0] == "15":
-            fifteen.append(i)
+        sizes[i.split()[0]].append(i)
 
     random.seed(time.time_ns()) # makes sure it is random because when running with pygbag its always 2
-    if num == "5":
-        try:
-            solveNext = five[random.randint(0,len(five)-1)]
-        except:
-            solveNext = five[0]
-    elif num == "15":
-        try:
-            solveNext = fifteen[random.randint(0,len(fifteen)-1)]
-        except:
-            solveNext = fifteen[0]
 
-    return solveNext
+    try:
+        r = sizes[num][random.randint(0,len(sizes[num])-1)]
+    except:
+        r = sizes[num][0]
+
+    return r, PREDRAWN.index(r)
 
 # beach functions
 
@@ -1244,7 +1239,7 @@ async def main():
         infos, yinfoRects, xinfoRects, infoDone,\
         clueArrows, clueSelected, clueAnimation,\
         darken, opacity, fade, fadeo,\
-        choosePredrawnButton, chooseCustomRect, size15Button, size5Button,\
+        choosePredrawnButton, chooseCustomRect, size15Button, size10Button, size5Button,\
         playButton, drawButton, playBubble, drawBubble,\
         sanddollarRect, sanddollarImg,\
         shopButton, galleryButton, beachButton,\
@@ -1397,7 +1392,7 @@ async def main():
                 screen.blit(text, textpos)
 
                 if pygame.mouse.get_pressed()[0] and not down:
-                    stage = "animation-for-draw"
+                    stage = "choose-size draw"
                     clickSFX.play()
 
             if tutorial:
@@ -1467,6 +1462,11 @@ async def main():
                             except:
                                 saveR["gallery"] = ""
                                 save_data(json.dumps(saveR), "save")
+
+                                galleryData = []
+                                galleryBigRects = []
+                                gallerySmallRects = []
+                                galleryColors = []
                                 break
 
                         datasize = int(data[0])
@@ -1478,6 +1478,7 @@ async def main():
                                                            w*0.25), datasize])
 
                         dataW = (galleryBigRects[-1][0].w - w*0.02)/datasize
+                        dataCeil = math.ceil(dataW)
 
                         gallerySmallRects.append([])
                         for y in range(datasize):
@@ -1486,8 +1487,8 @@ async def main():
                                     pygame.Rect( # w*0.01 = margin
                                         galleryBigRects[-1][0].x + w*0.01 + dataW*x,
                                         galleryBigRects[-1][0].y + w*0.01 + dataW*y,
-                                        dataW, 
-                                        dataW))
+                                        dataCeil, 
+                                        dataCeil))
                         
                         galleryColors.append(list(data))
 
@@ -1861,7 +1862,7 @@ async def main():
                 screen.blit(text, textpos)
 
                 if pygame.mouse.get_pressed()[0] and not down:
-                    stage = "choose-size"
+                    stage = "choose-size play"
                     clickSFX.play()
 
             # custom button
@@ -1870,7 +1871,7 @@ async def main():
             if chooseCustomRect.collidepoint(pygame.mouse.get_pos()):
                 screen.blit(drawBubble, (w*0.2, chooseCustomRect.y + chooseCustomRect.h))
 
-                if load_data("gallery") != " ":
+                if not load_data("gallery") in ["", " "]:
                     text = TEXTS["24-Solve a nonogram you drew before"]
                     textpos = text.get_rect(centerx=w/2, centery=chooseCustomRect.y + w*0.23)
                     screen.blit(text, textpos)
@@ -1880,6 +1881,10 @@ async def main():
                     screen.blit(text, textpos)
 
                     text = TEXTS["72-Custom"]
+                    
+                    if pygame.mouse.get_pressed()[0] and not down:
+                        stage = "animation-for-solve get-from-gallery custom"
+                        clickSFX.play()
 
                 else:
                     text = TEXTS["24-No nonogram available"]
@@ -1891,10 +1896,6 @@ async def main():
                     screen.blit(text, textpos)
 
                     text = TEXTS["64-Custom"]
-
-                if pygame.mouse.get_pressed()[0] and not down and load_data("gallery") != " ":
-                    stage = "animation-for-solve get-from-gallery custom"
-                    clickSFX.play()
             
             else:
                 text = TEXTS["64-Custom"]
@@ -1904,20 +1905,51 @@ async def main():
 
             stage = exit_button(mainExitRect, clickSFX, stage, down, "home")
 
-        elif stage == "choose-size": # screen to chose what size of nonogram to play
+        elif stage.split()[0] == "choose-size": # screen to chose what size of nonogram to play
             text = TEXTS["64-Grid size"]
             textpos = text.get_rect(centerx=w/2, centery=w*0.2)
             screen.blit(text, textpos)
 
             size15Button.draw()
             if size15Button.get_pressed() and not down:
-                stage = "animation-for-solve get-from-gallery pre-drawn 15"
+                if stage.split()[1] == "play":
+                    stage = "animation-for-solve get-from-gallery pre-drawn 15"
+                else:
+                    stage = "animation-for-draw"
+                    size = 15
+                    cellW = math.floor((w-gap)/size)
+                    crossImg, cellTimers = setupPlayAnimations(cellW, size)
+                    infos, yinfoRects, xinfoRects, infoDone = setupInfo(size, gap, cellW)
+                    boardSolution, boardSolving, boardRects = setupBoards(size, cellW, gap)
+                clickSFX.play()
+
+            size10Button.draw()
+            if size10Button.get_pressed() and not down:
+                if stage.split()[1] == "play":
+                    stage = "animation-for-solve get-from-gallery pre-drawn 10"
+                else:
+                    stage = "animation-for-draw"
+                    size = 10
+                    cellW = math.floor((w-gap)/size)
+                    crossImg, cellTimers = setupPlayAnimations(cellW, size)
+                    infos, yinfoRects, xinfoRects, infoDone = setupInfo(size, gap, cellW)
+                    boardSolution, boardSolving, boardRects = setupBoards(size, cellW, gap)
                 clickSFX.play()
 
             size5Button.draw()
             if size5Button.get_pressed() and not down:
-                stage = "animation-for-solve get-from-gallery pre-drawn 5"
+                if stage.split()[1] == "play":
+                    stage = "animation-for-solve get-from-gallery pre-drawn 5"
+                else:
+                    stage = "animation-for-draw"
+                    size = 5
+                    cellW = math.floor((w-gap)/size)
+                    crossImg, cellTimers = setupPlayAnimations(cellW, size)
+                    infos, yinfoRects, xinfoRects, infoDone = setupInfo(size, gap, cellW)
+                    boardSolution, boardSolving, boardRects = setupBoards(size, cellW, gap)
                 clickSFX.play()
+
+            stage = exit_button(mainExitRect, clickSFX, stage, down, "home")
         
         elif stage.split()[0] == "animation-for-solve": # text animation for starting to solve
             if len(stage.split()) > 1 and stage.split()[1] == "get-from-gallery":
@@ -1927,7 +1959,7 @@ async def main():
                     r = r[solveNext]
                     
                 elif len(stage.split()) > 2 and stage.split()[2] == "pre-drawn":
-                    r = getSolveNext(stage.split()[3])
+                    r, solveNext = getSolveNext(stage.split()[3])
 
                     solveNext = f"p{solveNext}"
 

@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.3.5] - 2026-09-09
+
+### Added
+- Pick grid size for drawing
+- Grid size 10
+- Exit button on `choose-size` screen
+- 2 images to the shop
+- Added new nonograms, removed ones that requires trial and error
+
+### Changed
+- Used `math.ceil` on the gallery pixel width to get rid of slit in between pixels on the 10x10 grid
+
+### Fixed
+- Gallery displaying wrong data
+- Gallery delete all data when an invalid gallery is saved in `save.txt`
+- Changed screen width back to 720 after accidentally changing it to 800
+
 ## [1.3.4] - 2026-09-09
 
 ### Added
