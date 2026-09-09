@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.3.4] - 2026-09-08
+## [1.3.4] - 2026-09-09
 
 ### Changed
 - Flip pages to be 50% transparent when mouse not over. This allows the user to easily see the content underneath that the button may be covering.
@@ -8,6 +8,7 @@
 
 ### Fixed
 - Fixed TypeError while solving due to swipe to exit feature
+- Added datasize into the list containing each rect in `galleryBigRects` to allow for different nonogram sizes in the gallery to be displayed with appropriate gorder radius
 
 ## [1.3.3] - 2026-09-08
 

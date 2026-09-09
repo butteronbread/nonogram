@@ -63,7 +63,8 @@ PREDRAWN = """15 111111111111111100000010000001101001010100101100000010000001101
 15 000000000000000000000000000000001110000011100001011111110100000110000011000001000000000100010000000000010010001000100010010000000000010010000010000010001000101000100000100000001000000011111110000000000000000000000000000000000
 15 000000000000000000001000100000000000101000000001110101011100011111000111110011001101100110011100111001110001111111111100000001111100000000011111110000000110111011000000111101111000000011000110000000000000000000000000000000000
 15 000010000010000000001000100000000000111000000000001111100000000010111010000011011111110110000110010011000001100010001100001001010100100111000010110111001011010000100001101010101100000110010011000000011111110000001101111101100
-15 000000000000000000001000001110000011100011010000001000110110000000001101100000000011011000001000110110010011101101100111001111011000010000110110000000000111100000000001111110000000011100111000000001000010000000000000000000000""".splitlines()
+15 000000000000000000001000001110000011100011010000001000110110000000001101100000000011011000001000110110010011101101100111001111011000010000110110000000000111100000000001111110000000011100111000000001000010000000000000000000000
+15 000000011111110000000110111111000000111111111000000111111111000000111110000100001111111110110011111100000110111111111000111111111101000111111111100000011111111100000001111111000000000110110000000000100010000000000110010000000""".splitlines()
 
 # testing
 #PREDRAWN = """15 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000""".splitlines()
@@ -1435,23 +1436,23 @@ async def main():
                                 save_data(json.dumps(saveR), "save")
                                 break
 
-                        datasize = int(data[0]) # SMTH WRONG HERE HELPPPPP
+                        datasize = int(data[0])
                         data = data[1]
 
-                        dataW = (galleryBigRects[-1].w - w*0.02)/datasize
-
-                        galleryBigRects.append(pygame.Rect(w*0.2+((i%4)%2 * w*0.35),
+                        galleryBigRects.append([pygame.Rect(w*0.2+((i%4)%2 * w*0.35),
                                                            w*0.2+((i%4)//2 * w*0.35), 
                                                            w*0.25, # size
-                                                           w*0.25))
+                                                           w*0.25), datasize])
+
+                        dataW = (galleryBigRects[-1][0].w - w*0.02)/datasize
 
                         gallerySmallRects.append([])
                         for y in range(datasize):
                             for x in range(datasize):
                                 gallerySmallRects[-1].append(
                                     pygame.Rect( # w*0.01 = margin
-                                        galleryBigRects[-1].x + w*0.01 + dataW*x,
-                                        galleryBigRects[-1].y + w*0.01 + dataW*y,
+                                        galleryBigRects[-1][0].x + w*0.01 + dataW*x,
+                                        galleryBigRects[-1][0].y + w*0.01 + dataW*y,
                                         dataW, 
                                         dataW))
                         
@@ -1463,19 +1464,19 @@ async def main():
             # display the gallery
             for y in range(galleryPage*4,galleryPage*4+4):
                 if len(galleryBigRects) > y:
-                    pygame.draw.rect(screen, (60, 64, 57), galleryBigRects[y], border_radius=int(10/mul))
-
+                    pygame.draw.rect(screen, (60, 64, 57), galleryBigRects[y][0], border_radius=int(10/mul))
+                
                     for x in range(len(gallerySmallRects[y])):
                         if x == 0:
                             pygame.draw.rect(screen, colors[int(galleryColors[y][x])], 
                                              gallerySmallRects[y][x], border_top_left_radius=int(10/mul))
-                        elif x == datasize-1:
+                        elif x == galleryBigRects[y][1]-1:
                             pygame.draw.rect(screen, colors[int(galleryColors[y][x])], 
                                              gallerySmallRects[y][x], border_top_right_radius=int(10/mul))
-                        elif x == datasize**2-datasize:
+                        elif x == galleryBigRects[y][1]**2-galleryBigRects[y][1]:
                             pygame.draw.rect(screen, colors[int(galleryColors[y][x])], 
                                              gallerySmallRects[y][x], border_bottom_left_radius=int(10/mul))
-                        elif x == datasize**2-1:
+                        elif x == galleryBigRects[y][1]**2-1:
                             pygame.draw.rect(screen, colors[int(galleryColors[y][x])], 
                                              gallerySmallRects[y][x], border_bottom_right_radius=int(10/mul))
                         else:
