@@ -64,7 +64,8 @@ PREDRAWN = """15 111111111111111100000010000001101001010100101100000010000001101
 15 000000000000000000001000100000000000101000000001110101011100011111000111110011001101100110011100111001110001111111111100000001111100000000011111110000000110111011000000111101111000000011000110000000000000000000000000000000000
 15 000010000010000000001000100000000000111000000000001111100000000010111010000011011111110110000110010011000001100010001100001001010100100111000010110111001011010000100001101010101100000110010011000000011111110000001101111101100
 15 000000000000000000001000001110000011100011010000001000110110000000001101100000000011011000001000110110010011101101100111001111011000010000110110000000000111100000000001111110000000011100111000000001000010000000000000000000000
-15 000000011111110000000110111111000000111111111000000111111111000000111110000100001111111110110011111100000110111111111000111111111101000111111111100000011111111100000001111111000000000110110000000000100010000000000110010000000""".splitlines()
+15 000000011111110000000110111111000000111111111000000111111111000000111110000100001111111110110011111100000110111111111000111111111101000111111111100000011111111100000001111111000000000110110000000000100010000000000110010000000
+5 0000001000001000000000000""".splitlines()
 
 # testing
 #PREDRAWN = """15 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000""".splitlines()
@@ -82,24 +83,25 @@ def setupText():
     TEXTS = {
         "64-X": FONTSIZES[int(64/mul)].render("X", True, (255,255,255)),
         "48-X": FONTSIZES[int(48/mul)].render("X", True, (255,255,255)),
-        "24-Solve a nonogram": FONTSIZES[int(24/mul)].render("Solve a nonogram", True, (51, 66, 44)),
-        "24-Earn sand dollars": FONTSIZES[int(24/mul)].render("Earn sand dollars", True, (51, 66, 44)),
-        "24-Draw and solve your own nonogram": FONTSIZES[int(24/mul)].render("Draw and solve your own nonogram", True, (51, 66, 44)),
-        "24-Doesn't earn sand dollars": FONTSIZES[int(24/mul)].render("Doesn't earn sand dollars", True, (51, 66, 44)),
+        "24-Solve a nonogram": FONTSIZES[int(24/mul)].render("Solve a nonogram", True, "#33422c"),
+        "24-Earn sand dollars": FONTSIZES[int(24/mul)].render("Earn sand dollars", True, "#33422c"),
+        "24-Draw and solve your own nonogram": FONTSIZES[int(24/mul)].render("Draw and solve your own nonogram", True, "#33422c"),
+        "24-Doesn't earn sand dollars": FONTSIZES[int(24/mul)].render("Doesn't earn sand dollars", True, "#33422c"),
         "96-Draw your Nonogram!": FONTSIZES[int(96/mul)].render("Draw your Nonogram!", True, (255,255,255)),
         "48-Have a friend draw it for a challenge": FONTSIZES[int(48/mul)].render("Have a friend draw it for a challenge", True, (255,255,255)),
-        "24-Solve a pre-drawn nonogram": FONTSIZES[int(24/mul)].render("Solve a pre-drawn nonogram", True, (51, 66, 44)),
-        "24-Earn sand dollars": FONTSIZES[int(24/mul)].render("Earn sand dollars", True, (51, 66, 44)),
-        "24-Solve a nonogram you drew before": FONTSIZES[int(24/mul)].render("Solve a nonogram you drew before", True, (51, 66, 44)),
-        "24-Doesn't earn sand dollars": FONTSIZES[int(24/mul)].render("Doesn't earn sand dollars", True, (51, 66, 44)),
-        "72-Custom": FONTSIZES[int(72/mul)].render("Custom", True, (66, 99, 52)),
-        "24-No nonogram available": FONTSIZES[int(24/mul)].render("No nonogram available", True, (51, 66, 44)),
-        "24-Draw one before solving": FONTSIZES[int(24/mul)].render("Draw one before solving", True, (51, 66, 44)),
-        "64-Custom": FONTSIZES[int(64/mul)].render("Custom", True, (66, 99, 52)),
-        "96-Solve!": FONTSIZES[int(96/mul)].render("Solve!", True, (255,255,255)),
-        "128-YOU WIN!": FONTSIZES[int(128/mul)].render("YOU WIN!", True, (211, 232, 179)),
-        "128-YOU LOSE!": FONTSIZES[int(128/mul)].render("YOU LOSE!", True, (232, 195, 195)),
-        "64-Publish image?": FONTSIZES[int(64/mul)].render("Publish image?", True, (157, 166, 144))
+        "24-Solve a pre-drawn nonogram": FONTSIZES[int(24/mul)].render("Solve a pre-drawn nonogram", True, "#33422c"),
+        "24-Earn sand dollars": FONTSIZES[int(24/mul)].render("Earn sand dollars", True, "#33422c"),
+        "24-Solve a nonogram you drew before": FONTSIZES[int(24/mul)].render("Solve a nonogram you drew before", True, "#33422c"),
+        "24-Doesn't earn sand dollars": FONTSIZES[int(24/mul)].render("Doesn't earn sand dollars", True, "#33422c"),
+        "72-Custom": FONTSIZES[int(72/mul)].render("Custom", True, "#426334"),
+        "24-No nonogram available": FONTSIZES[int(24/mul)].render("No nonogram available", True, "#33422c"),
+        "24-Draw one before solving": FONTSIZES[int(24/mul)].render("Draw one before solving", True, "#33422c"),
+        "64-Custom": FONTSIZES[int(64/mul)].render("Custom", True, "#426334"),
+        "96-Solve!": FONTSIZES[int(96/mul)].render("Solve!", True, "#ffffff"),
+        "128-YOU WIN!": FONTSIZES[int(128/mul)].render("YOU WIN!", True, "#d3e8b3"),
+        "128-YOU LOSE!": FONTSIZES[int(128/mul)].render("YOU LOSE!", True, "#e8c3c3"),
+        "64-Publish image?": FONTSIZES[int(64/mul)].render("Publish image?", True, "#9da690"),
+        "64-Grid size": FONTSIZES[int(64/mul)].render("Grid size", True, "#33422c"),
     }
 
 # classes
@@ -347,7 +349,15 @@ def setupChooseSolve():
     chooseCustomRect.centerx = w/2
     chooseCustomRect.centery = w*0.55
 
-    return choosePredrawnButton, chooseCustomRect
+    size15Button = Button("text", w*0.5, w*0.15, "#426334", 
+                          border_radius=int(20/mul), centerx=w/2, centery=w*0.35, 
+                          text=Text("15x15", "#abcc9d", int(64/mul)), hoverSize=int(72/mul))
+
+    size5Button = Button("text", w*0.5, w*0.15, "#abcc9d", 
+                        border_radius=int(20/mul), centerx=w/2, centery=w*0.55, 
+                        text=Text("5x5", "#426334", int(64/mul)), hoverSize=int(72/mul))
+
+    return choosePredrawnButton, chooseCustomRect, size15Button, size5Button
 
 def setupDarkFade():
     darken = pygame.Surface((w,w), pygame.SRCALPHA)
@@ -546,7 +556,7 @@ def setup():
     shopSDAnimate, shopSDAnimateTxt,\
         scaling, rotating, ogRotation = 0, "", False, False, 0
 
-    choosePredrawnButton, chooseCustomRect = setupChooseSolve()
+    choosePredrawnButton, chooseCustomRect, size15Button, size5Button = setupChooseSolve()
 
     infoPageBg = pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, "assets/images/icons/infoPage.png")), 
                                         (w*0.9,w*0.9))
@@ -592,7 +602,7 @@ def setup():
         infos, yinfoRects, xinfoRects, infoDone,\
         clueArrows, clueSelected, clueAnimation,\
         darken, opacity, fade, fadeo,\
-        choosePredrawnButton, chooseCustomRect,\
+        choosePredrawnButton, chooseCustomRect, size15Button, size5Button,\
         playButton, drawButton, playBubble, drawBubble,\
         sanddollarRect, sanddollarImg,\
         shopButton, galleryButton, beachButton,\
@@ -624,7 +634,6 @@ def setup():
 def drawBoard(size, screen, colors, board, gap, w, cellW, boardRects, crossImg, cellTimers):
     """Draw the nonogram board, including filled cells, empty cells, crossed out cells, and wrong cells with animations."""
     # 0 = empty, 1 = filled, 2 = crossed out, 2 < x < 3 = animation for crossed out, 3 = wrong
-
     for y in range(size):
         for x in range(size):
             if board[y][x] == 3: # wrong
@@ -915,6 +924,30 @@ def check_info_done(infoDone, boardSolving, boardSolution, infos):
                 infoDone[xy][a1][run] = done
     
     return infoDone
+
+def getSolveNext(num):
+    five = []
+    fifteen = []
+
+    for i in PREDRAWN:
+        if i.split()[0] == "5":
+            five.append(i)
+        elif i.split()[0] == "15":
+            fifteen.append(i)
+
+    random.seed(time.time_ns()) # makes sure it is random because when running with pygbag its always 2
+    if num == "5":
+        try:
+            solveNext = five[random.randint(0,len(five)-1)]
+        except:
+            solveNext = five[0]
+    elif num == "15":
+        try:
+            solveNext = fifteen[random.randint(0,len(fifteen)-1)]
+        except:
+            solveNext = fifteen[0]
+
+    return solveNext
 
 # beach functions
 
@@ -1211,7 +1244,7 @@ async def main():
         infos, yinfoRects, xinfoRects, infoDone,\
         clueArrows, clueSelected, clueAnimation,\
         darken, opacity, fade, fadeo,\
-        choosePredrawnButton, chooseCustomRect,\
+        choosePredrawnButton, chooseCustomRect, size15Button, size5Button,\
         playButton, drawButton, playBubble, drawBubble,\
         sanddollarRect, sanddollarImg,\
         shopButton, galleryButton, beachButton,\
@@ -1274,7 +1307,7 @@ async def main():
             elif len(sdShowTxt) > 5:
                 sdShowTxt = str(int(sanddollar/1000))+"K"
 
-            text = FONTSIZES[int(48/mul)].render(sdShowTxt, True, (66, 99, 52))
+            text = FONTSIZES[int(48/mul)].render(sdShowTxt, True, "#426334")
             textpos = text.get_rect(x=sanddollarRect.x+w*0.12, centery=sanddollarRect.centery-w*0.003)
             screen.blit(text, textpos)
 
@@ -1554,14 +1587,14 @@ async def main():
                 sdShowTxt = str(int(sanddollar/1000))+"K"
 
             # display text
-            text = FONTSIZES[int(48/mul)].render(sdShowTxt, True, (66, 99, 52))
+            text = FONTSIZES[int(48/mul)].render(sdShowTxt, True, "#426334")
             textpos = text.get_rect(x=sanddollarRect.x+w*0.12, 
                                     centery=sanddollarRect.centery-w*0.003)
             screen.blit(text, textpos)
 
             # animations for when sand dollars are spent
             if shopSDAnimate > 0:
-                text = pygame.font.Font(FONT, int(((20-shopSDAnimate)*1.5)/mul)).render(f"-{shopSDAnimateTxt}", True, (66, 99, 52))
+                text = pygame.font.Font(FONT, int(((20-shopSDAnimate)*1.5)/mul)).render(f"-{shopSDAnimateTxt}", True, "#426334")
                 text.set_alpha(255*shopSDAnimate/20)
                 textpos = text.get_rect(centerx=sanddollarRect.x + sanddollarRect.w + w*0.05, 
                                         centery=sanddollarRect.y + sanddollarRect.h - w*0.05 + w*0.1*shopSDAnimate/20)
@@ -1828,7 +1861,7 @@ async def main():
                 screen.blit(text, textpos)
 
                 if pygame.mouse.get_pressed()[0] and not down:
-                    stage = "animation-for-solve get-from-gallery pre-drawn"
+                    stage = "choose-size"
                     clickSFX.play()
 
             # custom button
@@ -1871,6 +1904,21 @@ async def main():
 
             stage = exit_button(mainExitRect, clickSFX, stage, down, "home")
 
+        elif stage == "choose-size": # screen to chose what size of nonogram to play
+            text = TEXTS["64-Grid size"]
+            textpos = text.get_rect(centerx=w/2, centery=w*0.2)
+            screen.blit(text, textpos)
+
+            size15Button.draw()
+            if size15Button.get_pressed() and not down:
+                stage = "animation-for-solve get-from-gallery pre-drawn 15"
+                clickSFX.play()
+
+            size5Button.draw()
+            if size5Button.get_pressed() and not down:
+                stage = "animation-for-solve get-from-gallery pre-drawn 5"
+                clickSFX.play()
+        
         elif stage.split()[0] == "animation-for-solve": # text animation for starting to solve
             if len(stage.split()) > 1 and stage.split()[1] == "get-from-gallery":
                 if len(stage.split()) > 2 and stage.split()[2] == "custom":
@@ -1879,25 +1927,28 @@ async def main():
                     r = r[solveNext]
                     
                 elif len(stage.split()) > 2 and stage.split()[2] == "pre-drawn":
-                    r = load_data("gallery").strip().splitlines()
-                    random.seed(time.time_ns()) # makes sure it is random because when running with pygbag its always 2
-                    solveNext = random.randint(0,len(PREDRAWN)-1)
-
-                    r = PREDRAWN[solveNext]
+                    r = getSolveNext(stage.split()[3])
 
                     solveNext = f"p{solveNext}"
 
                 size = int(r.split(" ")[0])
+
+                cellW = math.floor((w-gap)/size)
+
+                crossImg, cellTimers = setupPlayAnimations(cellW, size)
+                infos, yinfoRects, xinfoRects, infoDone = setupInfo(size, gap, cellW)
+                boardSolution, boardSolving, boardRects = setupBoards(size, cellW, gap)
+
                 r = r.split(" ")[1]
                 for y in range(size):
                     for x in range(size):
                         boardSolution[y][x] = int(r[y*size+x])
-                
-                infos, boardSolving, infoDone = addInfo(size, infos, boardSolution, boardSolving, infoDone)
 
                 stage = stage.split()
                 stage[1] = "earn-sanddollar"
                 stage = " ".join(stage)
+
+                infos, boardSolving, infoDone = addInfo(size, infos, boardSolution, boardSolving, infoDone)
 
             drawBoard(size, screen, colors, boardSolving, gap, w, cellW, boardRects, crossImg, cellTimers)
 

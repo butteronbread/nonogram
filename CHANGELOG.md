@@ -2,6 +2,9 @@
 
 ## [1.3.4] - 2026-09-09
 
+### Added
+- Option to pick between 5x5 and 15x15 grid nonograms for pre-drawn ones
+
 ### Changed
 - Flip pages to be 50% transparent when mouse not over. This allows the user to easily see the content underneath that the button may be covering.
 - Updated low resolution to be 360 for grid alignment
