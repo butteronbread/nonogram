@@ -468,17 +468,17 @@ def setupShop():
     shopPage = 0
 
     shopItemRects = []
-    for i in range(16):
+    for i in range(17):
         shopItemRects.append(pygame.Rect(w*0.2+((i%4)%2 * w*0.35), w*0.15+((i%4)//2 * w*0.4), w*0.25, w*0.35))
 
     shopItemImgs = []
     ogShopItemImgs = []
-    for i in range(16):
+    for i in range(17):
         shopItemImgs.append(pygame.transform.scale(pygame.image.load(os.path.join(DIRECTORY, f"assets/images/shop/{i}.png")), 
                                                    (w*0.18, w*0.18)))
         ogShopItemImgs.append(pygame.image.load(os.path.join(DIRECTORY, f"assets/images/shop/{i}.png")))
 
-    shopItemPrice = [300, 100, 500, 300, 1200, 1000, 1000, 200, 200, 300, 300, 200, 500, 200, 200, 1200]
+    shopItemPrice = [300, 100, 500, 300, 1200, 1000, 1000, 200, 200, 300, 300, 200, 500, 200, 200, 1200, 600]
 
     return shopBg, shopPage, shopItemRects, shopItemImgs, ogShopItemImgs, shopItemPrice
 
@@ -1658,6 +1658,19 @@ async def main():
                         posOffset = (pygame.mouse.get_pos()[0]-beachData[moveItem[-1]][1][0], 
                                     pygame.mouse.get_pos()[1]-beachData[moveItem[-1]][1][1])
                     clickBg = False
+            
+            if moveItem != [] and not down:
+                beachData.append(beachData.pop(moveItem[-1]))
+
+                r = json.loads(load_data("save"))
+                
+                r["beach_items"] = ""
+                for data in beachData:
+                    r["beach_items"] += f"{data[0]}/{data[1][0]}-{data[1][1]}-{data[1][2]}-{data[1][3]}-{data[1][4]} "
+                r["beach_items"] = r["beach_items"].strip()
+                save_data(json.dumps(r), "save")
+
+                moveItem[-1] = len(beachData)-1
                     
             if pygame.mouse.get_pressed()[0] and clickBg and moveItem == []: # reset selecting if bg is clicked TODO
                 selecting = -1

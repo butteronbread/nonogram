@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.6] - 2026-09-12
+
+### Added
+- More images to shop/beach
+
+### Changed
+- When clicking an item on the beach, it will automatically be layered to the top
+
 ## [1.3.5] - 2026-09-09
 
 ### Added
