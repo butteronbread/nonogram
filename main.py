@@ -65,6 +65,7 @@ PREDRAWN = """15 111111111111111100000010000001101001010100101100000010000001101
 5 1111101110101011101111111
 5 0010001110111110111001010
 5 1111111111011100010011111
+5 1000111111101011101101110
 15 000001101100000000011111110000000011111110000000011111110000011101111101110111110111011111111111010111111011111101111110111111010111111111110010011111011100010001110000000110000000000001100000000000111000000000011100000000000""".splitlines()
 
 # testing
@@ -455,11 +456,31 @@ def setupBeach():
 
     posOffset = (0,0)
 
+    # choose beach screen
+    pickBeachSave = [
+        Button("text", w*0.4, w*0.15, "#426334", 
+                border_radius=int(20/mul), centerx=w/2, centery=w*0.3, 
+                text=Text("Beach 1", "#abcc9d", int(64/mul)), hoverSize=int(72/mul)),
+
+        Button("text", w*0.4, w*0.15, "#426334", 
+                border_radius=int(20/mul), centerx=w/2, centery=w*0.5, 
+                text=Text("Beach 2", "#abcc9d", int(64/mul)), hoverSize=int(72/mul)),
+
+        Button("text", w*0.4, w*0.15, "#426334", 
+                border_radius=int(20/mul), centerx=w/2, centery=w*0.7, 
+                text=Text("Beach 3", "#abcc9d", int(64/mul)), hoverSize=int(72/mul))
+    ]
+
+    pickBeachSave[0].unlocked = True
+    pickBeachSave[1].unlocked = False
+    pickBeachSave[2].unlocked = False
+
     return beachBgImgs, beachConfirmButton,\
         mainExitRect, addButton,\
         trashButtonRect, trashImgs,\
         addBg, posOffset,\
-        scaleButton, rotateButton, flipButton
+        scaleButton, rotateButton, flipButton,\
+        pickBeachSave
 
 def setupShop():
     shopBg = pygame.Rect(0,0,w*0.9,w*0.9)
@@ -544,7 +565,8 @@ def setup():
     beachBgImgs, beachConfirmButton,\
         mainExitRect, addButton, trashButtonRect, trashImgs,\
         addBg, posOffset,\
-        scaleButton, rotateButton, flipButton = setupBeach()
+        scaleButton, rotateButton, flipButton,\
+        pickBeachSave = setupBeach()
 
     # shop stuff
     shopBg, shopPage,\
@@ -557,7 +579,7 @@ def setup():
 
     selecting, clickBg = -1, False
 
-    shopSDAnimate, shopSDAnimateTxt,\
+    spendSDanimate, spendSDtext,\
         scaling, rotating, ogRotation = 0, "", False, False, 0
 
     choosePredrawnButton, chooseCustomRect, size15Button, size10Button, size5Button = setupChooseSolve()
@@ -621,7 +643,7 @@ def setup():
         shopItemPrice, stage, sanddollar,\
         selecting, clickBg,\
         rotateButton, scaleButton, flipButton,\
-        shopSDAnimate, shopSDAnimateTxt,\
+        spendSDanimate, spendSDtext,\
         scaling, rotating, ogRotation,\
         soundButtonRect, ogSoundImgs, soundImgs, soundOn,\
         infoButton, infoPageBg, infoPageBgBold, infoRect,\
@@ -629,7 +651,8 @@ def setup():
         XO, heartXOimg, heartRect,\
         tutorial,\
         prevx, prevy,\
-        exitImg, gapSurf, gapPrevPoint, gapOffset
+        exitImg, gapSurf, gapPrevPoint, gapOffset,\
+        pickBeachSave
 
 # other functions
 
@@ -946,7 +969,7 @@ def getSolveNext(num):
 
 # beach functions
 
-def beach_setup(shopItemImgs, ogShopItemImgs, stage):
+def ingame_beach_setup(shopItemImgs, ogShopItemImgs, stage):
     """Loads the beach data every time something has changed"""
 
     r = json.loads(load_data("save"))
@@ -1254,7 +1277,7 @@ async def main():
         shopItemPrice, stage, sanddollar,\
         selecting, clickBg,\
         rotateButton, scaleButton, flipButton,\
-        shopSDAnimate, shopSDAnimateTxt,\
+        spendSDanimate, spendSDtext,\
         scaling, rotating, ogRotation,\
         soundButtonRect, ogSoundImgs, soundImgs, soundOn,\
         infoButton, infoPageBg, infoPageBgBold, infoRect,\
@@ -1262,7 +1285,8 @@ async def main():
         XO, heartXOimg, heartRect,\
         tutorial,\
         prevx, prevy,\
-        exitImg, gapSurf, gapPrevPoint, gapOffset = setup()
+        exitImg, gapSurf, gapPrevPoint, gapOffset,\
+        pickBeachSave = setup()
 
     setupText()
 
@@ -1324,7 +1348,7 @@ async def main():
             beachButton.draw()
                         
             if beachButton.get_pressed():
-                stage = "beach setup"
+                stage = "pick-beach-save setup"
                 clickSFX.play()
         
             # sound
@@ -1539,8 +1563,8 @@ async def main():
                         if pygame.mouse.get_pressed()[0] and not down:
                             if sanddollar >= shopItemPrice[i]:
                                 # animation start + sfxs
-                                shopSDAnimateTxt = str(shopItemPrice[i])
-                                shopSDAnimate = 20
+                                spendSDtext = str(shopItemPrice[i])
+                                spendSDanimate = 30
                                 clickSFX.play()
 
                                 r = json.loads(load_data("save"))
@@ -1594,14 +1618,69 @@ async def main():
             screen.blit(text, textpos)
 
             # animations for when sand dollars are spent
-            if shopSDAnimate > 0:
-                text = pygame.font.Font(FONT, int(((20-shopSDAnimate)*1.5)/mul)).render(f"-{shopSDAnimateTxt}", True, "#426334")
-                text.set_alpha(255*shopSDAnimate/20)
+            if spendSDanimate > 0:
+                text = pygame.font.Font(FONT, int(((30-spendSDanimate)*1.5)/mul)).render(f"-{spendSDtext}", True, "#426334")
+                text.set_alpha(255*spendSDanimate/30)
                 textpos = text.get_rect(centerx=sanddollarRect.x + sanddollarRect.w + w*0.05, 
-                                        centery=sanddollarRect.y + sanddollarRect.h - w*0.05 + w*0.1*shopSDAnimate/20)
+                                        centery=sanddollarRect.y + sanddollarRect.h - w*0.05 + w*0.1*spendSDanimate/30)
                 screen.blit(text, textpos)
 
-                shopSDAnimate -= 1
+                spendSDanimate -= 1
+
+            stage = exit_button(popupExitRect, clickSFX, stage, down, "home")
+
+        elif stage.split()[0] == "pick-beach-save":
+            pygame.draw.rect(screen, (249, 250, 242), shopBg, border_radius=int(10/mul))
+
+            if len(stage.split()) > 1 and stage.split()[1] == "setup":
+                # make it so it checks save for if u bought it or not so it saves
+                for n, i in enumerate(pickBeachSave):
+                    i.text.modify(text = f"Beach {n+1}" if i.unlocked else "$3000 to unlock")
+                    i.hoverText.modify(text = f"Beach {n+1}" if i.unlocked else "$3000 to unlock")
+
+            for i in pickBeachSave:
+                i.draw()
+                if i.get_pressed() and not down:
+                    if not i.unlocked and sanddollar > 3000:
+                        i.unlocked = True
+                        spendSDtext = "3000"
+                        spendSDanimate = 30
+                        stage = "pick-beach-save setup"
+
+                        sanddollar -= 3000
+                        f = json.loads(load_data("save"))
+                        f["sanddollar"] = str(sanddollar)
+                        save_data(json.dumps(f), "save")
+
+            # display sand dollars
+            sanddollarRect = pygame.Rect(w*0.04, w*0.02, w*0.35, w*0.1)
+
+            pygame.draw.rect(screen, "#CAD4C5", sanddollarRect, border_radius=int(20/mul))
+            screen.blit(sanddollarImg, (sanddollarRect.x+w*0.02, 
+                                        sanddollarRect.centery-w*0.035))
+
+            # if go over then change to K or M for thousand and million
+            sdShowTxt = str(sanddollar)
+            if len(sdShowTxt) > 9:
+                sdShowTxt = str(int(sanddollar/1000000))+"M"
+            elif len(sdShowTxt) > 5:
+                sdShowTxt = str(int(sanddollar/1000))+"K"
+
+            # display text
+            text = FONTSIZES[int(48/mul)].render(sdShowTxt, True, "#426334")
+            textpos = text.get_rect(x=sanddollarRect.x+w*0.12, 
+                                    centery=sanddollarRect.centery-w*0.003)
+            screen.blit(text, textpos)
+
+            # animations for when sand dollars are spent
+            if spendSDanimate > 0:
+                text = pygame.font.Font(FONT, int(((30-spendSDanimate)*1.5)/mul)).render(f"-{spendSDtext}", True, "#426334")
+                text.set_alpha(255*spendSDanimate/30)
+                textpos = text.get_rect(centerx=sanddollarRect.x + sanddollarRect.w + w*0.05, 
+                                        centery=sanddollarRect.y + sanddollarRect.h - w*0.05 + w*0.1*spendSDanimate/30)
+                screen.blit(text, textpos)
+
+                spendSDanimate -= 1
 
             stage = exit_button(popupExitRect, clickSFX, stage, down, "home")
 
@@ -1629,7 +1708,7 @@ async def main():
 
         elif stage.split()[0] == "beach": # beach main screen
             if len(stage.split()) > 1 and stage.split()[1] == "setup":
-                beachBgNo, beachData, beachItemRects, moveItem, stage = beach_setup(shopItemImgs, ogShopItemImgs, stage)
+                beachBgNo, beachData, beachItemRects, moveItem, stage = ingame_beach_setup(shopItemImgs, ogShopItemImgs, stage)
 
             screen.blit(beachBgImgs[beachBgNo], (0,0))
 
