@@ -71,6 +71,32 @@ PREDRAWN = """15 111111111111111100000010000001101001010100101100000010000001101
 # testing
 #PREDRAWN = """15 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000""".splitlines()
 
+STARTER_SAVE = {
+    "sanddollar": 0, 
+    "gallery": "", 
+    "beach_bg": "", 
+    "inv": "", 
+    "beaches": {
+        "0": {
+            "unlocked": True,
+            "beach_items": ""
+        },
+
+        "1": {
+            "unlocked": False,
+            "beach_items": ""
+        },
+
+        "2": {
+            "unlocked": False,
+            "beach_items": ""
+        },
+
+    }, 
+    "sound": 1, 
+    "screen-res": resolution
+}
+
 def setupText():
     global FONTSIZES, TEXTS
     FONTSIZES = {int(24/mul): pygame.font.Font(FONT, int(24/mul)),
@@ -470,10 +496,9 @@ def setupBeach():
                 border_radius=int(20/mul), centerx=w/2, centery=w*0.7, 
                 text=Text("Beach 3", "#abcc9d", int(64/mul)), hoverSize=int(72/mul))
     ]
-
-    pickBeachSave[0].unlocked = True
-    pickBeachSave[1].unlocked = False
-    pickBeachSave[2].unlocked = False
+    r = json.loads(load_data("save"))
+    for i in range(3):
+        pickBeachSave[i].unlocked = bool(r["beaches"][str(i)]["unlocked"])
 
     return beachBgImgs, beachConfirmButton,\
         mainExitRect, addButton,\
@@ -505,17 +530,16 @@ def setupShop():
 
 def setup():
     tutorial = False
-    loadSave = {"sanddollar": 0, "gallery": "", "beach_bg": "", "inv": "", "beach_items": "", "sound": 1, "screen-res": resolution}
     if load_data("save") == None:
-        save_data(json.dumps(loadSave), "save") # default save value
+        save_data(json.dumps(STARTER_SAVE), "save") # default save value
         tutorial = True
     if load_data("gallery") == None:
         save_data(" ", "gallery")
 
     save = json.loads(load_data("save"))
-    for key in list(loadSave):
+    for key in list(STARTER_SAVE):
         if not key in save:
-            save[key] = loadSave[key]
+            save[key] = STARTER_SAVE[key]
 
     save_data(json.dumps(save), "save")
 
@@ -573,7 +597,7 @@ def setup():
         shopItemRects, shopItemImgs, ogShopItemImgs,\
         shopItemPrice = setupShop()
 
-    stage = "home" # index
+    stage = "home" # home
     r = json.loads(load_data("save"))
     sanddollar = int(r["sanddollar"])
 
@@ -977,7 +1001,7 @@ def ingame_beach_setup(shopItemImgs, ogShopItemImgs, stage):
     beachData = ""
 
     beachBgNo = r["beach_bg"]
-    beachData = r["beach_items"]
+    beachData = r["beaches"]
 
     if beachBgNo == '': # if user didnt pick a beach yet
         stage = "pick-beach"
@@ -1050,13 +1074,13 @@ def display_selected_UI(beachItemRects, selecting, scaleButton: Button, rotateBu
         
         r = json.loads(load_data("save"))
 
-        r["beach_items"] = r["beach_items"].split()
+        r["beaches"] = r["beaches"].split()
 
-        r["beach_items"][selecting] = r["beach_items"][selecting].split("-") # process data into list
-        r["beach_items"][selecting][4] = str(beachData[selecting][1][4]) # change data
-        r["beach_items"][selecting] = "-".join(r["beach_items"][selecting])
+        r["beaches"][selecting] = r["beaches"][selecting].split("-") # process data into list
+        r["beaches"][selecting][4] = str(beachData[selecting][1][4]) # change data
+        r["beaches"][selecting] = "-".join(r["beaches"][selecting])
 
-        r["beach_items"] = " ".join(r["beach_items"])
+        r["beaches"] = " ".join(r["beaches"])
 
         save_data(json.dumps(r), "save")
     
@@ -1085,10 +1109,10 @@ def scale_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopIt
     # save the data
     r = json.loads(load_data("save"))
     
-    r["beach_items"] = r["beach_items"].split()
-    r["beach_items"][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}-{beachData[moveItem[-1]][1][4]}"
+    r["beaches"] = r["beaches"].split()
+    r["beaches"][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}-{beachData[moveItem[-1]][1][4]}"
     
-    r["beach_items"] = " ".join(r["beach_items"])
+    r["beaches"] = " ".join(r["beaches"])
 
     save_data(json.dumps(r), "save")
 
@@ -1119,10 +1143,10 @@ def move_beach_item(moveItem, beachData, posOffset, beachItemRects, scaleButton,
     # save data
     r = json.loads(load_data("save"))
     
-    r["beach_items"] = r["beach_items"].split()
-    r["beach_items"][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}-{beachData[moveItem[-1]][1][4]}"
+    r["beaches"] = r["beaches"].split()
+    r["beaches"][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}-{beachData[moveItem[-1]][1][4]}"
     
-    r["beach_items"] = " ".join(r["beach_items"])
+    r["beaches"] = " ".join(r["beaches"])
 
     save_data(json.dumps(r), "save")
 
@@ -1162,9 +1186,9 @@ def beach_trash_button(moveItem, beachData, trashButtonRect, trashImgs, selectin
             # save data - remove from beach items and add to inv
             r = json.loads(load_data("save"))
 
-            r["beach_items"] = r["beach_items"].split()
-            r["beach_items"].pop(moveItem[-1])
-            r["beach_items"] = " ".join(r["beach_items"])
+            r["beaches"] = r["beaches"].split()
+            r["beaches"].pop(moveItem[-1])
+            r["beaches"] = " ".join(r["beaches"])
 
             r["inv"] = r["inv"].split()
             r["inv"].append(str(beachData[moveItem[-1]][0]))
@@ -1638,7 +1662,7 @@ async def main():
                     i.text.modify(text = f"Beach {n+1}" if i.unlocked else "$3000 to unlock")
                     i.hoverText.modify(text = f"Beach {n+1}" if i.unlocked else "$3000 to unlock")
 
-            for i in pickBeachSave:
+            for n, i in enumerate(pickBeachSave):
                 i.draw()
                 if i.get_pressed() and not down:
                     if not i.unlocked and sanddollar > 3000:
@@ -1650,7 +1674,14 @@ async def main():
                         sanddollar -= 3000
                         f = json.loads(load_data("save"))
                         f["sanddollar"] = str(sanddollar)
+                        f["beaches"][str(n)]["unlocked"] = True
                         save_data(json.dumps(f), "save")
+
+                        clickSFX.play()
+
+                    if i.unlocked:
+                        clickSFX.play()
+                        stage = f"beach {n} setup"
 
             # display sand dollars
             sanddollarRect = pygame.Rect(w*0.04, w*0.02, w*0.35, w*0.1)
@@ -1743,10 +1774,10 @@ async def main():
 
                 r = json.loads(load_data("save"))
                 
-                r["beach_items"] = ""
+                r["beaches"] = ""
                 for data in beachData:
-                    r["beach_items"] += f"{data[0]}/{data[1][0]}-{data[1][1]}-{data[1][2]}-{data[1][3]}-{data[1][4]} "
-                r["beach_items"] = r["beach_items"].strip()
+                    r["beaches"] += f"{data[0]}/{data[1][0]}-{data[1][1]}-{data[1][2]}-{data[1][3]}-{data[1][4]} "
+                r["beaches"] = r["beaches"].strip()
                 save_data(json.dumps(r), "save")
 
                 moveItem[-1] = len(beachData)-1
@@ -1778,9 +1809,9 @@ async def main():
                     
                     r = json.loads(load_data("save"))
 
-                    r["beach_items"] = r["beach_items"].split()
-                    r["beach_items"][selecting] = f"{beachData[selecting][0]}/{beachData[selecting][1][0]}-{beachData[selecting][1][1]}-{beachData[selecting][1][2]}-{beachData[selecting][1][3]}-{beachData[selecting][1][4]}"
-                    r["beach_items"] = " ".join(r["beach_items"])
+                    r["beaches"] = r["beaches"].split()
+                    r["beaches"][selecting] = f"{beachData[selecting][0]}/{beachData[selecting][1][0]}-{beachData[selecting][1][1]}-{beachData[selecting][1][2]}-{beachData[selecting][1][3]}-{beachData[selecting][1][4]}"
+                    r["beaches"] = " ".join(r["beaches"])
 
                     save_data(json.dumps(r), "save")
 
@@ -1844,12 +1875,12 @@ async def main():
                             # save data
                             r = json.loads(load_data("save"))
 
-                            r["beach_items"] = r["beach_items"].split()
+                            r["beaches"] = r["beaches"].split()
                             r["inv"] = r["inv"].split()
 
                             r["inv"].remove(str(addData[i]))
-                            r["beach_items"].append(f"{str(addData[i])}/{int(random.randint(int(w/4), int(w/4)*3))}-{int(random.randint(int(w/4), int(w/4)*3))}-1-0-0")
-                            r["beach_items"] = " ".join(r["beach_items"])
+                            r["beaches"].append(f"{str(addData[i])}/{int(random.randint(int(w/4), int(w/4)*3))}-{int(random.randint(int(w/4), int(w/4)*3))}-1-0-0")
+                            r["beaches"] = " ".join(r["beaches"])
                             r["inv"] = " ".join(r["inv"])
 
                             save_data(json.dumps(r), "save")
