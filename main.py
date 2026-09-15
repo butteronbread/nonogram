@@ -1001,10 +1001,10 @@ def ingame_beach_setup(shopItemImgs, ogShopItemImgs, stage):
     beachData = ""
 
     beachBgNo = r["beach_bg"]
-    beachData = r["beaches"]
+    beachData = r["beaches"][stage.split()[1]]["beach_items"]
 
     if beachBgNo == '': # if user didnt pick a beach yet
-        stage = "pick-beach"
+        stage = f"pick-beach {stage.split()[1]}"
         beachBgNo = 0
     else:
         beachBgNo = int(beachBgNo)
@@ -1040,14 +1040,14 @@ def ingame_beach_setup(shopItemImgs, ogShopItemImgs, stage):
                                           w*0.2 * beachData[i][1][2],  
                                           w*0.2*beachData[i][1][2]))
     
-    if stage != "pick-beach":
-        stage = "beach"
+    if stage.split()[0] != "pick-beach":
+        stage = f"beach {stage.split()[1]}"
 
     moveItem = [] # what item is being moved. the last item is layered on the top on the screen, so it will be moved
 
     return beachBgNo, beachData, beachItemRects, moveItem, stage
 
-def display_selected_UI(beachItemRects, selecting, scaleButton: Button, rotateButton: Button, flipButton:Button, scaling, rotating, beachData, ogRotation, down):
+def display_selected_UI(beachItemRects, selecting, scaleButton: Button, rotateButton: Button, flipButton:Button, scaling, rotating, beachData, ogRotation, down, stage):
     """Display the scale, rotate and flip button for the beach item currently selected"""
 
     # draw the UI rects
@@ -1074,19 +1074,19 @@ def display_selected_UI(beachItemRects, selecting, scaleButton: Button, rotateBu
         
         r = json.loads(load_data("save"))
 
-        r["beaches"] = r["beaches"].split()
+        r["beaches"][stage.split()[1]]["beach_items"] = r["beaches"][stage.split()[1]]["beach_items"].split()
 
-        r["beaches"][selecting] = r["beaches"][selecting].split("-") # process data into list
-        r["beaches"][selecting][4] = str(beachData[selecting][1][4]) # change data
-        r["beaches"][selecting] = "-".join(r["beaches"][selecting])
+        r["beaches"][stage.split()[1]]["beach_items"][selecting] = r["beaches"][stage.split()[1]]["beach_items"][selecting].split("-") # process data into list
+        r["beaches"][stage.split()[1]]["beach_items"][selecting][4] = str(beachData[selecting][1][4]) # change data
+        r["beaches"][stage.split()[1]]["beach_items"][selecting] = "-".join(r["beaches"][stage.split()[1]]["beach_items"][selecting])
 
-        r["beaches"] = " ".join(r["beaches"])
+        r["beaches"][stage.split()[1]]["beach_items"] = " ".join(r["beaches"][stage.split()[1]]["beach_items"])
 
         save_data(json.dumps(r), "save")
     
     return scaling, rotating, ogRotation
 
-def scale_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopItemImgs, rotateButton:Button, scaleButton:Button, flipButton:Button, moveItem):
+def scale_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopItemImgs, rotateButton:Button, scaleButton:Button, flipButton:Button, moveItem, stage):
     """Scales the selected beach item based on mouse position and updates the rect and image accordingly, as well as the UI."""
     # take the diff between mouse and rect. divide by default size to get multiplier
     beachData[selecting][1][2] = (pygame.mouse.get_pos()[0] - beachItemRects[selecting].x) / (w*0.2)
@@ -1109,16 +1109,16 @@ def scale_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopIt
     # save the data
     r = json.loads(load_data("save"))
     
-    r["beaches"] = r["beaches"].split()
-    r["beaches"][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}-{beachData[moveItem[-1]][1][4]}"
+    r["beaches"][stage.split()[1]]["beach_items"] = r["beaches"][stage.split()[1]]["beach_items"].split()
+    r["beaches"][stage.split()[1]]["beach_items"][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}-{beachData[moveItem[-1]][1][4]}"
     
-    r["beaches"] = " ".join(r["beaches"])
+    r["beaches"][stage.split()[1]]["beach_items"] = " ".join(r["beaches"][stage.split()[1]]["beach_items"])
 
     save_data(json.dumps(r), "save")
 
     return scaleButton, rotateButton, flipButton, beachItemRects
 
-def move_beach_item(moveItem, beachData, posOffset, beachItemRects, scaleButton, rotateButton, flipButton):
+def move_beach_item(moveItem, beachData, posOffset, beachItemRects, scaleButton, rotateButton, flipButton, stage):
     """Moves the selected beach item based on mouse position and updates the rect accordingly, as well as the UI."""
 
     selecting = moveItem[-1] # takes the last item in the list, which is the image layered on top in the screen
@@ -1143,10 +1143,10 @@ def move_beach_item(moveItem, beachData, posOffset, beachItemRects, scaleButton,
     # save data
     r = json.loads(load_data("save"))
     
-    r["beaches"] = r["beaches"].split()
-    r["beaches"][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}-{beachData[moveItem[-1]][1][4]}"
+    r["beaches"][stage.split()[1]]["beach_items"] = r["beaches"][stage.split()[1]]["beach_items"].split()
+    r["beaches"][stage.split()[1]]["beach_items"][moveItem[-1]] = f"{beachData[moveItem[-1]][0]}/{beachData[moveItem[-1]][1][0]}-{beachData[moveItem[-1]][1][1]}-{beachData[moveItem[-1]][1][2]}-{beachData[moveItem[-1]][1][3]}-{beachData[moveItem[-1]][1][4]}"
     
-    r["beaches"] = " ".join(r["beaches"])
+    r["beaches"][stage.split()[1]]["beach_items"] = " ".join(r["beaches"][stage.split()[1]]["beach_items"])
 
     save_data(json.dumps(r), "save")
 
@@ -1186,9 +1186,9 @@ def beach_trash_button(moveItem, beachData, trashButtonRect, trashImgs, selectin
             # save data - remove from beach items and add to inv
             r = json.loads(load_data("save"))
 
-            r["beaches"] = r["beaches"].split()
-            r["beaches"].pop(moveItem[-1])
-            r["beaches"] = " ".join(r["beaches"])
+            r["beaches"][stage.split()[1]]["beach_items"] = r["beaches"][stage.split()[1]]["beach_items"].split()
+            r["beaches"][stage.split()[1]]["beach_items"].pop(moveItem[-1])
+            r["beaches"][stage.split()[1]]["beach_items"] = " ".join(r["beaches"][stage.split()[1]]["beach_items"])
 
             r["inv"] = r["inv"].split()
             r["inv"].append(str(beachData[moveItem[-1]][0]))
@@ -1208,7 +1208,7 @@ def beach_add_button(addButton: Button, stage, clickSFX, down):
     addButton.draw()
 
     if addButton.get_pressed() and not down:
-        stage = "add setup"
+        stage = f"add {stage.split()[1]} setup"
         clickSFX.play()
     
     return stage
@@ -1662,6 +1662,8 @@ async def main():
                     i.text.modify(text = f"Beach {n+1}" if i.unlocked else "$3000 to unlock")
                     i.hoverText.modify(text = f"Beach {n+1}" if i.unlocked else "$3000 to unlock")
 
+                stage = "pick-beach-save"
+
             for n, i in enumerate(pickBeachSave):
                 i.draw()
                 if i.get_pressed() and not down:
@@ -1679,7 +1681,7 @@ async def main():
 
                         clickSFX.play()
 
-                    if i.unlocked:
+                    elif i.unlocked:
                         clickSFX.play()
                         stage = f"beach {n} setup"
 
@@ -1715,7 +1717,7 @@ async def main():
 
             stage = exit_button(popupExitRect, clickSFX, stage, down, "home")
 
-        elif stage == "pick-beach": # startup screen to pick what beach background you want
+        elif stage.split()[0] == "pick-beach": # startup screen to pick what beach background you want
             screen.blit(beachBgImgs[beachBgNo], (0,0))
 
             beachBgNo = flip_page(beachBgNo, 5, 
@@ -1727,7 +1729,7 @@ async def main():
             beachConfirmButton.draw()
             
             if beachConfirmButton.get_pressed():
-                stage = "beach setup"
+                stage = f"beach {stage.split()[1]} setup"
                 clickSFX.play()
 
                 # save data
@@ -1738,7 +1740,7 @@ async def main():
                 save_data(json.dumps(r), "save")
 
         elif stage.split()[0] == "beach": # beach main screen
-            if len(stage.split()) > 1 and stage.split()[1] == "setup":
+            if len(stage.split()) > 2 and stage.split()[2] == "setup":
                 beachBgNo, beachData, beachItemRects, moveItem, stage = ingame_beach_setup(shopItemImgs, ogShopItemImgs, stage)
 
             screen.blit(beachBgImgs[beachBgNo], (0,0))
@@ -1774,10 +1776,10 @@ async def main():
 
                 r = json.loads(load_data("save"))
                 
-                r["beaches"] = ""
+                r["beaches"][stage.split()[1]]["beach_items"] = ""
                 for data in beachData:
-                    r["beaches"] += f"{data[0]}/{data[1][0]}-{data[1][1]}-{data[1][2]}-{data[1][3]}-{data[1][4]} "
-                r["beaches"] = r["beaches"].strip()
+                    r["beaches"][stage.split()[1]]["beach_items"] += f"{data[0]}/{data[1][0]}-{data[1][1]}-{data[1][2]}-{data[1][3]}-{data[1][4]} "
+                r["beaches"][stage.split()[1]]["beach_items"] = r["beaches"][stage.split()[1]]["beach_items"].strip()
                 save_data(json.dumps(r), "save")
 
                 moveItem[-1] = len(beachData)-1
@@ -1787,7 +1789,7 @@ async def main():
             
             # do things to selected object (blit stuff)
             if selecting != -1:
-                scaling, rotating, ogRotation = display_selected_UI(beachItemRects, selecting, scaleButton, rotateButton, flipButton, scaling, rotating, beachData, ogRotation, down)
+                scaling, rotating, ogRotation = display_selected_UI(beachItemRects, selecting, scaleButton, rotateButton, flipButton, scaling, rotating, beachData, ogRotation, down, stage)
             
             if rotating:
                 # find the distance between center of the image and mouse pos and then use trig to find angle to rotate
@@ -1809,9 +1811,9 @@ async def main():
                     
                     r = json.loads(load_data("save"))
 
-                    r["beaches"] = r["beaches"].split()
-                    r["beaches"][selecting] = f"{beachData[selecting][0]}/{beachData[selecting][1][0]}-{beachData[selecting][1][1]}-{beachData[selecting][1][2]}-{beachData[selecting][1][3]}-{beachData[selecting][1][4]}"
-                    r["beaches"] = " ".join(r["beaches"])
+                    r["beaches"][stage.split()[1]]["beach_items"] = r["beaches"][stage.split()[1]]["beach_items"].split()
+                    r["beaches"][stage.split()[1]]["beach_items"][selecting] = f"{beachData[selecting][0]}/{beachData[selecting][1][0]}-{beachData[selecting][1][1]}-{beachData[selecting][1][2]}-{beachData[selecting][1][3]}-{beachData[selecting][1][4]}"
+                    r["beaches"][stage.split()[1]]["beach_items"] = " ".join(r["beaches"][stage.split()[1]]["beach_items"])
 
                     save_data(json.dumps(r), "save")
 
@@ -1819,29 +1821,29 @@ async def main():
                 
             if scaling:
                 if (pygame.mouse.get_pos()[0] - beachItemRects[selecting].x) / (w*0.2) > 0.3:
-                    scaleButton, rotateButton, flipButton, beachItemRects = scale_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopItemImgs, rotateButton, scaleButton, flipButton, moveItem)
+                    scaleButton, rotateButton, flipButton, beachItemRects = scale_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopItemImgs, rotateButton, scaleButton, flipButton, moveItem, stage)
 
             if moveItem != []\
                 and not scaleButton.rect.collidepoint(pygame.mouse.get_pos()) and not scaling\
                 and not rotateButton.rect.collidepoint(pygame.mouse.get_pos()) and not rotating:
-                selecting, scaleButton, rotateButton, flipButton = move_beach_item(moveItem, beachData, posOffset, beachItemRects, scaleButton, rotateButton, flipButton)
+                selecting, scaleButton, rotateButton, flipButton = move_beach_item(moveItem, beachData, posOffset, beachItemRects, scaleButton, rotateButton, flipButton, stage)
             
             if not pygame.mouse.get_pressed()[0] and down:
                 scaling = False
                 rotating = False
-                stage = "beach setup"
+                stage = f"beach {stage.split()[1]} setup"
             
             stage = beach_add_button(addButtonRect, stage, clickSFX, down)
             
             selecting, stage = beach_trash_button(moveItem, beachData, trashButtonRect, trashImgs, selecting, stage)
 
-            stage = exit_button(mainExitRect, clickSFX, stage, down, "home")
+            stage = exit_button(mainExitRect, clickSFX, stage, down, "pick-beach-save setup")
 
         elif stage.split()[0] == "add": # screen to chose what to add to beach
             pygame.draw.rect(screen, (241, 245, 237), addBg, border_radius=10)
 
-            if len(stage.split()) > 1 and stage.split()[1] == "setup":
-                stage = "add"
+            if len(stage.split()) > 2 and stage.split()[2] == "setup":
+                stage = f"add {stage.split()[1]}"
                 addPage = 0
 
                 # get data
@@ -1870,17 +1872,17 @@ async def main():
                         screen.blit(shopItemImgs[addData[i]], (addItemRects[i].centerx-w*0.085, addItemRects[i].centery-w*0.085))
 
                         if pygame.mouse.get_pressed()[0]:
-                            stage = "beach setup"
+                            stage = f"beach {stage.split()[1]} setup"
 
                             # save data
                             r = json.loads(load_data("save"))
 
-                            r["beaches"] = r["beaches"].split()
+                            r["beaches"][stage.split()[1]]["beach_items"] = r["beaches"][stage.split()[1]]["beach_items"].split()
                             r["inv"] = r["inv"].split()
 
                             r["inv"].remove(str(addData[i]))
-                            r["beaches"].append(f"{str(addData[i])}/{int(random.randint(int(w/4), int(w/4)*3))}-{int(random.randint(int(w/4), int(w/4)*3))}-1-0-0")
-                            r["beaches"] = " ".join(r["beaches"])
+                            r["beaches"][stage.split()[1]]["beach_items"].append(f"{str(addData[i])}/{int(random.randint(int(w/4), int(w/4)*3))}-{int(random.randint(int(w/4), int(w/4)*3))}-1-0-0")
+                            r["beaches"][stage.split()[1]]["beach_items"] = " ".join(r["beaches"][stage.split()[1]]["beach_items"])
                             r["inv"] = " ".join(r["inv"])
 
                             save_data(json.dumps(r), "save")
@@ -1901,7 +1903,7 @@ async def main():
             if key[pygame.K_RIGHT] and addPage < (len(shopItemRects)-1)//9 and not down:
                 addPage += 1
 
-            stage = exit_button(popupExitRect, clickSFX, stage, down, "beach")
+            stage = exit_button(popupExitRect, clickSFX, stage, down, f"beach {stage.split()[1]}")
 
         elif stage == "animation-for-draw": # text animation for drawing new custom
             drawBoard(size, screen, colors, boardSolution, gap, w, cellW, boardRects, crossImg, cellTimers)

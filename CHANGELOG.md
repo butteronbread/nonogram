@@ -1,11 +1,11 @@
 # Changelog
 
-## [1.3.6] - 2026-09-12
+## [1.3.6] - 2026-09-15
 
 ### Added
 - More images to shop/beach
 - Screen to choose which beach save slot to use
-- Buy 2nd and 3rd beaches with 3000 sand dollars
+- Buy 2nd and 3rd beaches with 3000 sand dollars to customize more beaches
 
 ### Changed
 - When clicking an item on the beach, it will automatically be layered to the top
