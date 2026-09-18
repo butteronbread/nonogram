@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.7] - 2026-09-18
+
+### Fixed
+- Remove item (trash can) feature stage changing issue
+- Immediate UI adjustment when clicking on another beach item
+
 ## [1.3.6] - 2026-09-15
 
 ### Added

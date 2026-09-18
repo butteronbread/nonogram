@@ -1181,7 +1181,7 @@ def beach_trash_button(moveItem, beachData, trashButtonRect, trashImgs, selectin
         screen.blit(trashImgs[1], (trashButtonRect.x+w*0.01, trashButtonRect.y+w*0.01))
 
         if moveItem != [] and not pygame.mouse.get_pressed()[0]:
-            stage = "beach setup"
+            stage = f"beach {stage.split()[1]} setup"
 
             # save data - remove from beach items and add to inv
             r = json.loads(load_data("save"))
@@ -1763,7 +1763,7 @@ async def main():
                 screen.blit(img, rect)
 
                 if beachItemRects[i].collidepoint(pygame.mouse.get_pos())\
-                    and pygame.mouse.get_pressed()[0]: #TODO
+                    and pygame.mouse.get_pressed()[0]:
                     if not down:
                         moveItem.append(i)
 
@@ -1772,7 +1772,12 @@ async def main():
                     clickBg = False
             
             if moveItem != [] and not down:
-                beachData.append(beachData.pop(moveItem[-1]))
+                i = moveItem[-1]
+                last = len(beachData) - 1
+                if i != last:
+                    beachData[i], beachData[last] = beachData[last], beachData[i]
+                    beachItemRects[i], beachItemRects[last] = beachItemRects[last], beachItemRects[i]
+                moveItem[-1] = last
 
                 r = json.loads(load_data("save"))
                 
@@ -1781,12 +1786,15 @@ async def main():
                     r["beaches"][stage.split()[1]]["beach_items"] += f"{data[0]}/{data[1][0]}-{data[1][1]}-{data[1][2]}-{data[1][3]}-{data[1][4]} "
                 r["beaches"][stage.split()[1]]["beach_items"] = r["beaches"][stage.split()[1]]["beach_items"].strip()
                 save_data(json.dumps(r), "save")
-
-                moveItem[-1] = len(beachData)-1
                     
-            if pygame.mouse.get_pressed()[0] and clickBg and moveItem == []: # reset selecting if bg is clicked TODO
+            if pygame.mouse.get_pressed()[0] and clickBg and moveItem == []: # reset selecting if bg is clicked
                 selecting = -1
             
+            if moveItem != []\
+                and not scaleButton.rect.collidepoint(pygame.mouse.get_pos()) and not scaling\
+                and not rotateButton.rect.collidepoint(pygame.mouse.get_pos()) and not rotating:
+                selecting, scaleButton, rotateButton, flipButton = move_beach_item(moveItem, beachData, posOffset, beachItemRects, scaleButton, rotateButton, flipButton, stage)
+
             # do things to selected object (blit stuff)
             if selecting != -1:
                 scaling, rotating, ogRotation = display_selected_UI(beachItemRects, selecting, scaleButton, rotateButton, flipButton, scaling, rotating, beachData, ogRotation, down, stage)
@@ -1823,11 +1831,7 @@ async def main():
                 if (pygame.mouse.get_pos()[0] - beachItemRects[selecting].x) / (w*0.2) > 0.3:
                     scaleButton, rotateButton, flipButton, beachItemRects = scale_beach_img(beachData, selecting, beachItemRects, shopItemImgs, ogShopItemImgs, rotateButton, scaleButton, flipButton, moveItem, stage)
 
-            if moveItem != []\
-                and not scaleButton.rect.collidepoint(pygame.mouse.get_pos()) and not scaling\
-                and not rotateButton.rect.collidepoint(pygame.mouse.get_pos()) and not rotating:
-                selecting, scaleButton, rotateButton, flipButton = move_beach_item(moveItem, beachData, posOffset, beachItemRects, scaleButton, rotateButton, flipButton, stage)
-            
+
             if not pygame.mouse.get_pressed()[0] and down:
                 scaling = False
                 rotating = False

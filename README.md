@@ -17,6 +17,7 @@ Grids and Grains is a creative blend of logic puzzles and customization—solve 
 - **Mobile Friendly** - A toggle to swap between **cross** and **fill** mode as opposed to single and double clicks
 
 ### Beach Customization
+- **3 Beaches** - As you play on, you can unlock more beaches to customize
 - **Inventory** – Manage items you own but aren't currently displaying
 - **3 Beach Backgrounds** – Choose from different scenic backdrops
 - **Blue Box** - Each item complete with a blue box that shows the barrier of collision with edges of the screen
