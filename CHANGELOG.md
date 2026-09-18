@@ -2,6 +2,10 @@
 
 ## [1.3.7] - 2026-09-18
 
+### Changed
+- Added `price` attribute to choose beach save buttons, where 3rd beach now cost $9000
+- Updated font size in choose beach save buttons if not unlocked yet to fully fit inside the button
+
 ### Fixed
 - Remove item (trash can) feature stage changing issue
 - Immediate UI adjustment when clicking on another beach item

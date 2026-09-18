@@ -74,22 +74,24 @@ PREDRAWN = """15 111111111111111100000010000001101001010100101100000010000001101
 STARTER_SAVE = {
     "sanddollar": 0, 
     "gallery": "", 
-    "beach_bg": "", 
     "inv": "", 
     "beaches": {
         "0": {
             "unlocked": True,
-            "beach_items": ""
+            "beach_items": "",
+            "beach_bg": ""
         },
 
         "1": {
             "unlocked": False,
-            "beach_items": ""
+            "beach_items": "",
+            "beach_bg": ""
         },
 
         "2": {
             "unlocked": False,
-            "beach_items": ""
+            "beach_items": "",
+            "beach_bg": ""
         },
 
     }, 
@@ -499,6 +501,10 @@ def setupBeach():
     r = json.loads(load_data("save"))
     for i in range(3):
         pickBeachSave[i].unlocked = bool(r["beaches"][str(i)]["unlocked"])
+
+    pickBeachSave[0].price = 0
+    pickBeachSave[1].price = 3000
+    pickBeachSave[2].price = 9000
 
     return beachBgImgs, beachConfirmButton,\
         mainExitRect, addButton,\
@@ -1000,7 +1006,7 @@ def ingame_beach_setup(shopItemImgs, ogShopItemImgs, stage):
     beachBgNo = 0
     beachData = ""
 
-    beachBgNo = r["beach_bg"]
+    beachBgNo = r["beaches"][stage.split()[1]]["beach_bg"]
     beachData = r["beaches"][stage.split()[1]]["beach_items"]
 
     if beachBgNo == '': # if user didnt pick a beach yet
@@ -1659,21 +1665,21 @@ async def main():
             if len(stage.split()) > 1 and stage.split()[1] == "setup":
                 # make it so it checks save for if u bought it or not so it saves
                 for n, i in enumerate(pickBeachSave):
-                    i.text.modify(text = f"Beach {n+1}" if i.unlocked else "$3000 to unlock")
-                    i.hoverText.modify(text = f"Beach {n+1}" if i.unlocked else "$3000 to unlock")
+                    i.text.modify(text = f"Beach {n+1}" if i.unlocked else f"${i.price} to unlock", size = int(64/mul) if i.unlocked else int(38/mul))
+                    i.hoverText.modify(text = f"Beach {n+1}" if i.unlocked else f"${i.price} to unlock", size = int(72/mul) if i.unlocked else int(42/mul))
 
                 stage = "pick-beach-save"
 
             for n, i in enumerate(pickBeachSave):
                 i.draw()
                 if i.get_pressed() and not down:
-                    if not i.unlocked and sanddollar > 3000:
+                    if not i.unlocked and sanddollar > i.price:
                         i.unlocked = True
-                        spendSDtext = "3000"
+                        spendSDtext = str(i.price)
                         spendSDanimate = 30
                         stage = "pick-beach-save setup"
 
-                        sanddollar -= 3000
+                        sanddollar -= i.price
                         f = json.loads(load_data("save"))
                         f["sanddollar"] = str(sanddollar)
                         f["beaches"][str(n)]["unlocked"] = True
@@ -1735,7 +1741,7 @@ async def main():
                 # save data
                 r = json.loads(load_data("save"))
 
-                r["beach_bg"] = str(beachBgNo)
+                r["beaches"][stage.split()[1]]["beach_bg"] = str(beachBgNo)
 
                 save_data(json.dumps(r), "save")
 
