@@ -9,6 +9,7 @@
 ### Fixed
 - Remove item (trash can) feature stage changing issue
 - Immediate UI adjustment when clicking on another beach item
+- Allow to click outside the beach item hitbox and on the buttons to transform the image
 
 ## [1.3.6] - 2026-09-15
 

@@ -1768,8 +1768,11 @@ async def main():
                 rect = img.get_rect(center=center)
                 screen.blit(img, rect)
 
-                if beachItemRects[i].collidepoint(pygame.mouse.get_pos())\
-                    and pygame.mouse.get_pressed()[0]:
+                if beachItemRects[i].collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]\
+                      or scaleButton.get_pressed()\
+                        or rotateButton.get_pressed()\
+                             or flipButton.get_pressed():
+                    print( scaleButton.get_pressed(), rotateButton.get_pressed(), flipButton.get_pressed())
                     if not down:
                         moveItem.append(i)
 
